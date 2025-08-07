@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Lane Selection</title>
+    <style>
+        :root {
+            /* Border radius constant */
+            --modal-border-radius: 20px;
+            
+            /* Light theme colors */
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e9ecef;
+            --bg-accent: #4b5563;
+            --bg-input: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            --bg-section-header: #f8f9fa;
+            --bg-section-header-hover: #e9ecef;
+            --bg-pool-header: #efefef;
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #495057;
+            --text-light: #ffffff;
+            --text-accent: #1976d2;
+            
+            --border-color: #e2e8f0;
+            --border-light: #dee2e6;
+            --border-medium: #9ca3af;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.05);
+            
+            --accent-blue: #1976d2;
+            --accent-blue-hover: #1565c0;
+            --accent-red: #dc2626;
+            --accent-green: #28a745;
+            
+            --chart-bg: #f8f9fa;
+            --note-bg: #f8f9fa;
+            --metric-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #4c4c4c;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --bg-accent: #374151;
+            --bg-input: #2d2d2d;
+            --bg-card: #262626;
+            --bg-hover: #3a3a3a;
+            --bg-section-header: #2d2d2d;
+            --bg-section-header-hover: #3a3a3a;
+            --bg-pool-header: #333333;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #ffffff;
+            --text-accent: #60a5fa;
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            --border-medium: #6b7280;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.3);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.2);
+            
+            --accent-blue: #60a5fa;
+            --accent-blue-hover: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            
+            --chart-bg: #2d2d2d;
+            --note-bg: #2d2d2d;
+            --metric-bg: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(183, 183, 183, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: var(--modal-border-radius);
+            box-shadow: var(--shadow-medium);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-section-header);
+            transition: background-color 0.3s ease;
+            border-radius: var(--modal-border-radius) var(--modal-border-radius) 0 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        [data-theme="dark"] .pool-id-badge {
+            background: #198754;
+            color: #d1e7dd;
+        }
+
+        [data-theme="dark"] .lane-id-badge {
+            background: #4a148c;
+            color: #e1bee7;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .radio-input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-blue);
+        }
+
+        .radio-input:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .radio-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .radio-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .radio-option.disabled .radio-label {
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .pools-container {
+            padding: 12px 28px 24px 28px;
+            transition: all 0.15s ease-out;
+        }
+
+        .pool-section {
+            background: var(--bg-card);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 1000px;
+        }
+
+        .pool-section.filtering-out {
+            display: none;
+        }
+
+        .pool-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .pool-header {
+            padding: 16px 20px;
+            background: var(--bg-pool-header);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .pool-header:hover {
+            background: var(--bg-section-header-hover);
+        }
+
+
+
+        .pool-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .pool-id-badge {
+            background: #d1e7dd;
+            color: #0f5132;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            text-align: center;
+            line-height: 1.2;
+            word-break: break-all;
+        }
+
+        .pool-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .pool-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .pool-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pool-subtitle span::after {
+            content: "•";
+            color: var(--text-muted);
+            margin-left: 12px;
+        }
+
+        .pool-traffic {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .pool-section.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+
+
+        .pool-lanes {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 20px;
+            background: var(--bg-primary);
+            margin: 0 -1px -1px -1px;
+            border-radius: 0 0 8px 8px;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .pool-section.expanded .pool-lanes {
+            max-height: 1000px;
+            padding: 16px 20px;
+            opacity: 1;
+        }
+
+        .lane-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lane-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lane-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lane-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .lane-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .lane-item.selected {
+            background: rgba(25, 118, 210, 0.05);
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        }
+
+        .lane-radio {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .lane-id-badge {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .lane-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .lane-experiments {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .experiment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: transparent;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .experiment-id {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: lowercase;
+        }
+
+        .experiment-title {
+            color: var(--text-primary);
+            flex: 1;
+            font-size: 11px;
+        }
+
+        .experiment-traffic {
+            color: var(--text-secondary);
+            font-size: 10px;
+        }
+
+        .lane-traffic {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .modal-footer {
+            padding: 20px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-section-header);
+            transition: background-color 0.3s ease;
+            border-radius: 0 0 var(--modal-border-radius) var(--modal-border-radius);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-blue-hover);
+            border-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-secondary);
+            border-color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .modal {
+                margin: 20px;
+                max-width: calc(100vw - 40px);
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .radio-group {
+                flex-wrap: wrap;
+            }
+            
+            .pool-info {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            
+            .pool-subtitle {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="header-top">
+                    <h2 class="modal-title">Pool lane selection</h2>
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                        <svg class="sun-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                        </svg>
+                        <svg class="moon-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <span class="filter-label">Filter by number of lanes:</span>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="lane-filter" value="all" class="radio-input" checked>
+                                <span class="radio-label">All</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="lane-filter" value="2" class="radio-input">
+                                <span class="radio-label">2</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="lane-filter" value="3" class="radio-input">
+                                <span class="radio-label">3</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="lane-filter" value="4" class="radio-input">
+                                <span class="radio-label">4</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="lane-filter" value="5" class="radio-input">
+                                <span class="radio-label">5</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="checkbox-option">
+                        <input type="checkbox" class="checkbox-input" id="show-empty">
+                        <label for="show-empty" class="checkbox-label">Show empty pools</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-content">
+                <div class="pools-container">
+                    <!-- Pool 85 -->
+                    <div class="pool-section expanded" data-pool="a5f8">
+                        <div class="pool-header" onclick="togglePool(this)">
+                            <div class="pool-info">
+                                <div class="pool-id-badge">a5f8</div>
+                                <div class="pool-details">
+                                    <div class="pool-title">Pool 85</div>
+                                    <div class="pool-subtitle">
+                                        <span>Number of lanes: 3</span>
+                                        <div class="pool-traffic">65% Traffic</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </div>
+                        <div class="pool-lanes">
+                            <div class="lane-item" onclick="selectLane(this, 'a5f8', '664448')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="a5f8_664448">
+                                        <div class="lane-title">Lane 1</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">664448</div>
+                                        <div class="lane-traffic">25%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">2ad3de</div>
+                                        <div class="experiment-title">Home App New For You Test</div>
+                                        <div class="experiment-traffic">15%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">5f8a21</div>
+                                        <div class="experiment-title">Search Results Enhancement</div>
+                                        <div class="experiment-traffic">10%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, 'a5f8', '63f820')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="a5f8_63f820">
+                                        <div class="lane-title">Lane 2</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">63f820</div>
+                                        <div class="lane-traffic">20%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">7b9c4e</div>
+                                        <div class="experiment-title">Store Mode Map Entry Test</div>
+                                        <div class="experiment-traffic">12%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">3d6f91</div>
+                                        <div class="experiment-title">Mobile Navigation Update</div>
+                                        <div class="experiment-traffic">8%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, 'a5f8', '9fb882')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="a5f8_9fb882">
+                                        <div class="lane-title">Lane 3</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">9fb882</div>
+                                        <div class="lane-traffic">20%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">8e2a45</div>
+                                        <div class="experiment-title">Filter Ordering Optimization</div>
+                                        <div class="experiment-traffic">20%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pool 37 -->
+                    <div class="pool-section expanded" data-pool="2bc9">
+                        <div class="pool-header" onclick="togglePool(this)">
+                            <div class="pool-info">
+                                <div class="pool-id-badge">2bc9</div>
+                                <div class="pool-details">
+                                    <div class="pool-title">Pool 37</div>
+                                    <div class="pool-subtitle">
+                                        <span>Number of lanes: 4</span>
+                                        <div class="pool-traffic">25% Traffic</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </div>
+                        <div class="pool-lanes">
+                            <div class="lane-item" onclick="selectLane(this, '2bc9', '628f38')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="2bc9_628f38">
+                                        <div class="lane-title">Lane 1</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">628f38</div>
+                                        <div class="lane-traffic">30%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">4c8b2d</div>
+                                        <div class="experiment-title">VMS Tabbed Interface Module</div>
+                                        <div class="experiment-traffic">18%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">9a5e76</div>
+                                        <div class="experiment-title">Profile Management Update</div>
+                                        <div class="experiment-traffic">12%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '2bc9', '16735b')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="2bc9_16735b">
+                                        <div class="lane-title">Lane 2</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">16735b</div>
+                                        <div class="lane-traffic">25%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">6d1f94</div>
+                                        <div class="experiment-title">Native Profile Completion Test</div>
+                                        <div class="experiment-traffic">25%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '2bc9', 'ed4c1c')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="2bc9_ed4c1c">
+                                        <div class="lane-title">Lane 3</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">ed4c1c</div>
+                                        <div class="lane-traffic">25%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">b3c945</div>
+                                        <div class="experiment-title">Department Filter Enhancement</div>
+                                        <div class="experiment-traffic">15%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">7f2e83</div>
+                                        <div class="experiment-title">Sort Order Optimization</div>
+                                        <div class="experiment-traffic">10%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '2bc9', 'b50423')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="2bc9_b50423">
+                                        <div class="lane-title">Lane 4</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">b50423</div>
+                                        <div class="lane-traffic">20%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">e8a4c7</div>
+                                        <div class="experiment-title">Advanced Profile Features</div>
+                                        <div class="experiment-traffic">20%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pool 44 -->
+                    <div class="pool-section expanded" data-pool="7e3a">
+                        <div class="pool-header" onclick="togglePool(this)">
+                            <div class="pool-info">
+                                <div class="pool-id-badge">7e3a</div>
+                                <div class="pool-details">
+                                    <div class="pool-title">Pool 44</div>
+                                    <div class="pool-subtitle">
+                                        <span>Number of lanes: 2</span>
+                                        <div class="pool-traffic">10% Traffic</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </div>
+                        <div class="pool-lanes">
+                            <div class="lane-item" onclick="selectLane(this, '7e3a', 'c4b2a1')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="7e3a_c4b2a1">
+                                        <div class="lane-title">Lane 1</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">c4b2a1</div>
+                                        <div class="lane-traffic">50%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">a7d923</div>
+                                        <div class="experiment-title">Mobile Checkout Enhancement</div>
+                                        <div class="experiment-traffic">30%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">f4e876</div>
+                                        <div class="experiment-title">Payment Flow Optimization</div>
+                                        <div class="experiment-traffic">20%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '7e3a', '8d9e7f')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="7e3a_8d9e7f">
+                                        <div class="lane-title">Lane 2</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">8d9e7f</div>
+                                        <div class="lane-traffic">50%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">c9b254</div>
+                                        <div class="experiment-title">Personalized Offers Display</div>
+                                        <div class="experiment-traffic">35%</div>
+                                    </div>
+                                    <div class="experiment-item">
+                                        <div class="experiment-id">6e1a87</div>
+                                        <div class="experiment-title">Recommendation Engine Test</div>
+                                        <div class="experiment-traffic">15%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pool 46 -->
+                    <div class="pool-section expanded" data-pool="1f6d">
+                        <div class="pool-header" onclick="togglePool(this)">
+                            <div class="pool-info">
+                                <div class="pool-id-badge">1f6d</div>
+                                <div class="pool-details">
+                                    <div class="pool-title">Pool 46</div>
+                                    <div class="pool-subtitle">
+                                        <span>Number of lanes: 3</span>
+                                        <div class="pool-traffic">Empty</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </div>
+                        <div class="pool-lanes">
+                            <div class="lane-item" onclick="selectLane(this, '1f6d', 'a1b2c3')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="1f6d_a1b2c3">
+                                        <div class="lane-title">Lane 1</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">a1b2c3</div>
+                                        <div class="lane-traffic">0%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <!-- No experiments assigned -->
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '1f6d', 'd4e5f6')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="1f6d_d4e5f6">
+                                        <div class="lane-title">Lane 2</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">d4e5f6</div>
+                                        <div class="lane-traffic">0%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <!-- No experiments assigned -->
+                                </div>
+                            </div>
+                            <div class="lane-item" onclick="selectLane(this, '1f6d', 'g7h8i9')">
+                                <div class="lane-header">
+                                    <div class="lane-header-left">
+                                        <input type="radio" name="selected-lane" class="lane-radio" value="1f6d_g7h8i9">
+                                        <div class="lane-title">Lane 3</div>
+                                    </div>
+                                    <div class="lane-header-right">
+                                        <div class="lane-id-badge">g7h8i9</div>
+                                        <div class="lane-traffic">0%</div>
+                                    </div>
+                                </div>
+                                <div class="lane-experiments">
+                                    <!-- No experiments assigned -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    Add pool
+                </button>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-primary" id="update-btn" disabled>Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTheme = 'light';
+        let selectedLane = null;
+
+        // Initialize filter options based on available pools
+        function initializeFilters() {
+            const availableLaneCounts = new Set();
+            
+            // Count lanes for each pool
+            document.querySelectorAll('.pool-section').forEach(pool => {
+                const lanes = pool.querySelectorAll('.lane-item').length;
+                availableLaneCounts.add(lanes);
+            });
+            
+            // Disable radio buttons for unavailable lane counts
+            document.querySelectorAll('input[name="lane-filter"]').forEach(radio => {
+                if (radio.value !== 'all') {
+                    const laneCount = parseInt(radio.value);
+                    if (!availableLaneCounts.has(laneCount)) {
+                        radio.disabled = true;
+                        radio.closest('.radio-option').classList.add('disabled');
+                    } else {
+                        radio.disabled = false;
+                        radio.closest('.radio-option').classList.remove('disabled');
+                    }
+                }
+            });
+        }
+
+        // Theme toggle functionality
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+        });
+
+        // Initialize filters on page load
+        initializeFilters();
+
+        // Pool toggle functionality
+        function togglePool(header) {
+            const poolSection = header.closest('.pool-section');
+            poolSection.classList.toggle('expanded');
+        }
+
+        // Lane selection functionality
+        function selectLane(laneElement, poolId, laneId) {
+            // Remove selection from all other lanes
+            document.querySelectorAll('.lane-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.querySelectorAll('.lane-radio').forEach(radio => {
+                radio.checked = false;
+            });
+
+            // Select the clicked lane
+            laneElement.classList.add('selected');
+            const radio = laneElement.querySelector('.lane-radio');
+            radio.checked = true;
+            
+            const laneTitle = laneElement.querySelector('.lane-title').textContent;
+            const experiments = Array.from(laneElement.querySelectorAll('.experiment-item')).map(exp => ({
+                id: exp.querySelector('.experiment-id').textContent,
+                title: exp.querySelector('.experiment-title').textContent,
+                traffic: exp.querySelector('.experiment-traffic').textContent
+            }));
+            
+            selectedLane = {
+                poolId: poolId,
+                laneId: laneId,
+                title: laneTitle,
+                experiments: experiments
+            };
+
+            // Enable the Update button
+            document.getElementById('update-btn').disabled = false;
+        }
+
+        // Filter functionality
+        document.querySelectorAll('input[name="lane-filter"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const filterValue = this.value;
+                filterPools(filterValue);
+            });
+        });
+
+        document.getElementById('show-empty').addEventListener('change', function() {
+            const showOnlyEmpty = this.checked;
+            toggleEmptyFilter(showOnlyEmpty);
+        });
+
+        function applyFilters() {
+            const laneFilter = document.querySelector('input[name="lane-filter"]:checked').value;
+            const showOnlyEmpty = document.getElementById('show-empty').checked;
+            
+            document.querySelectorAll('.pool-section').forEach(pool => {
+                const lanes = pool.querySelectorAll('.lane-item').length;
+                const experiments = pool.querySelectorAll('.experiment-item');
+                const isEmpty = experiments.length === 0;
+                
+                // First check lane count filter
+                const matchesLaneFilter = laneFilter === 'all' || lanes.toString() === laneFilter;
+                
+                // Then check empty pools filter (if applicable)
+                const matchesEmptyFilter = !showOnlyEmpty || isEmpty;
+                
+                // Show only if it matches both filters
+                if (matchesLaneFilter && matchesEmptyFilter) {
+                    pool.classList.remove('filtering-out');
+                } else {
+                    pool.classList.add('filtering-out');
+                }
+            });
+        }
+
+        function filterPools(laneCount) {
+            applyFilters();
+        }
+
+        function toggleEmptyFilter(showOnlyEmpty) {
+            applyFilters();
+        }
+
+        // Update button functionality
+        document.getElementById('update-btn').addEventListener('click', function() {
+            if (selectedLane) {
+                let message = `Selected: ${selectedLane.title} (Pool: ${selectedLane.poolId}, Lane: ${selectedLane.laneId})`;
+                if (selectedLane.experiments.length > 0) {
+                    message += `\nExperiments in this lane:`;
+                    selectedLane.experiments.forEach(exp => {
+                        message += `\n- ${exp.id}: ${exp.title} (${exp.traffic})`;
+                    });
+                } else {
+                    message += `\nNo experiments assigned to this lane.`;
+                }
+                alert(message);
+                // Here you would typically close the modal and return the selection
+            }
+        });
+    </script>
+</body>
+</html>

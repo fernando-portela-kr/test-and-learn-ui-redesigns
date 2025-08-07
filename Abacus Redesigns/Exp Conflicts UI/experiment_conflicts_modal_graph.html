@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Conflicts Modal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 820px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: white;
+            padding: 32px 32px 24px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .experiment-overview {
+            flex: 1;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .experiment-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #616161;
+        }
+
+        .platform-badge {
+            background: #E3F2FD;
+            color: #1976D2;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .space-badges-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .space-badge-with-count {
+            background: #F3E5F5;
+            color: #6A1B9A;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .space-badge-with-count.search {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .space-badge-with-count.profile {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .space-badge-small {
+            background: #F3E5F5;
+            color: #6A1B9A;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .space-badge-small.search {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .space-badge-small.profile {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.running {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .status-badge.scheduled {
+            background: #F3E5F5;
+            color: #6A1B9A;
+        }
+
+        .close-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #F5F5F5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+            transition: all 0.2s;
+        }
+
+        .close-button:hover {
+            background: #E0E0E0;
+            color: #424242;
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .warning-banner {
+            background: #FFF3E0;
+            border: 1px solid #FFE0B2;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .warning-icon {
+            color: #FF9800;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-text {
+            font-size: 14px;
+            color: #795548;
+            line-height: 1.5;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212121;
+        }
+
+        .conflict-list-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-right: -8px;
+            padding-right: 8px;
+        }
+
+        .conflict-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .conflict-list-container::-webkit-scrollbar-track {
+            background: #F5F5F5;
+            border-radius: 3px;
+        }
+
+        .conflict-list-container::-webkit-scrollbar-thumb {
+            background: #BDBDBD;
+            border-radius: 3px;
+        }
+
+        .conflict-list-container::-webkit-scrollbar-thumb:hover {
+            background: #9E9E9E;
+        }
+
+        .space-group {
+            margin-bottom: 32px;
+        }
+
+        .space-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .space-group-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #424242;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E0E0E0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .space-icon {
+            font-size: 16px;
+        }
+
+        .conflict-count-badge {
+            background: #FFEBEE;
+            color: #D32F2F;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .conflict-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .conflict-card {
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .conflict-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-color: #D0D0D0;
+        }
+
+        .conflict-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .conflict-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .conflict-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212121;
+            margin-right: 12px;
+        }
+
+        .conflict-id {
+            font-size: 13px;
+            color: #757575;
+        }
+
+        .date-overlap-info {
+            background: #FAFAFA;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .timeline-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #616161;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .overlap-badge {
+            background: #FFEBEE;
+            color: #D32F2F;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .timeline-bar-container {
+            flex: 1;
+            height: 24px;
+            position: relative;
+            background: #E8E8E8;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .timeline-bar {
+            height: 100%;
+            border-radius: 4px;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .timeline-bar.your-experiment {
+            background: linear-gradient(135deg, #1976D2, #1565C0);
+            z-index: 1;
+        }
+
+        .timeline-bar.conflicting-experiment {
+            background: linear-gradient(135deg, #D32F2F, #C62828);
+            z-index: 2;
+        }
+
+        .timeline-bar.overlap {
+            background: linear-gradient(135deg, #FF5722, #E64A19);
+            z-index: 3;
+        }
+
+        .overlap-summary {
+            background: #FFEBEE;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .overlap-days {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D32F2F;
+        }
+
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 24px 32px;
+            border-top: 1px solid #E0E0E0;
+            background: #FAFAFA;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #424242;
+            border: 1px solid #E0E0E0;
+        }
+
+        .btn-secondary:hover {
+            background: #F5F5F5;
+            border-color: #D0D0D0;
+        }
+
+        .btn-primary {
+            background: #1976D2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565C0;
+        }
+
+        .quick-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <div class="header-content">
+                <div class="experiment-overview">
+                    <h1 class="modal-title">
+                        Conflicts for New User Onboarding A/B Test
+                    </h1>
+                    <div class="experiment-meta">
+                        <span class="platform-badge">iOS</span>
+                        <span class="status-badge running">RUNNING</span>
+                        <span class="meta-item">
+                            <span>Jan 5 - Jan 25, 2025</span>
+                        </span>
+                        <span class="meta-item" style="font-family: monospace;">
+                            <span>Pool: A3F</span>
+                        </span>
+                        <span class="meta-item" style="font-family: monospace;">
+                            <span>Lane: 2B1</span>
+                        </span>
+                    </div>
+                    <div class="space-badges-container">
+                        <span class="space-badge-with-count">
+                            📍 Home
+                            <span class="conflict-count-badge">3</span>
+                        </span>
+                        <span class="space-badge-with-count search">
+                            🔍 Search
+                            <span class="conflict-count-badge">1</span>
+                        </span>
+                        <span class="space-badge-with-count profile">
+                            👤 Profile
+                            <span class="conflict-count-badge">1</span>
+                        </span>
+                    </div>
+                </div>
+                <button class="close-button" aria-label="Close modal">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L8 7.293 4.354 3.646a.5.5 0 1 0-.708.708L7.293 8l-3.647 3.646a.5.5 0 0 0 .708.708L8 8.707l3.646 3.647a.5.5 0 0 0 .708-.708L8.707 8l3.647-3.646z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body">
+            <div class="warning-banner">
+                <span class="warning-icon">⚠️</span>
+                <div class="warning-content">
+                    <div class="warning-text">These experiments overlap during your testing period and only one should run in a given space at a time.</div>
+                    <div style="margin-top: 12px; color: #388E3C; font-weight: 600; font-size: 14px;">You can still submit your edits. The Abacus team will work with you to remediate and ensure no issues prior to launch.</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Conflicting Experiments</h2>
+            </div>
+
+            <div class="conflict-list-container">
+                <!-- Home Space Conflicts -->
+                <div class="space-group">
+                    <div class="space-group-header">
+                        <span class="space-icon">📍</span>
+                        Home Space
+                        <span class="conflict-count-badge">3</span>
+                    </div>
+                    <div class="conflict-list">
+                        <div class="conflict-card">
+                            <div class="conflict-header">
+                                <div class="conflict-info">
+                                    <div class="quick-info">
+                                        <h3 class="conflict-name">Homepage Personalization Test</h3>
+                                        <span class="status-badge running">RUNNING</span>
+                                    </div>
+                                    <div class="conflict-id">Test ID: 12b507 • Owner: Sarah Chen • Pool: <span style="font-family: monospace;">B4A</span> • Lane: <span style="font-family: monospace;">1C2</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="date-overlap-info">
+                                <div class="timeline-container">
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Your Experiment</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar your-experiment" style="left: 13.3%; width: 66.7%;">Jan 5 - Jan 25</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Personalization Test</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar conflicting-experiment" style="left: 0%; width: 56.7%;">Jan 1 - Jan 18</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conflict-card">
+                            <div class="conflict-header">
+                                <div class="conflict-info">
+                                    <div class="quick-info">
+                                        <h3 class="conflict-name">Navigation Menu Redesign</h3>
+                                        <span class="status-badge scheduled">SCHEDULED</span>
+                                    </div>
+                                    <div class="conflict-id">Test ID: 12d234 • Owner: Lisa Park • Pool: <span style="font-family: monospace;">A3F</span> • Lane: <span style="font-family: monospace;">3D1</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="date-overlap-info">
+                                <div class="timeline-container">
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Your Experiment</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar your-experiment" style="left: 13.3%; width: 66.7%;">Jan 5 - Jan 25</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Navigation Redesign</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar conflicting-experiment" style="left: 63.3%; width: 36.7%;">Jan 20 - Jan 30</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conflict-card">
+                            <div class="conflict-header">
+                                <div class="conflict-info">
+                                    <div class="quick-info">
+                                        <h3 class="conflict-name">Featured Content Algorithm Test</h3>
+                                        <span class="status-badge running">RUNNING</span>
+                                    </div>
+                                    <div class="conflict-id">Test ID: 12a893 • Owner: Mike Johnson • Pool: <span style="font-family: monospace;">C2F</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="date-overlap-info">
+                                <div class="timeline-container">
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Your Experiment</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar your-experiment" style="left: 13.3%; width: 66.7%;">Jan 5 - Jan 25</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Content Algorithm</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar conflicting-experiment" style="left: 30%; width: 86.7%;">Jan 10 - Feb 5</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Space Conflicts -->
+                <div class="space-group">
+                    <div class="space-group-header">
+                        <span class="space-icon">🔍</span>
+                        Search Space
+                        <span class="conflict-count-badge">1</span>
+                    </div>
+                    <div class="conflict-list">
+                        <div class="conflict-card">
+                            <div class="conflict-header">
+                                <div class="conflict-info">
+                                    <div class="quick-info">
+                                        <h3 class="conflict-name">Search Results Ranking Test</h3>
+                                        <span class="status-badge running">RUNNING</span>
+                                    </div>
+                                    <div class="conflict-id">Test ID: 12e445 • Owner: David Kim • Pool: <span style="font-family: monospace;">A3F</span> • Lane: <span style="font-family: monospace;">4A2</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="date-overlap-info">
+                                <div class="timeline-container">
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Your Experiment</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar your-experiment" style="left: 13.3%; width: 66.7%;">Jan 5 - Jan 25</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Search Ranking</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar conflicting-experiment" style="left: 23.3%; width: 66.7%;">Jan 8 - Jan 28</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Space Conflicts -->
+                <div class="space-group">
+                    <div class="space-group-header">
+                        <span class="space-icon">👤</span>
+                        Profile Space
+                        <span class="conflict-count-badge">1</span>
+                    </div>
+                    <div class="conflict-list">
+                        <div class="conflict-card">
+                            <div class="conflict-header">
+                                <div class="conflict-info">
+                                    <div class="quick-info">
+                                        <h3 class="conflict-name">Profile Page Optimization</h3>
+                                        <span class="status-badge scheduled">SCHEDULED</span>
+                                    </div>
+                                    <div class="conflict-id">Test ID: 12f891 • Owner: Emma Wilson • Pool: <span style="font-family: monospace;">A3F</span></div>
+                                </div>
+                            </div>
+                            
+                            <div class="date-overlap-info">
+                                <div class="timeline-container">
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Your Experiment</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar your-experiment" style="left: 13.3%; width: 66.7%;">Jan 5 - Jan 25</div>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-row">
+                                        <div class="timeline-label">Profile Optimization</div>
+                                        <div class="timeline-bar-container">
+                                            <div class="timeline-bar conflicting-experiment" style="left: 46.7%; width: 70%;">Jan 15 - Feb 5</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="footer-actions">
+                <button class="btn btn-secondary">Back to Edits</button>
+                <button class="btn btn-primary">Submit Edits</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

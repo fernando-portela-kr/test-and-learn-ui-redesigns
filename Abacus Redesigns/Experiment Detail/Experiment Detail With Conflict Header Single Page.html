@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Testing Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            /* Light theme colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-accent: #4b5563;
+            --bg-input: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            --bg-section-header: #f8f9fa;
+            --bg-section-header-hover: #e9ecef;
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #495057;
+            --text-light: #ffffff;
+            --text-accent: #1976d2;
+            
+            --border-color: #e2e8f0;
+            --border-light: #dee2e6;
+            --border-medium: #9ca3af;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.05);
+            
+            --accent-blue: #1976d2;
+            --accent-blue-hover: #1565c0;
+            --accent-red: #dc2626;
+            --accent-green: #28a745;
+            
+            --chart-bg: #f8f9fa;
+            --note-bg: #f8f9fa;
+            --metric-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --bg-accent: #374151;
+            --bg-input: #2d2d2d;
+            --bg-card: #262626;
+            --bg-hover: #3a3a3a;
+            --bg-section-header: #2d2d2d;
+            --bg-section-header-hover: #3a3a3a;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #ffffff;
+            --text-accent: #60a5fa;
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            --border-medium: #6b7280;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.3);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.2);
+            
+            --accent-blue: #60a5fa;
+            --accent-blue-hover: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            
+            --chart-bg: #2d2d2d;
+            --note-bg: #2d2d2d;
+            --metric-bg: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding-top: 156px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 20px 20px;
+        }
+        .header {
+            position: fixed;
+            top: 0px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-primary);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0;
+            padding: 0 20px;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #f3f4f6;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(156, 163, 175, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        .conflicts-alert {
+            background: var(--accent-red);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .conflicts-message {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .conflicts-icon {
+            background: #b91c1c;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .conflicts-text {
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .conflicts-count {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .conflicts-link {
+            color: var(--accent-red);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: white;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .conflicts-link:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .main-header {
+            padding: 20px 24px;
+            background: var(--bg-accent);
+            border: 1px solid var(--border-medium);
+            border-top: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 12px;
+        }
+
+        .id-badge {
+            background: var(--accent-blue);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .title-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .experiment-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .action-cluster {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .meta-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #6b7280;
+        }
+
+        .meta-left {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .platform-chips {
+            display: flex;
+            gap: 6px;
+        }
+
+        .platform-chip {
+            background: #6b7280;
+            color: #f3f4f6;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .platform-chip:hover {
+            background: #9ca3af;
+            color: #ffffff;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+
+        .platform-chip.active {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-hover) 100%);
+            color: white;
+            border-color: var(--accent-blue);
+            font-weight: 700;
+            box-shadow: 0 3px 8px rgba(25, 118, 210, 0.4);
+        }
+
+        .subscriber-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #6b7280;
+            border: 1px solid #9ca3af;
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .subscriber-pill:hover {
+            background: #9ca3af;
+            border-color: #d1d5db;
+        }
+
+        .subscriber-pill .subscription-tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 1001;
+        }
+
+        .subscriber-pill .subscription-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 4px solid rgba(0, 0, 0, 0.9);
+        }
+
+        .subscriber-pill:hover .subscription-tooltip {
+            opacity: 1;
+        }
+
+        .heart-icon {
+            color: #f3f4f6;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .subscriber-pill:hover .heart-icon {
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .subscriber-pill.subscribed .heart-icon {
+            color: #ef4444;
+        }
+
+        .subscriber-info {
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .approval-compact {
+            color: #f3f4f6;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .tool-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #9ca3af;
+            background: #6b7280;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #f3f4f6;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: #9ca3af;
+            border-color: #d1d5db;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .compact-btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .compact-primary {
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .compact-primary:hover {
+            background: var(--accent-blue-hover);
+            border-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .compact-secondary {
+            background: #6b7280;
+            color: #ffffff;
+            border: 1px solid #9ca3af;
+        }
+
+        .compact-secondary:hover {
+            background: #9ca3af;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .heart-outline {
+            display: inline;
+        }
+
+        .heart-filled {
+            display: none;
+        }
+
+        .subscriber-pill.subscribed .heart-outline {
+            display: none;
+        }
+
+        .subscriber-pill.subscribed .heart-filled {
+            display: inline !important;
+            animation: heartPulse 0.3s ease-out;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .workflow-section {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 24px;
+            margin-top: 62px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .workflow-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .workflow-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .workflow-stage {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .workflow-eta {
+            color: var(--text-secondary);
+        }
+
+        .workflow-metrics {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            background: var(--metric-bg);
+            border-radius: 12px;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.2s ease;
+        }
+
+        .metric:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 24px;
+        }
+
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 48px;
+            right: 48px;
+            height: 2px;
+            background: var(--border-light);
+            z-index: 1;
+        }
+
+        .workflow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 3px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+
+        .workflow-step.completed .step-indicator {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+
+        .workflow-step.active .step-indicator {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #42a5f5 100%);
+            border-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+            animation: activeStepPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes activeStepPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+            }
+            25% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 8px rgba(25, 118, 210, 0.15);
+            }
+            50% { 
+                transform: scale(1.08);
+                box-shadow: 0 0 0 12px rgba(25, 118, 210, 0.1);
+            }
+            75% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 0 8px rgba(25, 118, 210, 0.15);
+            }
+        }
+
+        .step-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .workflow-step.completed .step-label,
+        .workflow-step.active .step-label {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .step-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: var(--shadow-medium);
+        }
+
+        .section-header {
+            padding: 20px 24px;
+            background: var(--bg-section-header);
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: var(--bg-section-header-hover);
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .platform-label {
+            color: var(--accent-blue);
+            font-size: 12px;
+            margin-left: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .section.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 24px;
+            display: none;
+        }
+
+        .section.expanded .section-content {
+            display: block;
+        }
+
+        .platform-specific {
+            position: relative;
+        }
+
+        .variants-container {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .pie-chart-container {
+            position: relative;
+            background: var(--chart-bg);
+            border-radius: 8px;
+            padding: 40px;
+            transition: background-color 0.3s ease;
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .variants-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: flex-start;
+            flex: 1;
+        }
+
+        .variant-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .variant-item:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+        }
+
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .variant-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .variant-percentage {
+            background: var(--accent-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .variant-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .variant-a {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .variant-b {
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .variant-c {
+            border-left: 4px solid #9b59b6;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .config-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .config-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .config-value {
+            font-size: 16px;
+            color: var(--text-primary);
+            padding: 8px 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg-secondary);
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-blue);
+            background: rgba(25, 118, 210, 0.05);
+        }
+
+        .file-upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+            margin: 0 auto 16px;
+        }
+
+        .note-item {
+            background: var(--note-bg);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .note-author {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .note-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .audit-item {
+            padding: 16px 0;
+        }
+
+        .audit-item:last-child {
+            border-bottom: none;
+        }
+
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .audit-user {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .audit-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .audit-changes {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: var(--bg-secondary);
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .banners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .banner-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .banner-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-blue);
+        }
+
+        .individual-banners {
+            transition: all 0.3s ease;
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .individual-banners.hidden {
+            display: none;
+        }
+
+        .date-input {
+            position: relative;
+        }
+
+        .date-input input[type="date"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            color-scheme: light dark;
+        }
+
+        .date-input input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .spaces-container {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .spaces-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .space-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            box-shadow: var(--shadow-card);
+            transition: all 0.2s ease;
+        }
+
+        .space-item.home-space {
+            background: #ff6b6b;
+            border: none;
+        }
+
+        .space-item.home-space .space-icon {
+            color: white;
+        }
+
+        .space-item.home-space .space-name {
+            color: white;
+        }
+
+        .space-item.search-space {
+            background: #06b6d4;
+            border: none;
+        }
+
+        .space-item.search-space .space-icon {
+            color: white;
+        }
+
+        .space-item.search-space .space-name {
+            color: white;
+        }
+
+        .space-item.profile-space {
+            background: #8b5cf6;
+            border: none;
+        }
+
+        .space-item.profile-space .space-icon {
+            color: white;
+        }
+
+        .space-item.profile-space .space-name {
+            color: white;
+        }
+
+        .space-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            border-color: var(--accent-blue);
+        }
+
+        .space-icon {
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .space-name {
+            color: var(--text-primary);
+        }
+
+        .space-count {
+            background: var(--text-secondary);
+            color: white;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .space-count:hover {
+            background: var(--accent-red);
+            transform: scale(1.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-blue-hover);
+            border-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 200px;
+            }
+            
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .header-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .action-cluster {
+                justify-content: center;
+            }
+            
+            .meta-footer {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .meta-left, .meta-right {
+                justify-content: center;
+            }
+            
+            .variants-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .workflow-steps {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .workflow-steps::before {
+                display: none;
+            }
+            
+            .workflow-metrics {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .metric {
+                padding: 8px 6px;
+            }
+            
+            .metric-value {
+                font-size: 14px;
+            }
+            
+            .spaces-list {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Sticky Header -->
+    <div class="header">
+        <div class="header-container">
+            <!-- Conflicts Alert -->
+            <div class="conflicts-alert">
+                <div class="conflicts-message">
+                    <div class="conflicts-icon">
+                        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                        </svg>
+                    </div>
+                    <div class="conflicts-text">
+                        This <span id="platform-conflict-name">iOS</span> experiment has <span class="conflicts-count">3 conflicts</span> with other experiments in the Home space
+                    </div>
+                </div>
+                <a href="#" class="conflicts-link">
+                    View Conflicts
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6 12.796V3.204L11.481 8 6 12.796zm1-2.185L9.616 8 7 5.389v5.222z"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Main Header - Design 3 Layout -->
+            <div class="main-header">
+                <div class="header-row">
+                    <div class="id-badge">2ad3de</div>
+                    
+                    <div class="title-area">
+                        <h1 class="experiment-title">P8W1 Home App & Web New For You PZN Science Place Recommendations Test</h1>
+                    </div>
+                    
+                    <div class="action-cluster">
+                        <button class="compact-btn compact-secondary">Cancel</button>
+                        <button class="compact-btn compact-primary">Start</button>
+                    </div>
+                </div>
+                
+                <div class="meta-footer">
+                    <div class="meta-left">
+                        <div class="platform-chips">
+                            <span class="platform-chip" data-platform="web">Web</span>
+                            <span class="platform-chip" data-platform="android">Android</span>
+                            <span class="platform-chip active" data-platform="ios">iOS</span>
+                        </div>
+                        
+                        <div class="approval-compact">
+                            <span>✓</span>
+                            <span>Started on Jul 30, 10:20 AM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="meta-right">
+                        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                            <svg class="sun-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                            </svg>
+                            <svg class="moon-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                            </svg>
+                        </button>
+                        
+                        <div class="subscriber-pill">
+                            <span class="heart-icon heart-outline">♡</span>
+                            <span class="heart-icon heart-filled">♥</span>
+                            <span class="subscriber-info"><span id="subscriber-count">12</span> Subscribers</span>
+                            <div class="subscription-tooltip">Subscribe to get notifications</div>
+                        </div>
+                        
+                        <button class="tool-btn" title="Copy">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2z"/>
+                            </svg>
+                        </button>
+                        <button class="tool-btn" title="Edit">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10 2.708 2.708z"/>
+                            </svg>
+                        </button>
+                        <button class="tool-btn" title="Delete">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+        <div class="theme-toggle-icon">
+            <span class="sun-icon">☀️</span>
+            <span class="moon-icon">🌙</span>
+        </div>
+        <span class="theme-toggle-label">Theme</span>
+    </button>
+
+    <div class="container">
+        <!-- Experiment Workflow Section - Now separate from header -->
+        <div class="workflow-section">
+            <div class="workflow-header">
+                <h3 class="workflow-title">Experiment Workflow</h3>
+                <div class="workflow-info">
+                    <span class="workflow-stage">Stage 3 of 4</span>
+                    <span class="workflow-eta">• Currently started</span>
+                </div>
+            </div>
+            
+            <div class="workflow-metrics">
+                <div class="metric">
+                    <span class="metric-value">60%</span>
+                    <span class="metric-label">Complete</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">7</span>
+                    <span class="metric-label">Days Running</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-value">14</span>
+                    <span class="metric-label">Test Duration (days)</span>
+                </div>
+            </div>
+            
+            <div class="workflow-steps">
+                <div class="workflow-step completed">
+                    <div class="step-indicator">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                    </div>
+                    <div class="step-label">Submitted</div>
+                    <div class="step-date">Jul 25, 3:45 PM</div>
+                </div>
+                
+                <div class="workflow-step completed">
+                    <div class="step-indicator">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                    </div>
+                    <div class="step-label">Approved</div>
+                    <div class="step-date">Jul 28, 10:15 AM</div>
+                </div>
+                
+                <div class="workflow-step active">
+                    <div class="step-indicator">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        </svg>
+                    </div>
+                    <div class="step-label">Started</div>
+                    <div class="step-date">Jul 30, 10:20 AM</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-indicator">4</div>
+                    <div class="step-label">Ready to Stop</div>
+                    <div class="step-date"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Hypothesis Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="hypothesis">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        Hypothesis
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; border-left: 4px solid var(--accent-green); transition: background-color 0.3s ease;">
+                        <div style="color: var(--text-primary); line-height: 1.6; font-size: 15px;">
+                            By implementing a streamlined one-click add to cart experience from search results, we expect to see increased conversion rates and reduced cart abandonment as users can more quickly and easily add products to their cart without additional navigation steps.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variants Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="variants">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 3v18h2v-8h6v8h2V3h-2v8H9V3H7z"/>
+                            <path d="M3 12h4v2H3v-2z"/>
+                            <path d="M17 12h4v2h-4v-2z"/>
+                        </svg>
+                        Variants
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <p style="margin-bottom: 24px; color: var(--text-secondary);">Configure the control and variant experiences that are being tested.</p>
+                    
+                    <div class="variants-container">
+                        <div class="pie-chart-container">
+                            <canvas id="variantsPieChart"></canvas>
+                        </div>
+                        
+                        <div class="variants-list">
+                            <div class="variant-item variant-a">
+                                <div class="variant-header">
+                                    <div class="variant-label">A — Current add to cart experience from search</div>
+                                    <div class="variant-percentage">20%</div>
+                                </div>
+                                <div class="variant-description">
+                                    Users see the standard add to cart experience when browsing products from search results. This represents the current user flow without any modifications.
+                                </div>
+                            </div>
+
+                            <div class="variant-item variant-b">
+                                <div class="variant-header">
+                                    <div class="variant-label">B — New 1ATC experience from search</div>
+                                    <div class="variant-percentage">40%</div>
+                                </div>
+                                <div class="variant-description">
+                                    Users experience the new one-click add to cart (1ATC) functionality when browsing products from search results, streamlining the purchase process.
+                                </div>
+                            </div>
+
+                            <div class="variant-item variant-c">
+                                <div class="variant-header">
+                                    <div class="variant-label">C — Enhanced 1ATC with quantity selector</div>
+                                    <div class="variant-percentage">40%</div>
+                                </div>
+                                <div class="variant-description">
+                                    Users get the one-click add to cart functionality plus an inline quantity selector, allowing them to add multiple items directly from search without navigating to product pages.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="configuration">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-.97l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.32-.07.65-.07.97s.03.66.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
+                        </svg>
+                        Configuration
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <div class="config-label">Submitted By</div>
+                            <div class="config-value">Casha, Vincent</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Secondary Measures/Goal</div>
+                            <div class="config-value">—</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Allocation</div>
+                            <input type="text" class="form-input" value="100%" placeholder="Enter allocation percentage">
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Distribution</div>
+                            <input type="text" class="form-input" value="20:40:40" placeholder="Enter distribution ratio">
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Planned Start Date</div>
+                            <div class="date-input">
+                                <input type="date" value="2025-04-25">
+                            </div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Planned End Date</div>
+                            <div class="date-input">
+                                <input type="date" value="2025-05-02">
+                            </div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Location(s)/URL</div>
+                            <div class="config-value">N/A</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 24px;">
+                        <h4 style="margin-bottom: 16px;">Experiment Settings</h4>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="amp-experiment">
+                            <label for="amp-experiment" class="checkbox-label">AMP Experiment</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="authentication" checked>
+                            <label for="authentication" class="checkbox-label">Authentication Required (Logged in users only)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="server-side" checked>
+                            <label for="server-side" class="checkbox-label">Server-side Experiment (Requires server-side technology)</label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 24px;">
+                        <h4 style="margin-bottom: 16px;">Banner Selection</h4>
+                        <div class="banners-grid">
+                            <div class="banner-item">
+                                <input type="checkbox" class="banner-checkbox" id="all-banners" checked>
+                                <label for="all-banners">All Banners</label>
+                            </div>
+                            <div class="individual-banners hidden">
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Kroger</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Baker's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> City Market</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Dillons</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Food 4 Less</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Foods Co</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fred Meyer</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fry's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Gerbes</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Harris Teeter</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Jay C Foods</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> King Soopers</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Mariano's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Metro Market</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pay-less</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pick 'n Save</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> QFC</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Ralph's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Smith's Food & Drug</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spaces Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="spaces">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 3h18v4H3V3zm0 6h18v4H3V9zm0 6h18v4H3v-4z"/>
+                        </svg>
+                        Spaces
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">Define the spaces where this experiment will run. Spaces help organize and prevent conflicts between experiments.</p>
+                    
+                    <div class="spaces-container">
+                        <div class="spaces-selected">
+                            <h4 style="margin-bottom: 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">Selected Spaces</h4>
+                            <div class="spaces-list">
+                                <div class="space-item home-space">
+                                    <svg class="space-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+                                    </svg>
+                                    <span class="space-name">Home</span>
+                                    <span class="space-count" title="Remove space">×</span>
+                                </div>
+                                <div class="space-item search-space">
+                                    <svg class="space-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg>
+                                    <span class="space-name">Search</span>
+                                    <span class="space-count" title="Remove space">×</span>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-secondary" style="margin-top: 16px;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                                Add Space
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporting Section (Platform Specific) -->
+            <div class="section platform-specific expanded" data-section="reporting">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z"/>
+                            <path d="M7 17h2v-4H7v4zm4-6h2v6h-2v-6zm4-4h2v10h-2V7z"/>
+                        </svg>
+                        <span id="reporting-title">Results for iOS</span>
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <div class="config-label">Primary Metric</div>
+                            <select class="form-select">
+                                <option value="cart-adds" selected>Cart Adds</option>
+                                <option value="click-through-rate">Click Through Rate</option>
+                                <option value="conversion-rate">Conversion Rate</option>
+                                <option value="revenue-per-user">Revenue Per User</option>
+                                <option value="time-on-page">Time on Page</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 24px;">
+                        <h4 style="margin-bottom: 16px; color: var(--text-primary);">Trend Chart & Performance Metrics</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 16px;">Data Source: Customer Journey Analytics</p>
+                        
+                        <div style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+                            <select class="form-input" style="width: auto; min-width: 150px;">
+                                <option>Unique Visitors</option>
+                                <option>Cart Adds</option>
+                                <option>Conversions</option>
+                            </select>
+                            <select class="form-input" style="width: auto; min-width: 120px;">
+                                <option>Last Week</option>
+                                <option>Last Month</option>
+                                <option>Last Quarter</option>
+                            </select>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="reportingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="notes">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                            <path d="M8 10h8v2H8zm0 4h8v2H8zm0 4h5v2H8z"/>
+                        </svg>
+                        Notes
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">Have questions or comments? Use this section to communicate with our team.</p>
+                    
+                    <div class="note-item">
+                        <div class="note-author">Ellie Clyde</div>
+                        <div class="note-date">about 1 month ago</div>
+                        <div>test</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Add a new note</label>
+                        <textarea class="form-input form-textarea" placeholder="Please enter your note"></textarea>
+                    </div>
+                    <button class="btn btn-primary">Add Note</button>
+                </div>
+            </div>
+
+            <!-- Attachments Section (Non-Platform Specific) -->
+            <div class="section expanded" data-section="attachments">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21.44 11.05l-9.19 9.19c-1.28 1.28-3.36 1.28-4.64 0s-1.28-3.36 0-4.64l8.48-8.48c.76-.76 2-.76 2.76 0s.76 2 0 2.76l-7.07 7.07c-.24.24-.64.24-.88 0s-.24-.64 0-.88l6.01-6.01 1.06 1.06-6.01 6.01c-.71.71-1.85.71-2.56 0s-.71-1.85 0-2.56l7.07-7.07c1.22-1.22 3.2-1.22 4.42 0s1.22 3.2 0 4.42l-8.48 8.48c-1.74 1.74-4.56 1.74-6.3 0s-1.74-4.56 0-6.3l9.19-9.19 1.06 1.06z"/>
+                        </svg>
+                        Attachments
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="file-upload">
+                        <svg class="file-upload-icon" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                        </svg>
+                        <h4 style="margin-bottom: 8px;">Drag and drop files here</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 16px;">or</p>
+                        <button class="btn btn-primary">Browse Files</button>
+                        <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">Supports JPG, PNG, MD, PDFs, and Microsoft suite files within a 40MB limit.</p>
+                    </div>
+                    <p style="margin-top: 16px; color: var(--text-secondary); font-style: italic;">No files have been uploaded yet.</p>
+                </div>
+            </div>
+
+            <!-- Audit Log Section (Platform Specific) -->
+            <div class="section platform-specific expanded" data-section="audit">
+                <div class="section-header">
+                    <h3>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z"/>
+                            <path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/>
+                        </svg>
+                        <span id="audit-log-title">Audit Log for iOS experiment</span>
+                    </h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </div>
+                <div class="section-content">
+                    <div class="audit-item">
+                        <div class="audit-header">
+                            <div class="audit-user">Sinha, Nikhil</div>
+                            <div class="audit-date">07/10/2025, 11:15 AM</div>
+                        </div>
+                        <div class="audit-changes">status updated "Pending" → "Running"</div>
+                    </div>
+                    
+                    <div class="audit-item">
+                        <div class="audit-header">
+                            <div class="audit-user">Sinha, Nikhil</div>
+                            <div class="audit-date">07/10/2025, 11:14 AM</div>
+                        </div>
+                        <div class="audit-changes">
+                            readyToStart added true<br>
+                            readyToStart_by added "Sinha, Nikhil"<br>
+                            readyToStart_timestamp added 1752160495100
+                        </div>
+                    </div>
+                    
+                    <div class="audit-item">
+                        <div class="audit-header">
+                            <div class="audit-user">Sinha, Nikhil</div>
+                            <div class="audit-date">06/26/2025, 4:34 PM</div>
+                        </div>
+                        <div class="audit-changes">
+                            status updated "In Review" → "Pending"<br>
+                            allocation added "100"<br>
+                            distribution added "50:50"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management for sections
+        let sectionStates = {
+            hypothesis: true,
+            variants: true,
+            spaces: true,
+            reporting: true,
+            notes: true,
+            attachments: true,
+            configuration: true,
+            audit: true
+        };
+
+        // Theme management
+        let currentTheme = 'light';
+
+        // Platform data (simulated)
+        const platformData = {
+            web: {
+                reporting: [
+                    { date: '2025-07-25', variant1: 305000, variant2: 302000, variant3: 298000 },
+                    { date: '2025-07-26', variant1: 285000, variant2: 281000, variant3: 275000 },
+                    { date: '2025-07-27', variant1: 302000, variant2: 301000, variant3: 295000 },
+                    { date: '2025-07-28', variant1: 260000, variant2: 258000, variant3: 252000 },
+                    { date: '2025-07-29', variant1: 285000, variant2: 280000, variant3: 278000 },
+                    { date: '2025-07-30', variant1: 335000, variant2: 328000, variant3: 325000 },
+                    { date: '2025-07-31', variant1: 310000, variant2: 305000, variant3: 308000 }
+                ],
+                audit: [
+                    { user: 'Johnson, Sarah', date: '07/11/2025, 9:45 AM', changes: 'Web configuration updated for A/B/C test parameters' },
+                    { user: 'Chen, David', date: '07/10/2025, 3:20 PM', changes: 'Web analytics tracking configured' }
+                ]
+            },
+            android: {
+                reporting: [
+                    { date: '2025-07-25', variant1: 285000, variant2: 290000, variant3: 288000 },
+                    { date: '2025-07-26', variant1: 275000, variant2: 278000, variant3: 276000 },
+                    { date: '2025-07-27', variant1: 292000, variant2: 295000, variant3: 293000 },
+                    { date: '2025-07-28', variant1: 255000, variant2: 260000, variant3: 258000 },
+                    { date: '2025-07-29', variant1: 280000, variant2: 285000, variant3: 283000 },
+                    { date: '2025-07-30', variant1: 320000, variant2: 325000, variant3: 322000 },
+                    { date: '2025-07-31', variant1: 300000, variant2: 310000, variant3: 305000 }
+                ],
+                audit: [
+                    { user: 'Anderson, Mike', date: '07/09/2025, 2:30 PM', changes: 'Android build deployed v2.1.3' },
+                    { user: 'Chen, Li', date: '07/08/2025, 10:15 AM', changes: 'Android configuration updated' }
+                ]
+            },
+            ios: {
+                reporting: [
+                    { date: '2025-07-25', variant1: 295000, variant2: 288000, variant3: 285000 },
+                    { date: '2025-07-26', variant1: 280000, variant2: 275000, variant3: 272000 },
+                    { date: '2025-07-27', variant1: 298000, variant2: 292000, variant3: 290000 },
+                    { date: '2025-07-28', variant1: 265000, variant2: 258000, variant3: 255000 },
+                    { date: '2025-07-29', variant1: 290000, variant2: 282000, variant3: 280000 },
+                    { date: '2025-07-30', variant1: 330000, variant2: 320000, variant3: 318000 },
+                    { date: '2025-07-31', variant1: 315000, variant2: 308000, variant3: 305000 }
+                ],
+                audit: [
+                    { user: 'Sinha, Nikhil', date: '07/10/2025, 11:15 AM', changes: 'status updated "Pending" → "Running"' },
+                    { user: 'Sinha, Nikhil', date: '07/10/2025, 11:14 AM', changes: 'readyToStart added true\nreadyToStart_by added "Sinha, Nikhil"' }
+                ]
+            }
+        };
+
+        let currentPlatform = 'ios';
+        let reportingChart = null;
+        let variantsPieChart = null;
+
+        // Initialize the app
+        function init() {
+            setupEventListeners();
+            updateSectionStates();
+            updatePlatformSpecificContent();
+            initCharts();
+            setupBannerToggle();
+            setupSubscriptionToggle();
+            setupThemeToggle();
+            matchPieChartHeight();
+        }
+
+        function matchPieChartHeight() {
+            const variantsList = document.querySelector('.variants-list');
+            const pieChartContainer = document.querySelector('.pie-chart-container');
+            
+            if (variantsList && pieChartContainer) {
+                const variantsHeight = variantsList.offsetHeight;
+                pieChartContainer.style.height = variantsHeight + 'px';
+            }
+        }
+
+        function setupEventListeners() {
+            // Platform switching
+            document.querySelectorAll('.platform-chip').forEach(chip => {
+                chip.addEventListener('click', (e) => {
+                    const platform = e.target.closest('.platform-chip').dataset.platform;
+                    switchPlatform(platform);
+                });
+            });
+
+            // Section toggle
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = header.parentElement;
+                    const sectionName = section.dataset.section;
+                    toggleSection(sectionName);
+                });
+            });
+
+            // Window resize event to maintain height matching
+            window.addEventListener('resize', () => {
+                setTimeout(matchPieChartHeight, 100);
+            });
+        }
+
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            themeToggle.addEventListener('click', () => {
+                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', currentTheme);
+                updateChartsForTheme();
+            });
+        }
+
+        function updateChartsForTheme() {
+            // Update chart colors based on theme
+            if (reportingChart) {
+                const isDark = currentTheme === 'dark';
+                
+                reportingChart.options.plugins.legend.labels.color = isDark ? '#f1f5f9' : '#2c3e50';
+                reportingChart.options.scales.x.ticks.color = isDark ? '#cbd5e1' : '#6c757d';
+                reportingChart.options.scales.y.ticks.color = isDark ? '#cbd5e1' : '#6c757d';
+                reportingChart.options.scales.x.grid.color = isDark ? '#374151' : '#e9ecef';
+                reportingChart.options.scales.y.grid.color = isDark ? '#374151' : '#e9ecef';
+                
+                reportingChart.update();
+            }
+            
+            if (variantsPieChart) {
+                const isDark = currentTheme === 'dark';
+                
+                variantsPieChart.options.plugins.legend.labels.color = isDark ? '#f1f5f9' : '#2c3e50';
+                variantsPieChart.update();
+            }
+        }
+
+        function setupBannerToggle() {
+            const allBannersCheckbox = document.getElementById('all-banners');
+            const individualBanners = document.querySelector('.individual-banners');
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+
+            // When "All Banners" is toggled
+            allBannersCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    individualBanners.classList.add('hidden');
+                    // Check all individual banners when "All Banners" is checked
+                    individualCheckboxes.forEach(cb => cb.checked = true);
+                } else {
+                    individualBanners.classList.remove('hidden');
+                }
+            });
+
+            // When individual banners are toggled
+            individualCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(individualCheckboxes).every(cb => cb.checked);
+                    
+                    if (allChecked) {
+                        // If all individual banners are checked, check "All Banners" and hide individuals
+                        allBannersCheckbox.checked = true;
+                        individualBanners.classList.add('hidden');
+                    } else {
+                        // If not all are checked, ensure "All Banners" is unchecked
+                        allBannersCheckbox.checked = false;
+                    }
+                });
+            });
+        }
+
+        function setupSubscriptionToggle() {
+            const subscriberPill = document.querySelector('.subscriber-pill');
+            const subscriberCountEl = document.getElementById('subscriber-count');
+            const tooltip = document.querySelector('.subscription-tooltip');
+            let isSubscribed = false;
+            let currentCount = 12;
+
+            subscriberPill.addEventListener('click', function() {
+                isSubscribed = !isSubscribed;
+                
+                if (isSubscribed) {
+                    this.classList.add('subscribed');
+                    tooltip.textContent = 'Unsubscribe from notifications';
+                    currentCount++;
+                } else {
+                    this.classList.remove('subscribed');
+                    tooltip.textContent = 'Subscribe to get notifications';
+                    currentCount--;
+                }
+                
+                subscriberCountEl.textContent = currentCount;
+            });
+        }
+
+        function switchPlatform(platform) {
+            if (platform === currentPlatform) return;
+            
+            // Update active platform chip
+            document.querySelectorAll('.platform-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            document.querySelector(`[data-platform="${platform}"]`).classList.add('active');
+            
+            // Update conflicts alert based on platform
+            const conflictsPlatformName = document.getElementById('platform-conflict-name');
+            const platformName = platform.toUpperCase();
+            conflictsPlatformName.textContent = platformName;
+            
+            // Update audit log title
+            const auditLogTitle = document.getElementById('audit-log-title');
+            auditLogTitle.textContent = `Audit Log for ${platformName} experiment`;
+            
+            // Update reporting title
+            const reportingTitle = document.getElementById('reporting-title');
+            reportingTitle.textContent = `Results for ${platformName}`;
+            
+            currentPlatform = platform;
+            updatePlatformSpecificContent();
+        }
+
+        function updatePlatformSpecificContent() {
+            // Update reporting chart
+            if (reportingChart) {
+                updateChart();
+            }
+            
+            // Update audit log
+            updateAuditLog();
+        }
+
+        function toggleSection(sectionName) {
+            sectionStates[sectionName] = !sectionStates[sectionName];
+            updateSectionStates();
+        }
+
+        function updateSectionStates() {
+            Object.keys(sectionStates).forEach(sectionName => {
+                const section = document.querySelector(`[data-section="${sectionName}"]`);
+                if (section) {
+                    if (sectionStates[sectionName]) {
+                        section.classList.add('expanded');
+                    } else {
+                        section.classList.remove('expanded');
+                    }
+                }
+            });
+        }
+
+        function initCharts() {
+            // Initialize Pie Chart for Variants
+            const pieCtx = document.getElementById('variantsPieChart').getContext('2d');
+            variantsPieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['A — Current add to cart experience', 'B — New 1ATC experience', 'C — Enhanced 1ATC with quantity selector'],
+                    datasets: [{
+                        data: [20, 40, 40],
+                        backgroundColor: ['#ff6b6b', '#4ecdc4', '#9b59b6'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                },
+                                color: currentTheme === 'dark' ? '#f1f5f9' : '#2c3e50'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            displayColors: true,
+                            boxWidth: 12,
+                            boxHeight: 12
+                        }
+                    }
+                }
+            });
+
+            // Initialize Reporting Chart
+            const ctx = document.getElementById('reportingChart').getContext('2d');
+            const data = platformData[currentPlatform].reporting;
+            
+            reportingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.date.substring(5)),
+                    datasets: [{
+                        label: 'Variant A',
+                        data: data.map(d => d.variant1),
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#dc2626',
+                        pointBorderColor: '#dc2626',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }, {
+                        label: 'Variant B',
+                        data: data.map(d => d.variant2),
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#16a34a',
+                        pointBorderColor: '#16a34a',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }, {
+                        label: 'Variant C',
+                        data: data.map(d => d.variant3),
+                        borderColor: '#9333ea',
+                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#9333ea',
+                        pointBorderColor: '#9333ea',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: currentTheme === 'dark' ? '#f1f5f9' : '#2c3e50'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: currentTheme === 'dark' ? '#cbd5e1' : '#6c757d'
+                            },
+                            grid: {
+                                color: currentTheme === 'dark' ? '#374151' : '#e9ecef'
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                },
+                                color: currentTheme === 'dark' ? '#cbd5e1' : '#6c757d'
+                            },
+                            grid: {
+                                color: currentTheme === 'dark' ? '#374151' : '#e9ecef'
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverRadius: 8
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+
+            // Match pie chart height after charts are initialized
+            setTimeout(matchPieChartHeight, 100);
+        }
+
+        function updateChart() {
+            if (!reportingChart) return;
+            
+            const data = platformData[currentPlatform].reporting;
+            reportingChart.data.labels = data.map(d => d.date.substring(5));
+            reportingChart.data.datasets[0].data = data.map(d => d.variant1);
+            reportingChart.data.datasets[1].data = data.map(d => d.variant2);
+            reportingChart.data.datasets[2].data = data.map(d => d.variant3);
+            
+            // Ensure colors are maintained
+            reportingChart.data.datasets[0].borderColor = '#dc2626';
+            reportingChart.data.datasets[0].backgroundColor = 'rgba(220, 38, 38, 0.1)';
+            reportingChart.data.datasets[0].pointBackgroundColor = '#dc2626';
+            reportingChart.data.datasets[0].pointBorderColor = '#dc2626';
+            
+            reportingChart.data.datasets[1].borderColor = '#16a34a';
+            reportingChart.data.datasets[1].backgroundColor = 'rgba(22, 163, 74, 0.1)';
+            reportingChart.data.datasets[1].pointBackgroundColor = '#16a34a';
+            reportingChart.data.datasets[1].pointBorderColor = '#16a34a';
+            
+            reportingChart.data.datasets[2].borderColor = '#9333ea';
+            reportingChart.data.datasets[2].backgroundColor = 'rgba(147, 51, 234, 0.1)';
+            reportingChart.data.datasets[2].pointBackgroundColor = '#9333ea';
+            reportingChart.data.datasets[2].pointBorderColor = '#9333ea';
+            
+            reportingChart.update();
+        }
+
+        function updateAuditLog() {
+            const auditContent = document.querySelector('[data-section="audit"] .section-content');
+            const auditData = platformData[currentPlatform].audit;
+            
+            auditContent.innerHTML = auditData.map(item => `
+                <div class="audit-item">
+                    <div class="audit-header">
+                        <div class="audit-user">${item.user}</div>
+                        <div class="audit-date">${item.date}</div>
+                    </div>
+                    <div class="audit-changes">${item.changes.replace(/\n/g, '<br>')}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
