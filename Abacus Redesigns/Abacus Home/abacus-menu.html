@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABacus - A/B Testing Platform</title>
+    <style>
+        :root {
+            /* Light theme colors */
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-accent: #4b5563;
+            --bg-input: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            --bg-sidebar: #ffffff;
+            --bg-sidebar-header: #4b5563;
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #495057;
+            --text-light: #ffffff;
+            --text-accent: #1976d2;
+            
+            --border-color: #e2e8f0;
+            --border-light: #dee2e6;
+            --border-medium: #9ca3af;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.05);
+            
+            --accent-blue: #1976d2;
+            --accent-blue-hover: #1565c0;
+            --accent-red: #dc2626;
+            --accent-green: #28a745;
+            --accent-orange: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --bg-accent: #374151;
+            --bg-input: #2d2d2d;
+            --bg-card: #262626;
+            --bg-hover: #3a3a3a;
+            --bg-sidebar: #1f1f1f;
+            --bg-sidebar-header: #2d2d2d;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #ffffff;
+            --text-accent: #60a5fa;
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            --border-medium: #6b7280;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.3);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-card: 0 1px 4px rgba(0,0,0,0.2);
+            
+            --accent-blue: #60a5fa;
+            --accent-blue-hover: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            --accent-orange: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            position: relative;
+            z-index: 100;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            background: var(--bg-sidebar-header);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            min-height: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            padding: 20px 8px;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .logo-icon::after {
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-image: url('AbacusLogoRed128.png');
+            background-size: 44px 44px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .sidebar.collapsed .sidebar-controls {
+            justify-content: center;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 16px;
+            transition: all 0.2s;
+            margin: 0 auto 16px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .collapse-toggle {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .collapse-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar.collapsed .collapse-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Search Bar */
+        .search-container {
+            padding: 20px 24px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .search-container {
+            padding: 20px 8px 0;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .sidebar.collapsed .search-wrapper {
+            display: none;
+        }
+
+        /* User Profile */
+        .user-profile {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .user-profile {
+            padding: 20px 8px;
+        }
+
+        .sidebar.collapsed .profile-info {
+            justify-content: center;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .profile-info:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .profile-details {
+            flex: 1;
+            min-width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .profile-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .sidebar.collapsed .profile-details {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* Navigation */
+        .nav-section {
+            flex: 1;
+            padding: 12px 0;
+            overflow: hidden auto;
+        }
+
+        .nav-group {
+            padding: 0 24px 24px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-group {
+            padding: 0 8px 24px;
+        }
+
+        .nav-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding: 0 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .nav-group-title {
+            opacity: 0;
+            height: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            position: relative;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-item.active:hover {
+            background: var(--accent-blue-hover);
+            transform: translateX(4px);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-text {
+            flex: 1;
+            min-width: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-badge {
+            background: var(--accent-red);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            line-height: 1.2;
+            transition: all 0.3s ease;
+        }
+
+        .nav-badge.green {
+            background: var(--accent-green);
+        }
+
+        .nav-badge.orange {
+            background: var(--accent-orange);
+        }
+
+        .nav-badge.blue {
+            background: var(--accent-blue);
+        }
+
+        .sidebar.collapsed .nav-text,
+        .sidebar.collapsed .nav-badge {
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+            padding: 12px 16px;
+            margin: 0 4px 4px 4px;
+        }
+
+        /* Tooltip for collapsed state */
+        .nav-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+            margin-left: 12px;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed .nav-item:hover::after {
+            opacity: 1;
+        }
+
+        /* Footer */
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-footer {
+            padding: 20px 8px;
+        }
+
+        .sidebar.collapsed .theme-toggle {
+            margin: 0 auto 12px;
+        }
+
+        .sidebar.collapsed .version-info {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .version-info {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .content-body {
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: auto;
+        }
+
+        /* URL Placeholder Styles */
+        .url-placeholder {
+            background: var(--bg-card);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px;
+            min-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .url-placeholder-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--text-secondary);
+            font-size: 32px;
+        }
+
+        .url-placeholder-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .url-placeholder-url {
+            font-family: 'Courier New', monospace;
+            background: var(--bg-secondary);
+            color: var(--text-accent);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-light);
+            display: inline-block;
+        }
+
+        .url-placeholder-description {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.5;
+            max-width: 500px;
+        }
+
+        /* Direct page content styling */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Hidden by default */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+            }
+
+            .sidebar.mobile-open {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            .url-placeholder {
+                margin: 10px;
+                min-height: calc(100vh - 50px);
+            }
+        }
+
+        /* Theme Toggle Icons */
+        .sun-icon {
+            display: block;
+        }
+
+        .moon-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .sun-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .moon-icon {
+            display: block;
+        }
+
+        /* Smooth scrollbar */
+        .nav-section::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nav-section::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 2px;
+        }
+
+        .nav-section::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 2px;
+        }
+
+        .nav-section::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="mobile-overlay"></div>
+
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <a href="#" class="logo-container">
+                    <div class="logo-icon"></div>
+                    <div class="logo-text">ABacus</div>
+                </a>
+                
+                <div class="sidebar-controls">
+                    <button class="collapse-toggle" id="collapse-toggle" title="Collapse sidebar">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search experiments, metrics..." />
+                </div>
+            </div>
+
+            <!-- User Profile -->
+            <div class="user-profile">
+                <div class="profile-info">
+                    <div class="profile-avatar">FP</div>
+                    <div class="profile-details">
+                        <div class="profile-name">Fernando Portela</div>
+                        <div class="profile-role">Experiment Manager</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-section">
+                <!-- Main Navigation -->
+                <div class="nav-group">
+                    <div class="nav-group-title">Main</div>
+                    
+                    <a href="#" class="nav-item active" data-tooltip="Dashboard" data-url="dashboard.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                <path d="M4 1a2.5 2.5 0 0 0-2.5 2.5v1.518A2.5 2.5 0 0 0 1 7.5V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5a2.5 2.5 0 0 0-.5-2.482V3.5A2.5 2.5 0 0 0 12 1H4zM3 3.5A1.5 1.5 0 0 1 4 2h8a1.5 1.5 0 0 1 1.5 1.5V5H3V3.5zM2 7.5A1.5 1.5 0 0 1 3.5 6h9A1.5 1.5 0 0 1 14 7.5V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Dashboard</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Submit Experiment" data-url="submit-experiment.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Submit Experiment</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="View Experiments" data-url="view-experiments.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">View Experiments</div>
+                        <div class="nav-badge">24</div>
+                    </a>
+
+                    <a href="#" class="nav-item" data-tooltip="Quality Experiments" data-url="quality-experiments.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Quality Experiments</div>
+                        <div class="nav-badge blue">18</div>
+                    </a>
+                </div>
+
+                <!-- Analysis & Insights -->
+                <div class="nav-group">
+                    <div class="nav-group-title">Analysis & Insights</div>
+                    
+                    <a href="#" class="nav-item" data-tooltip="View Collisions" data-url="view-collisions.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">View Collisions</div>
+                        <div class="nav-badge">3</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Analytics Dashboard" data-url="analytics-dashboard.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zM1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Analytics Dashboard</div>
+                    </a>
+                </div>
+
+                <!-- Collaboration -->
+                <div class="nav-group">
+                    <div class="nav-group-title">Collaboration</div>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Groups" data-url="groups.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                                <path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+                                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Groups</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="View Feedback" data-url="view-feedback.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">View Feedback</div>
+                        <div class="nav-badge orange">2</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Notifications" data-url="notifications.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Notifications</div>
+                        <div class="nav-badge green">5</div>
+                    </a>
+                </div>
+
+                <!-- Support -->
+                <div class="nav-group">
+                    <div class="nav-group-title">Support & Resources</div>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Read FAQ" data-url="faq.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Read FAQ</div>
+                    </a>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Documentation" data-url="documentation.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Documentation</div>
+                    </a>
+
+                    <a href="#" class="nav-item" data-tooltip="Help Center" data-url="help-center.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+                                <path d="M6.5 5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H9v1h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H8V6H7a.5.5 0 0 1-.5-.5V5z"/>
+                                <circle cx="8" cy="11.5" r=".5"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Help Center</div>
+                    </a>
+                </div>
+
+                <!-- Admin -->
+                <div class="nav-group">
+                    <div class="nav-group-title">Administration</div>
+                    
+                    <a href="#" class="nav-item" data-tooltip="Admin" data-url="admin-settings.html">
+                        <div class="nav-icon">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                                <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+                            </svg>
+                        </div>
+                        <div class="nav-text">Admin Settings</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                    <svg class="sun-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                    </svg>
+                    <svg class="moon-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+                    </svg>
+                </button>
+                
+                <div class="version-info">
+                    v2025.05.28
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="content-body">
+                <!-- URL Placeholder Container -->
+                <div class="url-placeholder" id="url-placeholder">
+                    <div class="url-placeholder-icon">
+                        🔗
+                    </div>
+                    <div class="url-placeholder-title">Page URL Placeholder</div>
+                    <div class="url-placeholder-url" id="current-url">dashboard.html</div>
+                    <div class="url-placeholder-description">
+                        This area will display the selected page. The URL will be loaded dynamically when you update the navigation system.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // REPLACE THE ENTIRE SCRIPT SECTION IN abacus-menu.html WITH THIS FIXED VERSION
+
+// Theme management
+let currentTheme = 'light';
+
+// Sidebar collapse management
+let isSidebarCollapsed = false;
+
+// Mobile menu management
+let isMobileMenuOpen = false;
+
+// Page URLs mapping
+const pageUrls = {
+    'Dashboard': 'dashboard.html',
+    'Submit Experiment': 'submit-experiment.html',
+    'View Experiments': 'experiment-list.html',
+    'Quality Experiments': 'quality-experiments.html',
+    'View Collisions': 'view-collisions.html',
+    'Analytics Dashboard': 'analytics-dashboard.html',
+    'Groups': 'groups.html',
+    'View Feedback': 'view-feedback.html',
+    'Notifications': 'notifications.html',
+    'Read FAQ': 'faq.html',
+    'Documentation': 'documentation.html',
+    'Help Center': 'help-center.html',
+    'Admin Settings': 'admin-settings.html'
+};
+
+function initializeApp() {
+    setupThemeToggle();
+    setupSidebarCollapse();
+    setupMobileMenu();
+    setupNavigation();
+    setupSearch();
+    injectExperimentListStyles();
+}
+
+function setupThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    themeToggle.addEventListener('click', () => {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', currentTheme);
+        
+        // Store theme preference
+        localStorage.setItem('abacus-theme', currentTheme);
+    });
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('abacus-theme');
+    if (savedTheme) {
+        currentTheme = savedTheme;
+        document.body.setAttribute('data-theme', currentTheme);
+    }
+}
+
+function setupSidebarCollapse() {
+    const collapseToggle = document.getElementById('collapse-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    collapseToggle.addEventListener('click', () => {
+        isSidebarCollapsed = !isSidebarCollapsed;
+        
+        if (isSidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+        } else {
+            sidebar.classList.remove('collapsed');
+        }
+        
+        // Store collapse state
+        localStorage.setItem('abacus-sidebar-collapsed', isSidebarCollapsed);
+    });
+
+    // Load saved collapse state
+    const savedCollapseState = localStorage.getItem('abacus-sidebar-collapsed');
+    if (savedCollapseState === 'true') {
+        isSidebarCollapsed = true;
+        sidebar.classList.add('collapsed');
+    }
+}
+
+function setupMobileMenu() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.mobile-overlay');
+    
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            isMobileMenuOpen = !isMobileMenuOpen;
+            
+            if (isMobileMenuOpen) {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    overlay.addEventListener('click', () => {
+        isMobileMenuOpen = false;
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Close mobile menu when clicking nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                isMobileMenuOpen = false;
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+}
+
+function setupNavigation() {
+    // Handle active nav item
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Remove active class from all items
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            item.classList.add('active');
+            
+            // Update content based on navigation
+            const navText = item.querySelector('.nav-text').textContent;
+            updateContent(navText);
+        });
+    });
+}
+
+function updateContent(navText) {
+    const contentBody = document.querySelector('.content-body');
+    
+    // Special handling for View Experiments
+    if (navText === 'View Experiments') {
+        loadExperimentList();
+        return;
+    }
+    
+    // Get the URL for this page
+    const pageUrl = pageUrls[navText] || `${navText.toLowerCase().replace(/\s+/g, '-')}.html`;
+    
+    // Check if we're running on file:// protocol
+    if (window.location.protocol === 'file:') {
+        showFileProtocolMessage(navText, pageUrl);
+        return;
+    }
+    
+    // Try to load the actual page content
+    loadPageDirectly(pageUrl, navText);
+}
+
+
+function setupExperimentNavigation() {
+    // Use event delegation on the main content area
+    const mainContent = document.querySelector('.main-content');
+    
+    if (mainContent) {
+        // Remove any existing event listeners to prevent duplicates
+        mainContent.removeEventListener('click', handleExperimentClick);
+        
+        // Add the experiment click handler
+        mainContent.addEventListener('click', handleExperimentClick);
+        
+        // Handle hover effects for experiment rows
+        mainContent.addEventListener('mouseover', function(e) {
+            const experimentRow = e.target.closest('.experiment-row');
+            if (experimentRow && !experimentRow.classList.contains('highlighted')) {
+                experimentRow.style.backgroundColor = 'var(--bg-hover)';
+                experimentRow.style.cursor = 'pointer';
+            }
+        });
+        
+        mainContent.addEventListener('mouseout', function(e) {
+            const experimentRow = e.target.closest('.experiment-row');
+            if (experimentRow && !experimentRow.classList.contains('highlighted')) {
+                experimentRow.style.backgroundColor = '';
+                experimentRow.style.cursor = '';
+            }
+        });
+    }
+}
+
+function handleExperimentClick(e) {
+    const experimentRow = e.target.closest('.experiment-row');
+    
+    if (experimentRow) {
+        // Prevent navigation if clicking on action buttons
+        if (e.target.closest('.actions') || e.target.closest('.action-btn')) {
+            return;
+        }
+        
+        // Get experiment data from row attributes
+        const experimentData = {
+            name: experimentRow.dataset.name,
+            testId: experimentRow.dataset.testid,
+            owner: experimentRow.dataset.owner,
+            spaces: experimentRow.dataset.spaces
+        };
+        
+        console.log('Navigating to experiment:', experimentData);
+        
+        // Load experiment detail within the menu instead of navigating away
+        loadExperimentDetail(experimentData);
+    }
+}
+
+// UPDATED loadExperimentList function with padding:
+
+function loadExperimentList() {
+    const contentBody = document.querySelector('.content-body');
+    
+    // Show loading state
+    contentBody.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="animation: spin 1s linear infinite;">
+                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+                </svg>
+                Loading experiments...
+            </div>
+        </div>
+    `;
+    
+    // Try to load the experiment list
+    fetch('experiment-list.html')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            // Parse the HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Extract styles from the experiment-list.html
+            const styles = doc.querySelectorAll('style');
+            styles.forEach(style => {
+                // Only inject if not already present
+                if (!document.querySelector(`style[data-source="experiment-list"]`)) {
+                    const newStyle = document.createElement('style');
+                    newStyle.setAttribute('data-source', 'experiment-list');
+                    newStyle.textContent = style.textContent;
+                    document.head.appendChild(newStyle);
+                }
+            });
+            
+            // Extract the container content
+            const container = doc.querySelector('.container');
+            
+            if (container) {
+                // Remove the header from the loaded content since we have our own
+                const header = container.querySelector('.header');
+                if (header) header.remove();
+                
+                // Wrap the content with proper padding
+                const paddedHTML = `
+                    <div class="experiment-list-wrapper" style="
+                        padding: 24px 32px;
+                        background: var(--bg-primary);
+                        min-height: 100vh;
+                        max-width: 1400px;
+                        margin: 0 auto;
+                    ">
+                        ${container.innerHTML}
+                    </div>
+                `;
+                
+                // Set the content
+                contentBody.innerHTML = paddedHTML;
+                
+                console.log('Experiment list loaded successfully with padding');
+                
+                // Set up experiment navigation for loaded content
+                setupExperimentNavigation();
+            } else {
+                throw new Error('Could not find container element in experiment-list.html');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading experiment list:', error);
+            
+            // Show appropriate error message
+            let errorMessage = 'Could not load experiment list. Please try again.';
+            if (window.location.protocol === 'file:') {
+                errorMessage = 'File protocol detected. Please use VS Code Live Preview or a local server to view individual pages.';
+            }
+            
+            contentBody.innerHTML = `
+                <div class="url-placeholder">
+                    <div class="url-placeholder-icon">⚠️</div>
+                    <div class="url-placeholder-title">Error Loading Experiments</div>
+                    <div class="url-placeholder-url">experiment-list.html</div>
+                    <div class="url-placeholder-description">${errorMessage}</div>
+                </div>
+            `;
+        });
+}
+
+// UPDATED loadExperimentDetail function with padding:
+
+function loadExperimentDetail(experimentData) {
+    const contentBody = document.querySelector('.content-body');
+    
+    // Show loading state
+    contentBody.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="animation: spin 1s linear infinite;">
+                    <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+                </svg>
+                Loading experiment details...
+            </div>
+        </div>
+    `;
+    
+    // Try to load the experiment detail page
+    fetch('experiment-detail.html')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            // Parse the HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Inject modified styles for proper layout
+            injectExperimentDetailStyles();
+            
+            // Extract and modify styles from experiment-detail.html
+            const styles = doc.querySelectorAll('style');
+            styles.forEach(style => {
+                if (!document.querySelector(`style[data-source="experiment-detail-original"]`)) {
+                    const newStyle = document.createElement('style');
+                    newStyle.setAttribute('data-source', 'experiment-detail-original');
+                    
+                    // Get original styles but modify positioning
+                    let styleText = style.textContent;
+                    
+                    // Remove fixed positioning and adjust for content area
+                    styleText = styleText.replace(/position:\s*fixed/g, 'position: relative');
+                    styleText = styleText.replace(/top:\s*0px/g, 'top: 0');
+                    styleText = styleText.replace(/left:\s*0/g, 'left: 0');
+                    styleText = styleText.replace(/right:\s*0/g, 'right: 0');
+                    styleText = styleText.replace(/z-index:\s*1000/g, 'z-index: 10');
+                    styleText = styleText.replace(/padding-top:\s*220px/g, 'padding-top: 0');
+                    
+                    newStyle.textContent = styleText;
+                    document.head.appendChild(newStyle);
+                }
+            });
+            
+            // Get the complete original content
+            const bodyContent = doc.body.innerHTML;
+            
+            // Create the experiment detail with padding wrapper
+            const detailHTML = `
+                <div class="experiment-detail-container" style="
+                    background: var(--bg-primary);
+                    min-height: 100vh;
+                ">
+                    <!-- Back Button with padding -->
+                    <div style="
+                        background: var(--bg-card); 
+                        padding: 16px 32px; 
+                        border-bottom: 1px solid var(--border-color); 
+                        position: sticky; 
+                        top: 0; 
+                        z-index: 100;
+                    ">
+                        <button id="back-to-experiments" style="
+                            background: var(--accent-blue);
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: 600;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        ">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                            Back to Experiments
+                        </button>
+                    </div>
+                    
+                    <!-- Experiment Detail Content with padding -->
+                    <div class="experiment-detail-wrapper" style="
+                        padding: 0 32px;
+                        max-width: 1400px;
+                        margin: 0 auto;
+                        background: var(--bg-primary);
+                    ">
+                        ${bodyContent}
+                    </div>
+                </div>
+            `;
+            
+            // Set the content
+            contentBody.innerHTML = detailHTML;
+            
+            // Update the experiment data in the loaded content
+            updateExperimentData(experimentData);
+            
+            // Add body class for experiment detail
+            document.body.classList.add('has-experiment-detail');
+            
+            // Add back button functionality
+            const backButtonEl = document.getElementById('back-to-experiments');
+            if (backButtonEl) {
+                backButtonEl.addEventListener('click', () => {
+                    document.body.classList.remove('has-experiment-detail');
+                    loadExperimentList();
+                });
+            }
+            
+            // CRITICAL: Initialize tab functionality after content is loaded
+            setTimeout(() => {
+                initializeExperimentDetailTabs();
+                initializeExperimentDetailScripts();
+            }, 100);
+            
+            console.log('Experiment detail loaded successfully with padding and tab functionality');
+        })
+        .catch(error => {
+            console.error('Error loading experiment detail:', error);
+            
+            contentBody.innerHTML = `
+                <div class="url-placeholder">
+                    <div class="url-placeholder-icon">⚠️</div>
+                    <div class="url-placeholder-title">Error Loading Experiment Detail</div>
+                    <div class="url-placeholder-url">experiment-detail.html</div>
+                    <div class="url-placeholder-description">Could not load experiment detail. Please try again.</div>
+                    <button onclick="loadExperimentList()" style="
+                        margin-top: 16px;
+                        background: var(--accent-blue);
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: 600;
+                    ">Back to Experiments</button>
+                </div>
+            `;
+        });
+}
+
+// UPDATED injectExperimentDetailStyles function with responsive padding:
+
+function injectExperimentDetailStyles() {
+    if (!document.querySelector('style[data-source="experiment-detail-layout"]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-source', 'experiment-detail-layout');
+        style.textContent = `
+            /* Ensure all content stays within the content area */
+            .experiment-detail-wrapper {
+                position: relative;
+                background: var(--bg-primary);
+                min-height: calc(100vh - 80px);
+            }
+            
+            /* Override fixed positioning for header elements within content area */
+            .experiment-detail-wrapper .header {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                z-index: 10 !important;
+            }
+            
+            /* Ensure proper container sizing with padding */
+            .experiment-detail-wrapper .container {
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 20px 0 !important;
+            }
+            
+            .experiment-detail-wrapper .header-container {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Remove body padding when experiment detail is shown */
+            body.has-experiment-detail {
+                padding-top: 0 !important;
+            }
+            
+            /* Ensure content scrolls properly */
+            .content-body {
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            /* Remove any conflicting positioning */
+            .experiment-detail-wrapper [style*="position: fixed"] {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+            
+            /* Ensure tabs work properly */
+            .tab-item {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .tab-item:hover {
+                background: var(--bg-hover);
+                color: var(--text-primary);
+            }
+            
+            .tab-item.active {
+                background: var(--accent-blue);
+                color: white;
+            }
+            
+            /* Responsive padding for smaller screens */
+            @media (max-width: 768px) {
+                .experiment-list-wrapper,
+                .experiment-detail-wrapper {
+                    padding-left: 16px !important;
+                    padding-right: 16px !important;
+                }
+                
+                .experiment-detail-container > div:first-child {
+                    padding-left: 16px !important;
+                    padding-right: 16px !important;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                .experiment-list-wrapper,
+                .experiment-detail-wrapper {
+                    padding-left: 12px !important;
+                    padding-right: 12px !important;
+                }
+                
+                .experiment-detail-container > div:first-child {
+                    padding-left: 12px !important;
+                    padding-right: 12px !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Initialize tab functionality for experiment detail
+function initializeExperimentDetailTabs() {
+    console.log('Initializing experiment detail tabs...');
+    
+    // Tab switching functionality
+    const tabItems = document.querySelectorAll('.tab-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    if (tabItems.length === 0) {
+        console.log('No tab items found');
+        return;
+    }
+    
+    // Set initial active tab
+    let currentTab = 'workflow';
+    
+    // Add click handlers to tab items
+    tabItems.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabName = tab.dataset.tab;
+            
+            console.log('Tab clicked:', tabName);
+            
+            if (tabName === currentTab) return;
+            
+            // Update active tab
+            tabItems.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Update tab content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const targetContent = document.getElementById(`${tabName}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+            
+            currentTab = tabName;
+            
+            console.log('Switched to tab:', tabName);
+        });
+    });
+    
+    // Initialize sections toggle functionality
+    initializeSectionToggles();
+    
+    console.log('Tab functionality initialized successfully');
+}
+
+// Initialize section toggle functionality
+function initializeSectionToggles() {
+    const sectionHeaders = document.querySelectorAll('.section-header:not(.no-toggle)');
+    
+    sectionHeaders.forEach(header => {
+        // Remove existing click handlers to prevent duplicates
+        const newHeader = header.cloneNode(true);
+        header.parentNode.replaceChild(newHeader, header);
+        
+        newHeader.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = newHeader.parentElement;
+            
+            if (section.classList.contains('expanded')) {
+                section.classList.remove('expanded');
+            } else {
+                section.classList.add('expanded');
+            }
+        });
+    });
+}
+
+// Initialize other experiment detail functionality
+function initializeExperimentDetailScripts() {
+    console.log('Initializing experiment detail scripts...');
+    
+    // Initialize theme toggle if present
+    const themeToggle = document.querySelector('.experiment-detail-wrapper .theme-toggle');
+    if (themeToggle && !themeToggle.hasAttribute('data-initialized')) {
+        themeToggle.setAttribute('data-initialized', 'true');
+        themeToggle.addEventListener('click', () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+        });
+    }
+    
+    // Initialize platform chips if present
+    const platformChips = document.querySelectorAll('.platform-chip');
+    platformChips.forEach(chip => {
+        if (!chip.hasAttribute('data-initialized')) {
+            chip.setAttribute('data-initialized', 'true');
+            chip.addEventListener('click', (e) => {
+                platformChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                
+                const platform = chip.dataset.platform;
+                if (platform) {
+                    updatePlatformContent(platform);
+                }
+            });
+        }
+    });
+    
+    // Initialize any task checkboxes
+    const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+    taskCheckboxes.forEach(checkbox => {
+        if (!checkbox.hasAttribute('data-initialized')) {
+            checkbox.setAttribute('data-initialized', 'true');
+            checkbox.addEventListener('click', () => {
+                toggleTask(checkbox);
+            });
+        }
+    });
+    
+    console.log('Experiment detail scripts initialized');
+}
+
+// Task toggle functionality
+function toggleTask(checkbox) {
+    const isChecked = checkbox.classList.contains('checked');
+    const taskItem = checkbox.closest('.checklist-task-item');
+    
+    if (!isChecked) {
+        checkbox.classList.add('checked');
+        checkbox.innerHTML = '✓';
+        taskItem.classList.remove('required');
+        taskItem.classList.add('completed');
+        
+        // Update status
+        const status = taskItem.querySelector('.task-status');
+        if (status) {
+            status.textContent = 'Completed';
+            status.className = 'task-status status-completed';
+        }
+        
+        // Add signed off by
+        const details = taskItem.querySelector('.task-details');
+        if (details) {
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                month: '2-digit',
+                day: '2-digit',
+                year: 'numeric'
+            });
+            const currentTime = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            details.innerHTML += `<div class="signed-off-by">✓ Completed on ${currentDate}, ${currentTime}</div>`;
+        }
+    }
+}
+
+// Platform content update functionality
+function updatePlatformContent(platform) {
+    console.log('Updating platform content for:', platform);
+    // Add platform-specific content updates here if needed
+}
+
+// Helper function to update experiment data in the loaded content
+function updateExperimentData(experimentData) {
+    // Update experiment title
+    const titleElement = document.querySelector('.experiment-title');
+    if (titleElement && experimentData.name) {
+        titleElement.textContent = experimentData.name;
+    }
+    
+    // Update ID badge
+    const idBadge = document.querySelector('.id-badge');
+    if (idBadge && experimentData.testId) {
+        idBadge.textContent = experimentData.testId;
+    }
+}
+
+// Make functions globally available
+window.toggleTask = toggleTask;
+window.initializeExperimentDetailTabs = initializeExperimentDetailTabs;
+
+// Helper function to inject proper layout styles
+function injectExperimentDetailStyles() {
+    if (!document.querySelector('style[data-source="experiment-detail-layout"]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-source', 'experiment-detail-layout');
+        style.textContent = `
+            /* Ensure all content stays within the content area */
+            .experiment-detail-wrapper {
+                position: relative;
+                background: var(--bg-primary);
+                min-height: calc(100vh - 80px);
+            }
+            
+            /* Override fixed positioning for header elements within content area */
+            .experiment-detail-wrapper .header {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                z-index: 10 !important;
+            }
+            
+            /* Ensure proper container sizing */
+            .experiment-detail-wrapper .container {
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .experiment-detail-wrapper .header-container {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Remove body padding when experiment detail is shown */
+            body.has-experiment-detail {
+                padding-top: 0 !important;
+            }
+            
+            /* Ensure content scrolls properly */
+            .content-body {
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            /* Remove any conflicting positioning */
+            .experiment-detail-wrapper [style*="position: fixed"] {
+                position: relative !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Helper function to update experiment data in the loaded content
+function updateExperimentData(experimentData) {
+    // Update experiment title
+    const titleElement = document.querySelector('.experiment-title');
+    if (titleElement && experimentData.name) {
+        titleElement.textContent = experimentData.name;
+    }
+    
+    // Update ID badge
+    const idBadge = document.querySelector('.id-badge');
+    if (idBadge && experimentData.testId) {
+        idBadge.textContent = experimentData.testId;
+    }
+    
+    // You can add more data updates here as needed
+}
+
+// Add this to your existing initializeApp function:
+// (Add this line to the initializeApp function)
+// injectExperimentDetailStyles();
+
+function executeScriptsInContent(container) {
+    // Execute any script tags in the loaded content
+    const scripts = container.querySelectorAll('script');
+    scripts.forEach(script => {
+        const newScript = document.createElement('script');
+        if (script.src) {
+            newScript.src = script.src;
+        } else {
+            newScript.textContent = script.textContent;
+        }
+        if (script.parentNode) {
+            script.parentNode.replaceChild(newScript, script);
+        }
+    });
+}
+
+function injectExperimentListStyles() {
+    // Pre-inject essential experiment list styles to prevent FOUC
+    if (!document.querySelector('style[data-source="experiment-list-base"]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-source', 'experiment-list-base');
+        style.textContent = `
+            .experiment-row {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .experiment-row:hover {
+                background: var(--bg-hover) !important;
+            }
+            
+            .experiments-table {
+                background: var(--bg-card);
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: var(--shadow-light);
+                border: 1px solid var(--border-color);
+            }
+            
+            .experiments-table table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .experiments-table th,
+            .experiments-table td {
+                padding: 16px 24px;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .experiments-table th {
+                background: var(--bg-secondary);
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 14px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function showFileProtocolMessage(navText, pageUrl) {
+    const contentBody = document.querySelector('.content-body');
+    
+    let icon, description;
+    
+    switch(navText) {
+        case 'Dashboard':
+            icon = '📊';
+            description = 'Main dashboard with experiment overview, metrics, and key performance indicators.';
+            break;
+        case 'View Experiments':
+            icon = '🧪';
+            description = 'Complete list of all A/B test experiments with status, metrics, and management controls.';
+            break;
+        case 'View Collisions':
+            icon = '⚠️';
+            description = 'Analysis and management of overlapping experiments that may interfere with each other.';
+            break;
+        case 'Analytics Dashboard':
+            icon = '📈';
+            description = 'Comprehensive analytics with charts, reports, and statistical analysis of experiment results.';
+            break;
+        case 'Submit Experiment':
+            icon = '➕';
+            description = 'Form to create new A/B test experiments with hypothesis definition and variant configuration.';
+            break;
+        default:
+            icon = '📄';
+            description = `This page will contain ${navText.toLowerCase()} functionality and content.`;
+    }
+    
+    contentBody.innerHTML = `
+        <div class="url-placeholder">
+            <div class="url-placeholder-icon">${icon}</div>
+            <div class="url-placeholder-title">${navText}</div>
+            <div class="url-placeholder-url">${pageUrl}</div>
+            <div class="url-placeholder-description">${description}</div>
+        </div>
+    `;
+}
+
+function loadPageDirectly(url, navText) {
+    const contentBody = document.querySelector('.content-body');
+    
+    // Show loading state
+    contentBody.innerHTML = `
+        <div class="url-placeholder">
+            <div class="url-placeholder-icon">⏳</div>
+            <div class="url-placeholder-title">Loading...</div>
+            <div class="url-placeholder-description">Please wait while the page loads.</div>
+        </div>
+    `;
+    
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            contentBody.innerHTML = html;
+            executeScriptsInContent(contentBody);
+        })
+        .catch(error => {
+            console.log(`Could not load ${url}:`, error.message);
+            showFileProtocolMessage(navText, url);
+        });
+}
+
+function setupSearch() {
+    const searchInput = document.querySelector('.search-input');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.toLowerCase().trim();
+        
+        searchTimeout = setTimeout(() => {
+            if (query) {
+                highlightMatchingNavItems(query);
+            } else {
+                clearSearchHighlights();
+            }
+        }, 300);
+    });
+}
+
+function highlightMatchingNavItems(query) {
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(item => {
+        const text = item.querySelector('.nav-text').textContent.toLowerCase();
+        const matches = text.includes(query);
+        
+        if (matches) {
+            item.style.background = 'var(--bg-hover)';
+            item.style.borderLeft = '3px solid var(--accent-blue)';
+        } else {
+            item.style.opacity = '0.5';
+        }
+    });
+}
+
+function clearSearchHighlights() {
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    navItems.forEach(item => {
+        if (!item.classList.contains('active')) {
+            item.style.background = '';
+            item.style.borderLeft = '';
+        }
+        item.style.opacity = '';
+    });
+}
+
+// Handle window resize for responsive behavior
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.mobile-overlay');
+        
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        isMobileMenuOpen = false;
+    }
+});
+
+// Make functions globally accessible
+window.loadExperimentList = loadExperimentList;
+window.loadExperimentDetail = loadExperimentDetail;
+
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+// Add required CSS for spin animation
+const additionalStyles = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+`;
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = additionalStyles;
+document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>
