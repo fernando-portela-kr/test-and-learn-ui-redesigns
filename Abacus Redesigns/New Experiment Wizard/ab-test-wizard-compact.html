@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit New A/B Test - Wizard</title>
+    <style>
+        :root {
+            /* Light theme colors */
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-accent: #4b5563;
+            --bg-input: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #495057;
+            --text-light: #ffffff;
+            --text-accent: #1976d2;
+            
+            --border-color: #e2e8f0;
+            --border-light: #dee2e6;
+            --border-medium: #9ca3af;
+            
+            --shadow-light: 0 1px 6px rgba(0,0,0,0.04);
+            --shadow-medium: 0 2px 10px rgba(0,0,0,0.06);
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.03);
+            
+            --accent-blue: #1976d2;
+            --accent-blue-hover: #1565c0;
+            --accent-red: #dc2626;
+            --accent-green: #28a745;
+            --accent-orange: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #4c4c4c;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --bg-accent: #374151;
+            --bg-input: #2d2d2d;
+            --bg-card: #262626;
+            --bg-hover: #3a3a3a;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #ffffff;
+            --text-accent: #60a5fa;
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            --border-medium: #6b7280;
+            
+            --shadow-light: 0 1px 6px rgba(0,0,0,0.2);
+            --shadow-medium: 0 2px 10px rgba(0,0,0,0.3);
+            --shadow-card: 0 1px 3px rgba(0,0,0,0.15);
+            
+            --accent-blue: #60a5fa;
+            --accent-blue-hover: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            --accent-orange: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 12px;
+        }
+
+        /* Header */
+        .wizard-header {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+        }
+
+        .wizard-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .wizard-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 2px;
+            margin-bottom: 12px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 8px 4px;
+        }
+
+        .progress-step-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.completed .progress-step-indicator {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: white;
+        }
+
+        .progress-step.active .progress-step-indicator {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+        }
+
+        .progress-step-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .progress-step.completed .progress-step-label,
+        .progress-step.active .progress-step-label {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Progress Line */
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 48px;
+            right: 48px;
+            height: 2px;
+            background: var(--border-light);
+            z-index: 1;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 28px;
+            left: 48px;
+            height: 2px;
+            background: var(--accent-blue);
+            z-index: 1;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-card);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-card);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        /* Step Content */
+        .step-content {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-light);
+            display: none;
+            animation: fadeInSlide 0.3s ease-out;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .form-label.required::after {
+            content: " *";
+            color: var(--accent-red);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.08);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-error {
+            color: var(--accent-red);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .form-input,
+        .form-group.error .form-select,
+        .form-group.error .form-textarea {
+            border-color: var(--accent-red);
+        }
+
+        .form-group.error .form-error {
+            display: block;
+        }
+
+        /* Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Checkbox Groups */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            padding: 8px 10px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-group:hover {
+            background: var(--bg-hover);
+        }
+
+        .checkbox-input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-blue);
+        }
+
+        .checkbox-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        /* Variant Configuration */
+        .variants-section {
+            margin-bottom: 16px;
+        }
+
+        .variant-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .variant-item:hover {
+            border: 1px solid var(--border-light);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .variant-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0;
+        }
+
+        .variant-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .variant-percentage {
+            background: var(--accent-blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .add-variant-btn {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-medium);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .add-variant-btn:hover {
+            border-color: var(--accent-blue);
+            background: rgba(25, 118, 210, 0.05);
+            color: var(--accent-blue);
+        }
+
+        /* Banner Selection */
+        .banners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .banner-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .banner-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .banner-checkbox {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--accent-blue);
+        }
+
+        /* Navigation */
+        .wizard-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-blue-hover);
+            border-color: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+            border: 1px solid var(--accent-green);
+            font-size: 14px;
+            padding: 12px 24px;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #22c55e;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .step-indicator {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Review Section */
+        .review-section {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .review-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .review-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .review-value {
+            color: var(--text-primary);
+            flex: 2;
+            text-align: right;
+        }
+
+        /* Info boxes */
+        .info-box {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .info-box .info-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .info-box .info-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .info-box .info-text {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 8px;
+            }
+
+            .wizard-header {
+                padding: 12px;
+            }
+
+            .step-content {
+                padding: 12px;
+            }
+
+            .wizard-navigation {
+                padding: 10px;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-steps::before {
+                display: none;
+            }
+
+            .progress-line {
+                display: none;
+            }
+
+            .progress-step {
+                padding: 6px 2px;
+            }
+
+            .progress-step-indicator {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .progress-step-label {
+                font-size: 10px;
+            }
+        }
+
+        /* Success Animation */
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+        <svg class="sun-icon" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+        </svg>
+        <svg class="moon-icon" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="wizard-header">
+            <h1 class="wizard-title">Submit New A/B Test</h1>
+            <p class="wizard-subtitle">Follow the steps below to configure and submit your experiment idea</p>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-steps">
+                    <div class="progress-line" id="progress-line"></div>
+                    <div class="progress-step active" data-step="1">
+                        <div class="progress-step-indicator">1</div>
+                        <div class="progress-step-label">Basic Info</div>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="progress-step-indicator">2</div>
+                        <div class="progress-step-label">Variants</div>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="progress-step-indicator">3</div>
+                        <div class="progress-step-label">Metrics</div>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="progress-step-indicator">4</div>
+                        <div class="progress-step-label">Targeting</div>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <div class="progress-step-indicator">5</div>
+                        <div class="progress-step-label">Configuration</div>
+                    </div>
+                    <div class="progress-step" data-step="6">
+                        <div class="progress-step-indicator">6</div>
+                        <div class="progress-step-label">Review</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Information -->
+        <div class="step-content active" id="step-1">
+            <h2 class="step-title">Basic Information</h2>
+            <p class="step-description">Let's start with the basics of your experiment. Provide a clear title and hypothesis.</p>
+
+            <div class="form-group">
+                <label class="form-label required">Experiment Title</label>
+                <input type="text" class="form-input" id="experiment-title" placeholder="Enter a descriptive title for your experiment">
+                <div class="form-error">Please enter a title for your experiment</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Hypothesis</label>
+                <textarea class="form-textarea" id="hypothesis" placeholder="Describe what you expect to happen and why..."></textarea>
+                <div class="form-error">Please enter your experiment hypothesis</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Experiment Type</label>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div class="checkbox-group">
+                        <input type="radio" class="checkbox-input" id="amp-experiment" name="experiment-type" value="amp">
+                        <label for="amp-experiment" class="checkbox-label">AMP Experiment</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="radio" class="checkbox-input" id="server-side" name="experiment-type" value="server-side" checked>
+                        <label for="server-side" class="checkbox-label">Server-side Experiment</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="radio" class="checkbox-input" id="client-side" name="experiment-type" value="client-side">
+                        <label for="client-side" class="checkbox-label">Client-side Experiment</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Authentication</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="checkbox-input" id="authentication-required" checked>
+                    <label for="authentication-required" class="checkbox-label">Authentication Required</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Variants Configuration -->
+        <div class="step-content" id="step-2">
+            <h2 class="step-title">Variants Configuration</h2>
+            <p class="step-description">Define the different experiences you want to test and set their traffic ratios. Variants are automatically labeled A, B, C, etc. Variant A is your control and cannot be deleted. You need at least one test variant in addition to the control.</p>
+
+            <div class="variants-section" id="variants-container">
+                <!-- Variants will be dynamically added here -->
+            </div>
+
+            <div class="info-box">
+                <div class="info-header">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="color: var(--accent-blue);">
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                    </svg>
+                    <span class="info-title">Ratio-based Distribution</span>
+                </div>
+                <p class="info-text">
+                    Enter ratios for each variant (e.g., 1:1:2 means the third variant gets twice as much traffic as the first two). 
+                    Percentages are calculated automatically. Variants are automatically labeled A, B, C, etc.
+                </p>
+            </div>
+
+            <div class="add-variant-btn" onclick="addVariant()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 6px;">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                Add Another Variant
+            </div>
+        </div>
+
+        <!-- Step 3: Metrics & Goals -->
+        <div class="step-content" id="step-3">
+            <h2 class="step-title">Metrics & Goals</h2>
+            <p class="step-description">Select the primary metric you want to optimize and any secondary metrics to track.</p>
+
+            <div class="form-group">
+                <label class="form-label required">Primary Metric</label>
+                <select class="form-select" id="primary-metric">
+                    <option value="">Select primary metric...</option>
+                    <option value="clicks-nav">Clicks (Nav Elements)</option>
+                    <option value="cart-adds">Cart Adds</option>
+                    <option value="orders-placed">Orders Placed</option>
+                    <option value="conversion-rate">Conversion Rate</option>
+                    <option value="revenue-per-user">Revenue Per User</option>
+                    <option value="order-revenue">Order Revenue Booked</option>
+                    <option value="page-views">Page Views</option>
+                    <option value="time-on-page">Time on Page</option>
+                    <option value="bounce-rate">Bounce Rate</option>
+                    <option value="session-duration">Session Duration</option>
+                </select>
+                <div class="form-error">Please select a primary metric</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Secondary Measures/Goals</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px;">
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-orders">
+                        <label for="secondary-orders" class="checkbox-label">Orders Placed</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-pageviews">
+                        <label for="secondary-pageviews" class="checkbox-label">Page Views</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-clicks">
+                        <label for="secondary-clicks" class="checkbox-label">Clicks (Nav Elements)</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-revenue">
+                        <label for="secondary-revenue" class="checkbox-label">Order Revenue Booked</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-cart-adds">
+                        <label for="secondary-cart-adds" class="checkbox-label">Cart Adds</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-conversion">
+                        <label for="secondary-conversion" class="checkbox-label">Conversion Rate</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-rpu">
+                        <label for="secondary-rpu" class="checkbox-label">Revenue Per User</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" class="checkbox-input" id="secondary-time">
+                        <label for="secondary-time" class="checkbox-label">Time on Page</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Targeting & Schedule -->
+        <div class="step-content" id="step-4">
+            <h2 class="step-title">Targeting & Schedule</h2>
+            <p class="step-description">Define where and when your experiment should run.</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Location(s)/URL</label>
+                    <input type="text" class="form-input" id="targeting-url" placeholder="Enter URL or targeting criteria">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Platforms</label>
+                    <div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="platform-web" checked>
+                            <label for="platform-web" class="checkbox-label">Web</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="platform-ios">
+                            <label for="platform-ios" class="checkbox-label">iOS</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="platform-android">
+                            <label for="platform-android" class="checkbox-label">Android</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Planned Start Date</label>
+                    <input type="date" class="form-input" id="start-date">
+                    <div class="form-error">Please select a start date</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Planned End Date</label>
+                    <input type="date" class="form-input" id="end-date">
+                    <div class="form-error">Please select an end date</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Banner Selection</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" class="checkbox-input" id="all-banners" checked>
+                    <label for="all-banners" class="checkbox-label">All Banners</label>
+                </div>
+                <div class="banners-grid" id="individual-banners" style="display: none;">
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Kroger</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Baker's</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> City Market</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Dillons</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Food 4 Less</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Foods Co</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Fred Meyer</div>
+                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Fry's</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Configuration -->
+        <div class="step-content" id="step-5">
+            <h2 class="step-title">Allocations & Distribution</h2>
+            <p class="step-description">Configure traffic allocation and review variant distribution from your ratio settings.</p>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">User Traffic Allocation (%)</label>
+                    <input type="number" class="form-input" id="traffic-allocation" value="100" min="1" max="100" placeholder="Enter percentage between 1-100">
+                    <div class="form-error">Please enter a traffic allocation percentage between 1 and 100</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Variant Distribution (from Step 2)</label>
+                    <input type="text" class="form-input" id="variant-distribution" placeholder="e.g., 1:1:2 or 50:30:20" readonly style="background: var(--bg-secondary); cursor: not-allowed; color: var(--text-secondary);">
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">
+                        This field is automatically populated based on the ratios you set in Step 2.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Spaces</label>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Select the spaces where this experiment will run to prevent conflicts.</p>
+                <div class="form-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox-input" id="space-home">
+                        <label for="space-home" class="checkbox-label">Home</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox-input" id="space-search">
+                        <label for="space-search" class="checkbox-label">Search</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox-input" id="space-cart">
+                        <label for="space-cart" class="checkbox-label">Cart & Checkout</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox-input" id="space-profile">
+                        <label for="space-profile" class="checkbox-label">Profile</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Review & Submit -->
+        <div class="step-content" id="step-6">
+            <h2 class="step-title">Review & Submit</h2>
+            <p class="step-description">Review your experiment configuration before submitting for approval.</p>
+
+            <div id="review-content">
+                <!-- Review content will be populated by JavaScript -->
+            </div>
+
+            <div style="text-align: center; margin-top: 16px;">
+                <button class="btn btn-success" onclick="submitExperiment()">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M15.854 5.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L8.5 11.793l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                    Submit Experiment for Approval
+                </button>
+            </div>
+        </div>
+
+        <!-- Success Step -->
+        <div class="step-content" id="step-success" style="text-align: center;">
+            <div class="success-icon">
+                <svg width="32" height="32" viewBox="0 0 16 16" fill="white">
+                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                </svg>
+            </div>
+            <h2 class="step-title">Experiment Submitted Successfully!</h2>
+            <p class="step-description">Your experiment has been submitted for review. You'll receive notifications about the approval process.</p>
+            
+            <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px; margin: 16px 0; text-align: left;">
+                <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 10px;">Next Steps:</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                        <div style="width: 16px; height: 16px; background: var(--accent-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;">1</div>
+                        Our team will review your submission within 2-3 business days
+                    </li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                        <div style="width: 16px; height: 16px; background: var(--accent-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;">2</div>
+                        Complete the pre-launch checklist items
+                    </li>
+                    <li style="display: flex; align-items: center; gap: 6px; font-size: 13px;">
+                        <div style="width: 16px; height: 16px; background: var(--accent-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;">3</div>
+                        Launch your experiment once approved
+                    </li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <button class="btn btn-primary" onclick="window.location.reload()">Submit Another Experiment</button>
+                <button class="btn btn-secondary" style="margin-left: 8px;">View My Experiments</button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="wizard-navigation">
+            <div class="step-indicator">
+                Step <span id="current-step">1</span> of 6
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prev-btn" onclick="previousStep()" disabled>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                    </svg>
+                    Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextStep()">
+                    Next
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wizard state
+        let currentStep = 1;
+        let totalSteps = 6;
+        let variants = [];
+        let currentTheme = 'light';
+
+        // Form data storage
+        let formData = {
+            title: '',
+            hypothesis: '',
+            experimentType: [],
+            authRequired: false,
+            variants: [],
+            primaryMetric: '',
+            secondaryMetrics: [],
+            platforms: [],
+            startDate: '',
+            endDate: '',
+            targetingUrl: '',
+            banners: [],
+            trafficAllocation: 100,
+            variantDistribution: '',
+            spaces: []
+        };
+
+        // Initialize wizard
+        function init() {
+            setupThemeToggle();
+            setupBannerToggle();
+            initializeVariants();
+            updateProgressBar();
+            updateNavigation();
+        }
+
+        // Theme toggle functionality
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', () => {
+                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', currentTheme);
+            });
+        }
+
+        // Banner toggle functionality
+        function setupBannerToggle() {
+            const allBannersCheckbox = document.getElementById('all-banners');
+            const individualBanners = document.getElementById('individual-banners');
+
+            allBannersCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    individualBanners.style.display = 'none';
+                } else {
+                    individualBanners.style.display = 'grid';
+                }
+            });
+        }
+
+        // Initialize default variants
+        function initializeVariants() {
+            variants = [
+                { description: 'Current Experience (Control)', ratio: 1, percentage: 50 },
+                { description: 'Test Variant', ratio: 1, percentage: 50 }
+            ];
+            calculatePercentagesFromRatios();
+            renderVariants();
+            updateVariantDistribution();
+        }
+
+        // Render variants
+        function renderVariants() {
+            const container = document.getElementById('variants-container');
+            container.innerHTML = '';
+
+            variants.forEach((variant, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, etc.
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant-item';
+                variantDiv.innerHTML = `
+                    <div class="variant-header">
+                        <div style="display: flex; flex-direction: column; flex: 1; margin-right: 10px;">
+                            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Variant ${letter}</div>
+                            <input type="text" class="variant-description" value="${variant.description}" onchange="updateVariant(${index}, 'description', this.value)" placeholder="Enter variant description..." style="border: 1px solid var(--border-light); background: var(--bg-input); font-size: 13px; color: var(--text-primary); padding: 5px 8px; border-radius: 4px;">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <input type="number" class="variant-ratio-input" value="${variant.ratio}" min="1" onchange="updateVariant(${index}, 'ratio', parseInt(this.value) || 1)" style="width: 50px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; padding: 3px 6px; background: var(--bg-input); color: var(--text-primary); font-weight: 600; font-size: 11px;">
+                            <span style="font-size: 11px; color: var(--text-secondary);">(${variant.percentage}%)</span>
+                        </div>
+                        ${variants.length > 2 && index > 0 ? `<button onclick="removeVariant(${index})" style="background: var(--accent-red); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; margin-left: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; line-height: 1;">×</button>` : ''}
+                    </div>
+                `;
+                container.appendChild(variantDiv);
+            });
+        }
+
+        // Add new variant
+        function addVariant() {
+            variants.push({
+                description: 'New Test Variant',
+                ratio: 1,
+                percentage: 0
+            });
+            calculatePercentagesFromRatios();
+            renderVariants();
+            updateVariantDistribution();
+        }
+
+        // Remove variant
+        function removeVariant(index) {
+            // Cannot delete variant A (index 0) and must have at least 2 variants
+            if (index > 0 && variants.length > 2) {
+                variants.splice(index, 1);
+                calculatePercentagesFromRatios();
+                renderVariants();
+                updateVariantDistribution();
+            }
+        }
+
+        // Calculate percentages from ratios
+        function calculatePercentagesFromRatios() {
+            const totalRatio = variants.reduce((sum, variant) => sum + (variant.ratio || 1), 0);
+            
+            variants.forEach(variant => {
+                variant.percentage = Math.round((variant.ratio / totalRatio) * 100 * 10) / 10; // Round to 1 decimal place
+            });
+            
+            // Adjust for rounding errors to ensure total is exactly 100%
+            const totalPercentage = variants.reduce((sum, variant) => sum + variant.percentage, 0);
+            if (totalPercentage !== 100) {
+                const difference = 100 - totalPercentage;
+                variants[0].percentage = Math.round((variants[0].percentage + difference) * 10) / 10;
+            }
+        }
+
+        // Update variant
+        function updateVariant(index, field, value) {
+            variants[index][field] = value;
+            if (field === 'ratio') {
+                // Ensure ratio is at least 1
+                if (value < 1) {
+                    variants[index][field] = 1;
+                }
+                calculatePercentagesFromRatios();
+                renderVariants();
+                updateVariantDistribution();
+            }
+            // Description changes don't need re-rendering
+        }
+
+        // Update variant distribution automatically
+        function updateVariantDistribution() {
+            const distributionInput = document.getElementById('variant-distribution');
+            if (distributionInput) {
+                distributionInput.value = variants.map(v => v.ratio || 1).join(':');
+            }
+        }
+
+        // Navigation functions
+        function nextStep() {
+            if (validateCurrentStep()) {
+                saveCurrentStepData();
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    updateWizard();
+                }
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizard();
+            }
+        }
+
+        // Update wizard display
+        function updateWizard() {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show current step
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Update navigation
+            updateNavigation();
+            
+            // Special handling for review step
+            if (currentStep === 6) {
+                generateReview();
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progressLine = document.getElementById('progress-line');
+            const steps = document.querySelectorAll('.progress-step');
+            
+            // Calculate progress percentage
+            const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressLine.style.width = `${Math.max(0, progressPercentage)}%`;
+            
+            // Update step indicators
+            steps.forEach((step, index) => {
+                const stepNumber = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNumber < currentStep) {
+                    step.classList.add('completed');
+                    step.querySelector('.progress-step-indicator').innerHTML = '✓';
+                } else if (stepNumber === currentStep) {
+                    step.classList.add('active');
+                    step.querySelector('.progress-step-indicator').innerHTML = stepNumber;
+                } else {
+                    step.querySelector('.progress-step-indicator').innerHTML = stepNumber;
+                }
+            });
+        }
+
+        // Update navigation buttons
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentStepSpan = document.getElementById('current-step');
+            
+            currentStepSpan.textContent = currentStep;
+            
+            // Previous button - hide on first step
+            if (currentStep === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'inline-flex';
+                prevBtn.disabled = false;
+            }
+            
+            // Next button
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'inline-flex';
+                nextBtn.textContent = currentStep === totalSteps - 1 ? 'Review' : 'Next';
+            }
+        }
+
+        // Validate current step
+        function validateCurrentStep() {
+            const requiredFields = [];
+            let isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+
+            switch (currentStep) {
+                case 1:
+                    requiredFields.push('experiment-title', 'hypothesis');
+                    // Check if experiment type is selected
+                    const selectedType = document.querySelector('input[name="experiment-type"]:checked');
+                    if (!selectedType) {
+                        alert('Please select an experiment type.');
+                        return false;
+                    }
+                    break;
+                case 2:
+                    if (variants.length < 2) {
+                        alert('You need at least 2 variants to proceed (including the control variant).');
+                        return false;
+                    }
+                    // Ratios automatically ensure valid distribution, no additional validation needed
+                    break;
+                case 3:
+                    requiredFields.push('primary-metric');
+                    break;
+                case 4:
+                    requiredFields.push('start-date', 'end-date');
+                    // Validate dates
+                    const startDate = document.getElementById('start-date').value;
+                    const endDate = document.getElementById('end-date').value;
+                    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                        alert('End date must be after start date.');
+                        return false;
+                    }
+                    break;
+                case 5:
+                    requiredFields.push('traffic-allocation');
+                    // Check traffic allocation range
+                    const trafficAllocation = parseInt(document.getElementById('traffic-allocation').value);
+                    if (trafficAllocation < 1 || trafficAllocation > 100) {
+                        document.getElementById('traffic-allocation').closest('.form-group').classList.add('error');
+                        alert('Traffic allocation must be between 1 and 100 percent.');
+                        return false;
+                    }
+                    // variant-distribution is auto-populated, no need to validate
+                    break;
+            }
+
+            // Check required fields
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.closest('.form-group').classList.add('error');
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        // Save current step data
+        function saveCurrentStepData() {
+            switch (currentStep) {
+                case 1:
+                    formData.title = document.getElementById('experiment-title').value;
+                    formData.hypothesis = document.getElementById('hypothesis').value;
+                    const selectedType = document.querySelector('input[name="experiment-type"]:checked');
+                    formData.experimentType = selectedType ? selectedType.value : '';
+                    formData.authRequired = document.getElementById('authentication-required').checked;
+                    break;
+                case 2:
+                    formData.variants = [...variants];
+                    break;
+                case 3:
+                    formData.primaryMetric = document.getElementById('primary-metric').value;
+                    formData.secondaryMetrics = [
+                        'secondary-orders', 'secondary-pageviews', 'secondary-clicks',
+                        'secondary-revenue', 'secondary-cart-adds', 'secondary-conversion',
+                        'secondary-rpu', 'secondary-time'
+                    ].filter(id => document.getElementById(id)?.checked)
+                     .map(id => document.querySelector(`label[for="${id}"]`).textContent);
+                    break;
+                case 4:
+                    formData.platforms = [
+                        document.getElementById('platform-web').checked ? 'Web' : null,
+                        document.getElementById('platform-ios').checked ? 'iOS' : null,
+                        document.getElementById('platform-android').checked ? 'Android' : null
+                    ].filter(Boolean);
+                    formData.startDate = document.getElementById('start-date').value;
+                    formData.endDate = document.getElementById('end-date').value;
+                    formData.targetingUrl = document.getElementById('targeting-url').value;
+                    formData.banners = document.getElementById('all-banners').checked ? ['All Banners'] : ['Selected Banners'];
+                    break;
+                case 5:
+                    formData.trafficAllocation = document.getElementById('traffic-allocation').value;
+                    formData.variantDistribution = document.getElementById('variant-distribution').value;
+                    formData.spaces = [
+                        document.getElementById('space-home').checked ? 'Home' : null,
+                        document.getElementById('space-search').checked ? 'Search' : null,
+                        document.getElementById('space-cart').checked ? 'Cart & Checkout' : null,
+                        document.getElementById('space-profile').checked ? 'Profile' : null
+                    ].filter(Boolean);
+                    break;
+            }
+        }
+
+        // Generate review content
+        function generateReview() {
+            const reviewContent = document.getElementById('review-content');
+            
+            reviewContent.innerHTML = `
+                <div class="review-section">
+                    <h3 class="review-title">Basic Information</h3>
+                    <div class="review-item">
+                        <span class="review-label">Title:</span>
+                        <span class="review-value">${formData.title}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Hypothesis:</span>
+                        <span class="review-value">${formData.hypothesis}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Experiment Type:</span>
+                        <span class="review-value">${formData.experimentType === 'amp' ? 'AMP Experiment' : formData.experimentType === 'server-side' ? 'Server-side Experiment' : formData.experimentType === 'client-side' ? 'Client-side Experiment' : 'Not selected'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Authentication Required:</span>
+                        <span class="review-value">${formData.authRequired ? 'Yes' : 'No'}</span>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <h3 class="review-title">Variants</h3>
+                    ${formData.variants.map((variant, index) => {
+                        const letter = String.fromCharCode(65 + index); // A, B, C, etc.
+                        return `
+                        <div class="review-item">
+                            <span class="review-label">Variant ${letter}:</span>
+                            <span class="review-value">Ratio ${variant.ratio} (${variant.percentage}%) - ${variant.description || 'No description'}</span>
+                        </div>
+                    `;}).join('')}
+                </div>
+
+                <div class="review-section">
+                    <h3 class="review-title">Metrics</h3>
+                    <div class="review-item">
+                        <span class="review-label">Primary Metric:</span>
+                        <span class="review-value">${document.querySelector(`#primary-metric option[value="${formData.primaryMetric}"]`)?.textContent || 'Not selected'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Secondary Metrics:</span>
+                        <span class="review-value">${formData.secondaryMetrics.join(', ') || 'None selected'}</span>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <h3 class="review-title">Targeting & Schedule</h3>
+                    <div class="review-item">
+                        <span class="review-label">Platforms:</span>
+                        <span class="review-value">${formData.platforms.join(', ') || 'None selected'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Start Date:</span>
+                        <span class="review-value">${formData.startDate || 'Not set'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">End Date:</span>
+                        <span class="review-value">${formData.endDate || 'Not set'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Targeting URL:</span>
+                        <span class="review-value">${formData.targetingUrl || 'Not specified'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Banners:</span>
+                        <span class="review-value">${formData.banners.join(', ')}</span>
+                    </div>
+                </div>
+
+                <div class="review-section">
+                    <h3 class="review-title">Configuration</h3>
+                    <div class="review-item">
+                        <span class="review-label">Traffic Allocation:</span>
+                        <span class="review-value">${formData.trafficAllocation}%</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Variant Distribution:</span>
+                        <span class="review-value">${formData.variantDistribution}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Spaces:</span>
+                        <span class="review-value">${formData.spaces.join(', ') || 'None selected'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Submit experiment
+        function submitExperiment() {
+            // Simulate submission
+            setTimeout(() => {
+                // Hide all other steps
+                document.querySelectorAll('.step-content').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // Show success step
+                document.getElementById('step-success').classList.add('active');
+                
+                // Hide navigation
+                document.querySelector('.wizard-navigation').style.display = 'none';
+                
+                // Update progress to show completion
+                document.querySelectorAll('.progress-step').forEach(step => {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                    step.querySelector('.progress-step-indicator').innerHTML = '✓';
+                });
+                
+                document.getElementById('progress-line').style.width = '100%';
+            }, 500);
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Make functions globally accessible
+        window.addVariant = addVariant;
+        window.removeVariant = removeVariant;
+        window.updateVariant = updateVariant;
+        window.nextStep = nextStep;
+        window.previousStep = previousStep;
+        window.submitExperiment = submitExperiment;
+    </script>
+</body>
+</html>
