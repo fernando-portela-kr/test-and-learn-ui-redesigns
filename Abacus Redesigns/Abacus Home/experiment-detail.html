@@ -36,6 +36,7 @@
             --accent-blue-hover: #1565c0;
             --accent-red: #dc2626;
             --accent-green: #28a745;
+            --accent-orange: #f59e0b;
             
             --chart-bg: #f8f9fa;
             --note-bg: #f8f9fa;
@@ -72,6 +73,7 @@
             --accent-blue-hover: #3b82f6;
             --accent-red: #ef4444;
             --accent-green: #22c55e;
+            --accent-orange: #fbbf24;
             
             --chart-bg: #2d2d2d;
             --note-bg: #2d2d2d;
@@ -414,6 +416,304 @@
             transition: all 0.3s ease;
         }
 
+        /* Variant Override Modal */
+.variant-override-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.variant-override-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.variant-override-modal-content {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.variant-override-modal.show .variant-override-modal-content {
+    transform: translateY(0);
+}
+
+/* Variant Override Modal Styles */
+.variant-override-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.variant-override-modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.variant-override-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.variant-override-modal-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* NEW: Recommended Variant Info */
+.recommended-variant-info {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    border: 1px solid var(--accent-orange);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.recommended-variant-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-orange);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recommended-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.recommended-variant-info p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.current-winner-info {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-blue);
+}
+
+.current-winner-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.current-winner-info p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.variant-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.variant-option {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.variant-option:hover {
+    border-color: var(--accent-blue);
+    background: var(--bg-hover);
+}
+
+.variant-option.selected {
+    border-color: var(--accent-blue);
+    background: rgba(25, 118, 210, 0.05);
+}
+
+/* NEW: Recommended variant styling */
+.variant-option.recommended {
+    border-color: var(--accent-orange);
+    background: rgba(251, 191, 36, 0.05);
+}
+
+.variant-option.recommended:hover {
+    border-color: var(--accent-orange);
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.variant-option.recommended.selected {
+    border-color: var(--accent-orange);
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.recommended-badge {
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    background: var(--accent-orange);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.variant-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border-medium);
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.variant-option.selected .variant-radio {
+    border-color: var(--accent-blue);
+}
+
+.variant-option.recommended .variant-radio {
+    border-color: var(--accent-orange);
+}
+
+.variant-option.selected .variant-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+}
+
+.variant-option.recommended.selected .variant-radio::after {
+    background: var(--accent-orange);
+}
+
+.variant-details {
+    flex: 1;
+}
+
+.variant-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.variant-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.variant-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.modal-btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.modal-btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+.modal-btn-primary {
+    background: var(--accent-blue);
+    color: white;
+    border: 1px solid var(--accent-blue);
+}
+
+.modal-btn-primary:hover {
+    background: var(--accent-blue-hover);
+    border-color: var(--accent-blue-hover);
+    transform: translateY(-1px);
+}
+
+.modal-btn-primary:disabled {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-color: var(--border-light);
+    cursor: not-allowed;
+    transform: none;
+}
+
         .subscribers-modal.show {
             opacity: 1;
             visibility: visible;
@@ -731,6 +1031,56 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Environment Tabs Styles - More Subtle */
+        .environment-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            padding: 4px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+
+        .environment-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .environment-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+        }
+
+        .environment-tab.active {
+            color: var(--text-primary);
+            background: var(--bg-card);
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .environment-content {
+            margin-top: 0;
+        }
+
+        .environment-tab-content {
+            display: none;
+        }
+
+        .environment-tab-content.active {
+            display: block;
+        }
+
         .workflow-section {
             background: var(--bg-card);
             border-radius: 8px;
@@ -746,7 +1096,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 4px;
         }
 
         .workflow-title {
@@ -918,7 +1268,7 @@
         .status-section {
             background: var(--bg-secondary);
             border-radius: 12px;
-            padding: 24px;
+            padding: 16px;
             border: none;
             transition: all 0.3s ease;
         }
@@ -927,29 +1277,29 @@
             font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             text-align: center;
-            padding-bottom: 12px;
+            padding-bottom: 8px;
         }
 
         .platforms-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+            gap: 12px;
         }
 
         .platform-status-card {
             background: var(--bg-card);
             border-radius: 12px;
-            padding: 20px 16px;
+            padding: 16px 12px;
             text-align: center;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            height: 180px;
+            gap: 8px;
+            height: 160px;
             justify-content: space-between;
             position: relative;
         }
@@ -961,9 +1311,6 @@
             height: 32px;
             flex-shrink: 0;
         }
-
-        
-
 
         .platform-name {
             font-size: 14px;
@@ -1019,6 +1366,110 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
+        /* NEW: Ended Status Container */
+        .ended-status-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .ended-status-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-winner-btn {
+            background: linear-gradient(135deg, var(--accent-orange) 0%, #d97706 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .select-winner-btn:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, var(--accent-orange) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Winner Selected State */
+        .winner-selected-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .winner-selected-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+  .winner-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;  /* <-- Add this if not present */
+}
+
+.winner-display {
+    display: flex;
+    align-items: center;  /* <-- This should align them vertically */
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+        .winner-display:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+
+        .winner-badge {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+.winner-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 20px;  /* <-- Add this to match badge height */
+}
 
         .platform-warning-indicator {
             position: absolute;
@@ -1087,12 +1538,19 @@
             margin-top: 4px;
         }
 
-        .winner-badge {
-            margin-top: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.winner-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;  /* <-- Add this if not present */
+}
 
         .winner-section {
             display: flex;
@@ -1133,19 +1591,50 @@
 
         /* Mobile Responsive Styles for New Workflow */
         @media (max-width: 768px) {
+            .workflow-section {
+                padding: 16px;
+            }
+            
+            .workflow-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            
+            .environment-tabs {
+                align-self: stretch;
+            }
+            
+            .environment-tab {
+                padding: 8px 12px;
+                font-size: 11px;
+                min-width: 60px;
+            }
+            
+            .status-section {
+                padding: 12px;
+            }
+            
+            .status-section-title {
+                margin-bottom: 8px;
+                padding-bottom: 6px;
+            }
+            
             .workflow-status-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 16px;
             }
             
             .platforms-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 8px;
             }
             
             .platform-status-card {
-                padding: 16px 12px;
-                height: 160px;
+                padding: 12px 10px;
+                height: 140px;
+                gap: 6px;
             }
             
             .platform-icon-container {
@@ -1159,9 +1648,9 @@
             }
             
             .status-btn {
-                padding: 10px 16px;
-                font-size: 12px;
-                min-width: 70px;
+                padding: 8px 12px;
+                font-size: 11px;
+                min-width: 60px;
             }
         }
 
@@ -1178,24 +1667,18 @@
 
         /* Section header with action button */
         .status-section-header-with-action {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .status-section-header-with-action .status-section-title {
             margin-bottom: 0;
-            flex-shrink: 1;
             padding-bottom: 0;
-        }
-
-        .status-section-header-with-action {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: nowrap;
+            text-align: center;
+            flex: 1;
+            margin-left: 100px;
         }
 
         .status-section-header-with-action .status-btn {
@@ -1205,10 +1688,15 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            flex-shrink: 0;
-            margin-left: 16px;
             min-width: 80px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .status-section-header-with-action {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
         }
 
         /* Disabled start button */
@@ -1230,13 +1718,15 @@
         @media (max-width: 768px) {
             .status-section-header-with-action {
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px;
                 align-items: stretch;
+                margin-bottom: 8px;
             }
             
             .status-section-header-with-action .status-btn {
-                padding: 10px 16px;
+                padding: 8px 16px;
                 font-size: 12px;
+                margin-left: 0;
             }
         }
 
@@ -1324,155 +1814,16 @@
             color: var(--text-secondary);
         }
 
-        /* Updated Winner Card Styles */
-.platform-status-card.winner-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    position: relative;
-    overflow: visible;
-    justify-content: space-between;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-/* Remove all existing .ended-status-btn rules and replace with this single consolidated version */
-
-.ended-status-btn {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-top: auto;
-    background: var(--bg-secondary);
-    border: none;
-    border-radius: 20px;
-    padding: 8px 20px;  /* Match other status buttons */
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 120px;
-    font-size: 13px;    /* ADD: Match other status buttons */
-    font-weight: 600;   /* ADD: Match other status buttons */
-    text-transform: uppercase;  /* ADD: Match other status buttons */
-    letter-spacing: 0.5px;      /* ADD: Match other status buttons */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);  /* Match other status buttons */
-    /* REMOVE: height: auto; line-height: normal; - these were causing issues */
-}
-
-.ended-status-btn:hover {
-    background: var(--bg-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);  /* Match other status button hovers */
-}
-
-.ended-status-btn:active {
-    transform: translateY(0);
-}
-
-.ended-status-text {
-    font-size: 13px;    /* Match button font-size */
-    font-weight: 600;   /* Match button font-weight */
-    color: var(--text-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.variant-winner-badge {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-}
-
-.ended-status-btn:hover .ended-status-text {
-    color: var(--accent-blue);
-}
-
-/* Dark theme adjustments */
-[data-theme="dark"] .ended-status-btn {
-    background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .ended-status-btn:hover {
-    background: var(--bg-hover);
-}
-
-[data-theme="dark"] .variant-winner-badge {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-}
-
-[data-theme="dark"] .ended-status-btn:hover .ended-status-text {
-    color: var(--accent-blue);
-}
-
-.ended-status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-top: auto;
-}
-
-
-/* Updated Winner Card Styles */
-.platform-status-card.winner-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    position: relative;
-    overflow: visible;
-    justify-content: space-between;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-/* Remove card hover - only button should have hover */
-.platform-status-card.winner-card:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: var(--border-color);
-}
-
-/* Dark theme adjustments */
-[data-theme="dark"] .ended-status-btn {
-    background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .ended-status-btn:hover {
-    background: var(--bg-hover);
-}
-
-
-[data-theme="dark"] .variant-winner-badge {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-}
-
-/* Dark theme adjustments */
-
-[data-theme="dark"] .ended-status-text {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .variant-winner-badge {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-}
-
-[data-theme="dark"] .ended-status-btn:hover .ended-status-text {
-    color: var(--accent-blue);
-}
-
-
-/* Dark theme adjustments */
-[data-theme="dark"] .ended-status-text {
-    color: var(--text-primary);
-}
-
+        /* In Review status style */
+        .status-in-review-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f59e0b;   
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 0;
+            text-align: center;
+        }
 
         .task-description {
             color: var(--text-muted);
@@ -1630,8 +1981,6 @@
     align-items: center; /* Add this */
 }
 
-
-
 .warning-btn-inline {
     width: 20px;
     height: 20px;
@@ -1701,8 +2050,6 @@
         gap: 6px;
     }
 }
-
-
 
         /* For single sections in tabs, show content only when expanded or when no-toggle */
         .tab-content .section.expanded .section-content,
@@ -2184,8 +2531,6 @@
     transform: scale(0.95);
 }
 
-
-
 .platform-status-card.has-warning:hover {
     /* Same hover effect as regular cards */
     transform: translateY(-2px);
@@ -2313,12 +2658,12 @@
             
             .variants-container {
                 flex-direction: column;
-                gap: 24px;
+                gap: 20px;
             }
             
             .workflow-steps {
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
             }
             
             .workflow-steps::before {
@@ -2327,15 +2672,15 @@
             
             .workflow-metrics {
                 flex-direction: column;
-                gap: 6px;
+                gap: 4px;
             }
             
             .metric {
-                padding: 8px 6px;
+                padding: 6px 4px;
             }
             
             .metric-value {
-                font-size: 14px;
+                font-size: 12px;
             }
             
             .spaces-list {
@@ -2354,7 +2699,7 @@
             /* Mobile styles for Experiment Isolation */
             .assignment-grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 12px;
             }
 
             .assignment-divider {
@@ -2500,95 +2845,97 @@
         <div class="workflow-section">
             <div class="workflow-header">
                 <h3 class="workflow-title">Experiment Workflow</h3>
+                <!-- Environment Tabs moved to header -->
+                <div class="environment-tabs">
+                    <div class="environment-tab active" data-environment="production">
+                        Production
+                    </div>
+                    <div class="environment-tab" data-environment="stage">
+                        Stage
+                    </div>
+                </div>
             </div>
             
-            <!-- Platform Grid -->
-            <div class="workflow-status-grid">
-                <!-- Production Section -->
-
-                <div class="status-section">
-
-                    <div class="status-section-header-with-action">
-                        <h4 class="status-section-title">Production Environment</h4>
-                        <button class="status-btn status-btn-approve">Approve</button>
-                    </div>
-                    <div class="platforms-grid">
-
-                        <div class="platform-status-card winner-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                                </svg>
-                            </div>
-                            <div class="platform-name">Web</div>
-                        <button class="ended-status-btn">
-                            <span class="ended-status-text">ENDED</span>
-                            <span class="variant-winner-badge">B</span>
-                        </button>
+            <!-- Tab Content Areas -->
+            <div class="environment-content">
+                <!-- Production Environment Content -->
+                <div class="environment-tab-content active" id="production-content">
+                    <div class="status-section">
+                        <div class="status-section-header-with-action">
+                            <h4 class="status-section-title">Production Environment</h4>
+                            <button class="status-btn status-btn-approve" id="approve-btn">Approve</button>
                         </div>
-                        
-                        <!-- Enhanced Android Card in Stage -->
-                        <div class="platform-status-card enhanced-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-11.301c.0998-.2489-.0997-.4985-.3986-.4985H6.9232c-.0997 0-.1993.0997-.1993.1992 0 .0997.0898.1993.1993.1993h9.9802L15.3929 4.68H4.6395c-.3986 0-.6477.2489-.6477.6476v11.3016c0 .3987.2491.6476.6477.6476h13.2637c.3986 0 .6477-.2489.6477-.6476V5.2275c-.0001-.5514-.4481-1.0002-.9999-1.0002" />
-                                </svg>
+                        <div class="platforms-grid">
+                            <div class="platform-status-card" id="web-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                                    </svg>
+                                </div>
+                                <div class="platform-name">Web</div>
+                                <span class="status-in-review-label" id="web-status">In Review</span>
                             </div>
-                            <div class="platform-name-with-warning">
-                                <button class="warning-btn-inline" title="Android platform has conflicts">!</button>
-                                <span class="platform-name">Android</span>
+                            
+                            <div class="platform-status-card enhanced-card" id="android-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-11.301c.0998-.2489-.0997-.4985-.3986-.4985H6.9232c-.0997 0-.1993.0997-.1993.1992 0 .0997.0898.1993.1993.1993h9.9802L15.3929 4.68H4.6395c-.3986 0-.6477.2489-.6477.6476v11.3016c0 .3987.2491.6476.6477.6476h13.2637c.3986 0 .6477-.2489.6477-.6476V5.2275c-.0001-.5514-.4481-1.0002-.9999-1.0002" />
+                                    </svg>
+                                </div>
+                                <div class="platform-name-with-warning">
+                                    <button class="warning-btn-inline" title="Android platform has conflicts">!</button>
+                                    <span class="platform-name">Android</span>
+                                </div>
+                                <span class="status-in-review-label" id="android-status">In Review</span>
                             </div>
-                            <button class="status-btn status-btn-stop">Stop</button>
+                            
+                            <div class="platform-status-card" id="ios-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                                    </svg>
+                                </div>
+                                <div class="platform-name">iOS</div>
+                                <span class="status-in-review-label" id="ios-status">In Review</span>
+                            </div>
                         </div>
-                        
-                        <div class="platform-status-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                                </svg>
-                            </div>
-                            <div class="platform-name">iOS</div>
-                            <button class="status-btn status-btn-start">Start</button>
-                        </div>
-
-
                     </div>
                 </div>
                 
-                <!-- Stage Section -->
-                <div class="status-section">
-                    <h4 class="status-section-title">Stage Environment</h4>
-                    <div class="platforms-grid">
-
-                      <!-- Enhanced iOS Card in Production -->
-                        <div class="platform-status-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                                </svg>
+                <!-- Stage Environment Content -->
+                <div class="environment-tab-content" id="stage-content">
+                    <div class="status-section">
+                        <h4 class="status-section-title">Stage Environment</h4>
+                        <div class="platforms-grid">
+                            <div class="platform-status-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                                    </svg>
+                                </div>
+                                <div class="platform-name">iOS</div>
+                                <span class="status-running-label">Running</span>
                             </div>
-                            <div class="platform-name">iOS</div>
-                           <span class="status-running-label">Running</span>
-                        </div>
-                        
-                        <div class="platform-status-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                                </svg>
+                            
+                            <div class="platform-status-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                                    </svg>
+                                </div>
+                                <div class="platform-name">Web</div>
+                                <span class="status-running-label">Running</span>
                             </div>
-                            <div class="platform-name">Web</div>
-                            <span class="status-running-label">Running</span>
-                        </div>
-                        
-                        <div class="platform-status-card">
-                            <div class="platform-icon-container">
-                                <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-11.301c.0998-.2489-.0997-.4985-.3986-.4985H6.9232c-.0997 0-.1993.0997-.1993.1992 0 .0997.0898.1993.1993.1993h9.9802L15.3929 4.68H4.6395c-.3986 0-.6477.2489-.6477.6476v11.3016c0 .3987.2491.6476.6477.6476h13.2637c.3986 0 .6477-.2489.6477-.6476V5.2275c-.0001-.5514-.4481-1.0002-.9999-1.0002" />
-                                </svg>
+                            
+                            <div class="platform-status-card">
+                                <div class="platform-icon-container">
+                                    <svg class="platform-icon" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-11.301c.0998-.2489-.0997-.4985-.3986-.4985H6.9232c-.0997 0-.1993.0997-.1993.1992 0 .0997.0898.1993.1993.1993h9.9802L15.3929 4.68H4.6395c-.3986 0-.6477.2489-.6477.6476v11.3016c0 .3987.2491.6476.6477.6476h13.2637c.3986 0 .6477-.2489.6477-.6476V5.2275c-.0001-.5514-.4481-1.0002-.9999-1.0002" />
+                                    </svg>
+                                </div>
+                                <div class="platform-name">Android</div>
+                                <span class="status-running-label">Running</span>
                             </div>
-                            <div class="platform-name">Android</div>
-                           <span class="status-running-label">Running</span>
                         </div>
                     </div>
                 </div>
@@ -3204,6 +3551,17 @@
         </div>
     </div>
 
+    <!-- Variant Selection Modal -->
+    <div class="variant-override-modal" id="variant-selection-modal">
+        <div class="variant-override-modal-content">
+            <div class="variant-override-modal-header">
+                <h3 class="variant-override-modal-title">Select Winning Variant</h3>
+                <button class="variant-override-modal-close" id="close-variant-modal">×</button>
+            </div>
+            <div class="variant-override-content"></div>
+        </div>
+    </div>
+
     <script>
         // State management for tabs and sections
         let currentTab = 'workflow';
@@ -3218,6 +3576,9 @@
 
         // Theme management
         let currentTheme = 'light';
+
+        // Workflow state management
+        let workflowStage = 'review'; // 'review', 'approved', 'started', 'stopped'
 
         // Platform data (simulated)
         const platformData = {
@@ -3272,6 +3633,13 @@
         let reportingChart = null;
         let variantsPieChart = null;
 
+        // NEW: Variant selection data
+        const variantLabels = {
+            'A': 'Current Experience',
+            'B': 'New 1ATC Experience', 
+            'C': 'Enhanced 1ATC'
+        };
+
         // Initialize the app
         function init() {
             setupEventListeners();
@@ -3281,6 +3649,7 @@
             setupBannerToggle();
             setupSubscriptionToggle();
             setupThemeToggle();
+            setupWorkflowButtons();
             matchPieChartHeight();
         }
 
@@ -3295,6 +3664,14 @@
         }
 
         function setupEventListeners() {
+            // Environment tab switching
+            document.querySelectorAll('.environment-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const environment = e.target.dataset.environment;
+                    switchEnvironment(environment);
+                });
+            });
+
             // Tab switching
             document.querySelectorAll('.tab-item').forEach(tab => {
                 tab.addEventListener('click', (e) => {
@@ -3327,6 +3704,225 @@
             window.addEventListener('resize', () => {
                 setTimeout(matchPieChartHeight, 100);
             });
+        }
+
+        function setupWorkflowButtons() {
+            const approveBtn = document.getElementById('approve-btn');
+            const webCard = document.getElementById('web-card');
+            const androidCard = document.getElementById('android-card');
+            const iosCard = document.getElementById('ios-card');
+
+            // Approve button click handler
+            approveBtn.addEventListener('click', function() {
+                if (workflowStage === 'review') {
+                    // Change button to show approved text with timestamp
+                    const now = new Date();
+                    const timestamp = now.toLocaleDateString('en-US', { 
+                        month: '2-digit', 
+                        day: '2-digit', 
+                        year: '2-digit' 
+                    });
+                    
+                    // Replace button with greyed out text
+                    const approvedText = document.createElement('span');
+                    approvedText.textContent = `APPROVED ON ${timestamp}`;
+                    approvedText.style.color = 'var(--text-secondary)';
+                    approvedText.style.fontSize = '13px';
+                    approvedText.style.fontWeight = '500';
+                    approvedText.style.textTransform = 'uppercase';
+                    approvedText.style.letterSpacing = '0.5px';
+                    
+                    approveBtn.parentNode.replaceChild(approvedText, approveBtn);
+
+                    // Update all platform cards to show Start buttons
+                    updatePlatformCardStatus(webCard, 'start');
+                    updatePlatformCardStatus(androidCard, 'start');
+                    updatePlatformCardStatus(iosCard, 'start');
+
+                    workflowStage = 'approved';
+                }
+            });
+
+            // Add click handlers to platform cards for Start/Stop buttons
+            setupPlatformCardHandlers(webCard, 'web');
+            setupPlatformCardHandlers(androidCard, 'android');
+            setupPlatformCardHandlers(iosCard, 'ios');
+        }
+
+        // UPDATED: Platform card handlers with new workflow
+        function setupPlatformCardHandlers(card, platform) {
+            card.addEventListener('click', function(e) {
+                const button = e.target.closest('.status-btn');
+                const selectWinnerBtn = e.target.closest('.select-winner-btn');
+                const winnerDisplay = e.target.closest('.winner-display');
+                
+                if (button && button.classList.contains('status-btn-start')) {
+                    // Change Start to Stop
+                    updatePlatformCardStatus(card, 'stop');
+                } else if (button && button.classList.contains('status-btn-stop')) {
+                    // NEW: Change Stop to Ended with select winner button
+                    updatePlatformCardStatus(card, 'ended');
+                } else if (selectWinnerBtn) {
+                    // NEW: Show variant selection modal
+                    e.stopPropagation();
+                    showVariantSelectionModal(card, platform);
+                } else if (winnerDisplay) {
+                    // Allow re-selection of winner
+                    e.stopPropagation();
+                    showVariantSelectionModal(card, platform);
+                }
+            });
+        }
+
+        // UPDATED: Platform card status function with new states
+        function updatePlatformCardStatus(card, status) {
+            const statusElement = card.querySelector('.status-in-review-label, .status-btn, .ended-status-container, .winner-selected-container');
+            
+            if (status === 'start') {
+                statusElement.outerHTML = '<button class="status-btn status-btn-start">Start</button>';
+            } else if (status === 'stop') {
+                statusElement.outerHTML = '<button class="status-btn status-btn-stop">Stop</button>';
+            } else if (status === 'ended') {
+                // NEW: Show ended state with select winner button
+                statusElement.outerHTML = `
+                    <div class="ended-status-container">
+                        <div class="ended-status-label">Ended</div>
+                        <button class="select-winner-btn">Select Winning Variant</button>
+                    </div>
+                `;
+            } else if (status === 'winner-selected') {
+                // NEW: Show winner selected state
+                const winnerData = card.dataset.selectedWinner || 'B';
+                
+                statusElement.outerHTML = `
+                    <div class="winner-selected-container">
+                        <div class="winner-selected-label">Winner Selected</div>
+                        <div class="winner-display">
+                            <div class="winner-badge">${winnerData}</div>
+                            <div class="winner-text">${variantLabels[winnerData]}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Re-setup event handlers after DOM change
+            setupPlatformCardHandlers(card, card.id.split('-')[0]);
+        }
+
+        // NEW: Show variant selection modal
+        function showVariantSelectionModal(card, platform) {
+            const modal = document.getElementById('variant-selection-modal');
+            setupVariantSelectionContent(modal, card, platform);
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // NEW: Setup variant selection modal content
+        function setupVariantSelectionContent(modal, card, platform) {
+            const variants = {
+                'A': {
+                    label: 'A — Current add to cart experience',
+                    description: 'Standard add to cart experience when browsing products from search results.',
+                    color: '#ff6b6b'
+                },
+                'B': {
+                    label: 'B — New 1ATC experience', 
+                    description: 'One-click add to cart functionality when browsing products from search results.',
+                    color: '#4ecdc4',
+                    recommended: true // NEW: Mark as recommended
+                },
+                'C': {
+                    label: 'C — Enhanced 1ATC with quantity selector',
+                    description: 'One-click add to cart with inline quantity selector from search results.',
+                    color: '#9b59b6'
+                }
+            };
+
+            const recommendedVariant = Object.keys(variants).find(v => variants[v].recommended) || 'B';
+            let selectedVariant = recommendedVariant; // Auto-select recommended
+
+            const content = modal.querySelector('.variant-override-content');
+            content.innerHTML = `
+                <div class="recommended-variant-info">
+                    <h4>
+                        <svg class="recommended-icon" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0l2.5 5 5.5.5-4 4 1 5.5L8 12l-5 2.5 1-5.5-4-4L5.5 5 8 0z"/>
+                        </svg>
+                        Recommended Winner
+                    </h4>
+                    <p>Based on performance data, Variant ${recommendedVariant} is recommended as the winning variant.</p>
+                </div>
+                
+                <h4 style="margin-bottom: 16px; color: var(--text-primary); font-size: 16px; font-weight: 600;">Select Winning Variant</h4>
+                
+                <div class="variant-options">
+                    ${Object.keys(variants).map(variant => `
+                        <div class="variant-option ${variant === recommendedVariant ? 'recommended selected' : ''}" data-variant="${variant}">
+                            ${variant === recommendedVariant ? '<div class="recommended-badge">Recommended</div>' : ''}
+                            <div class="variant-radio"></div>
+                            <div class="variant-details">
+                                <div class="variant-label">${variants[variant].label}</div>
+                                <div class="variant-description">${variants[variant].description}</div>
+                            </div>
+                            <div class="variant-badge" style="background: ${variants[variant].color}">${variant}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-secondary" id="cancel-variant-selection">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="confirm-variant-selection">Select Winner</button>
+                </div>
+            `;
+
+            // Add event listeners
+            const variantOptions = content.querySelectorAll('.variant-option');
+            const confirmButton = content.querySelector('#confirm-variant-selection');
+            const cancelButton = content.querySelector('#cancel-variant-selection');
+
+            variantOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    variantOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedVariant = this.dataset.variant;
+                });
+            });
+
+            cancelButton.addEventListener('click', closeVariantSelectionModal);
+
+            confirmButton.addEventListener('click', function() {
+                if (selectedVariant) {
+                    updateCardWithWinner(card, selectedVariant);
+                    closeVariantSelectionModal();
+                }
+            });
+        }
+
+        // NEW: Update card with selected winner
+        function updateCardWithWinner(card, winner) {
+            card.dataset.selectedWinner = winner;
+            updatePlatformCardStatus(card, 'winner-selected');
+        }
+
+        // NEW: Close variant selection modal
+        function closeVariantSelectionModal() {
+            const modal = document.getElementById('variant-selection-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function switchEnvironment(environment) {
+            // Update active environment tab
+            document.querySelectorAll('.environment-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-environment="${environment}"]`).classList.add('active');
+            
+            // Update environment tab content
+            document.querySelectorAll('.environment-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${environment}-content`).classList.add('active');
         }
 
         function switchTab(tabName) {
@@ -3856,11 +4452,32 @@
             `).join('');
         }
 
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
+        // Modal event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modal on outside click
+            document.getElementById('variant-selection-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeVariantSelectionModal();
+                }
+            });
+
+            // Close modal on X click
+            document.getElementById('close-variant-modal').addEventListener('click', closeVariantSelectionModal);
+
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeVariantSelectionModal();
+                }
+            });
+
+            // Initialize when DOM is loaded
+            init();
+        });
 
         // Make functions globally accessible for onclick handlers
         window.toggleTask = toggleTask;
     </script>
 </body>
 </html>
+                
