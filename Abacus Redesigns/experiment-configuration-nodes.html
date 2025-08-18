@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Test Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1650px;
+            width: 100%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .flow-container {
+            position: relative;
+            min-height: 350px;
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .svg-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .node {
+            background: #eef1f5;
+            border-radius: 10px;
+            padding: 12px;
+            min-width: 110px;
+            position: absolute;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            z-index: 2;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .node:hover {
+            transform: translateY(-0.5px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: #e8ecf1;
+        }
+
+        .node-title {
+            font-size: 0.8em;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .node-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .checkbox-item, .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .checkbox-item:hover, .radio-item:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        input[type="checkbox"], input[type="radio"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 0.75em;
+            color: #2d3748;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        input[type="date"], input[type="text"], input[type="number"] {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.8em;
+            width: 100%;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #9ca3af;
+            box-shadow: 0 0 0 1px rgba(156,163,175,0.1);
+        }
+
+        .allocation-input {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .save-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 30px auto 0;
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .save-button:hover {
+            background: #5863cc;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        /* Animated flow dots */
+        @keyframes flow {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
+        }
+
+        .flow-dot {
+            animation: flow 3s linear infinite;
+        }
+
+        /* Node positions */
+        #platform-node { left: 20px; top: 50%; transform: translateY(-50%); }
+        #schedule-start-node { left: 200px; top: 50%; transform: translateY(-50%); }
+        #banner-node { left: 380px; top: 50%; transform: translateY(-50%); }
+        #spaces-node { left: 560px; top: 50%; transform: translateY(-50%); }
+        #login-node { left: 740px; top: 50%; transform: translateY(-50%); }
+        #traffic-node { left: 920px; top: 50%; transform: translateY(-50%); }
+        #variant-a-node { left: 1100px; top: 30%; transform: translateY(-50%); }
+        #variant-b-node { left: 1100px; top: 70%; transform: translateY(-50%); }
+        #schedule-end-node { left: 1350px; top: 50%; transform: translateY(-50%); }
+
+        @media (max-width: 1200px) {
+            .flow-container {
+                overflow-x: scroll;
+                padding-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>A/B Test Configuration</h1>
+        
+        <div class="flow-container">
+            <!-- SVG for connections -->
+            <svg class="svg-connections" viewBox="0 0 1500 350" preserveAspectRatio="none">
+                <!-- Define patterns and markers -->
+                <defs>
+                    <!-- Arrow marker -->
+                    <marker id="arrow" markerWidth="8" markerHeight="8" 
+                            refX="4" refY="4" orient="auto" fill="#9ca3af">
+                        <path d="M 0 0 L 8 4 L 0 8 z" />
+                    </marker>
+                    
+                    <!-- Dot pattern for flow indication -->
+                    <pattern id="dots" x="0" y="0" width="20" height="1" patternUnits="userSpaceOnUse">
+                        <circle cx="5" cy="0.5" r="1.5" fill="#9ca3af"/>
+                        <circle cx="15" cy="0.5" r="1.5" fill="#9ca3af"/>
+                    </pattern>
+                </defs>
+                
+                <!-- Flow indicators using dots and arrows -->
+                <!-- Platform to Schedule Start -->
+                <line x1="130" y1="175" x2="195" y2="175" stroke="url(#dots)" stroke-width="3"/>
+                <path d="M 190 175 L 200 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Schedule Start to Banner -->
+                <line x1="310" y1="175" x2="375" y2="175" stroke="url(#dots)" stroke-width="3"/>
+                <path d="M 370 175 L 380 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Banner to Spaces -->
+                <line x1="490" y1="175" x2="555" y2="175" stroke="url(#dots)" stroke-width="3"/>
+                <path d="M 550 175 L 560 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Spaces to Login -->
+                <line x1="670" y1="175" x2="735" y2="175" stroke="url(#dots)" stroke-width="3"/>
+                <path d="M 730 175 L 740 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Login to Traffic -->
+                <line x1="850" y1="175" x2="915" y2="175" stroke="url(#dots)" stroke-width="3"/>
+                <path d="M 910 175 L 920 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Traffic to Variants (split with smooth curves) -->
+                <circle cx="1030" cy="175" r="4" fill="#667eea" opacity="0.5"/>
+                <path d="M 1030 175 Q 1065 145 1095 105" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+                <path d="M 1090 105 L 1100 105" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <path d="M 1030 175 Q 1065 205 1095 245" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+                <path d="M 1090 245 L 1100 245" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                
+                <!-- Variants to Schedule End (merge with smooth curves) -->
+                <path d="M 1210 105 Q 1280 135 1345 175" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+                <path d="M 1210 245 Q 1280 215 1345 175" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+                <path d="M 1340 175 L 1350 175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                <circle cx="1350" cy="175" r="4" fill="#667eea" opacity="0.5"/>
+            </svg>
+
+            <!-- Platform Node -->
+            <div class="node" id="platform-node">
+                <div class="node-title">Platform</div>
+                <div class="node-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="android" checked>
+                            <label for="android">Android</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="web" checked>
+                            <label for="web">Web</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ios" checked>
+                            <label for="ios">iOS</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Start Node -->
+            <div class="node" id="schedule-start-node">
+                <div class="node-title">Schedule</div>
+                <div class="node-content">
+                    <label for="start-date" style="font-size: 0.75em; text-align: center; display: block;">Start Date</label>
+                    <input type="date" id="start-date" value="2025-04-03">
+                </div>
+            </div>
+
+            <!-- User Banner Node -->
+            <div class="node" id="banner-node">
+                <div class="node-title">User banner</div>
+                <div class="node-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="all-banners" checked>
+                            <label for="all-banners">All banners</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="kroger">
+                            <label for="kroger">Kroger</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bakers">
+                            <label for="bakers">Baker's</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="dillons">
+                            <label for="dillons">Dillons</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="frys">
+                            <label for="frys">Fry's</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spaces Node -->
+            <div class="node" id="spaces-node">
+                <div class="node-title">Spaces</div>
+                <div class="node-content">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="home" checked>
+                            <label for="home">Home</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="search" checked>
+                            <label for="search">Search</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="profile" checked>
+                            <label for="profile">Profile</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="checkout" checked>
+                            <label for="checkout">Checkout</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Must be logged in Node -->
+            <div class="node" id="login-node">
+                <div class="node-title">User Must be<br>logged in</div>
+                <div class="node-content">
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="yes" name="logged-in" checked>
+                            <label for="yes">Yes</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="no" name="logged-in">
+                            <label for="no">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Traffic Allocation Node -->
+            <div class="node" id="traffic-node">
+                <div class="node-title">User Traffic<br>Allocation</div>
+                <div class="node-content">
+                    <input type="number" class="allocation-input" value="100" min="0" max="100">
+                    <span style="text-align: center; font-size: 0.75em; color: #718096;">%</span>
+                </div>
+            </div>
+
+            <!-- Variant A Node -->
+            <div class="node" id="variant-a-node">
+                <div class="node-title">Variant A</div>
+                <div class="node-content">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <input type="number" id="variant-a-input" value="50" min="0" max="100" style="width: 70px; text-align: center;">
+                        <span style="font-size: 0.8em;">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variant B Node -->
+            <div class="node" id="variant-b-node">
+                <div class="node-title">Variant B</div>
+                <div class="node-content">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <input type="number" id="variant-b-input" value="50" min="0" max="100" style="width: 70px; text-align: center;">
+                        <span style="font-size: 0.8em;">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule End Node -->
+            <div class="node" id="schedule-end-node">
+                <div class="node-title">Schedule</div>
+                <div class="node-content">
+                    <label for="end-date" style="font-size: 0.75em; text-align: center; display: block;">End Date</label>
+                    <input type="date" id="end-date" value="2025-04-03">
+                </div>
+            </div>
+        </div>
+
+        <button class="save-button" onclick="saveConfiguration()">Save Configuration</button>
+    </div>
+
+    <script>
+        // Handle "All banners" checkbox
+        document.getElementById('all-banners').addEventListener('change', function() {
+            const bannerCheckboxes = ['kroger', 'bakers', 'dillons', 'frys'];
+            bannerCheckboxes.forEach(id => {
+                document.getElementById(id).checked = this.checked;
+                document.getElementById(id).disabled = this.checked;
+            });
+        });
+
+        // Ensure variant percentages add up to 100
+        const variantAInput = document.getElementById('variant-a-input');
+        const variantBInput = document.getElementById('variant-b-input');
+        
+        [variantAInput, variantBInput].forEach(input => {
+            input.addEventListener('input', function() {
+                const total = parseInt(variantAInput.value || 0) + parseInt(variantBInput.value || 0);
+                if (total > 100) {
+                    this.style.borderColor = '#e53e3e';
+                } else {
+                    this.style.borderColor = '#cbd5e0';
+                }
+            });
+        });
+
+        function saveConfiguration() {
+            const config = {
+                platform: {
+                    android: document.getElementById('android').checked,
+                    web: document.getElementById('web').checked,
+                    ios: document.getElementById('ios').checked
+                },
+                schedule: {
+                    startDate: document.getElementById('start-date').value,
+                    endDate: document.getElementById('end-date').value
+                },
+                userBanner: {
+                    allBanners: document.getElementById('all-banners').checked,
+                    kroger: document.getElementById('kroger').checked,
+                    bakers: document.getElementById('bakers').checked,
+                    dillons: document.getElementById('dillons').checked,
+                    frys: document.getElementById('frys').checked
+                },
+                spaces: {
+                    home: document.getElementById('home').checked,
+                    search: document.getElementById('search').checked,
+                    profile: document.getElementById('profile').checked,
+                    checkout: document.getElementById('checkout').checked
+                },
+                userMustBeLoggedIn: document.querySelector('input[name="logged-in"]:checked').id === 'yes',
+                trafficAllocation: document.querySelector('.allocation-input').value,
+                variants: {
+                    A: variantAInput.value,
+                    B: variantBInput.value
+                }
+            };
+
+            console.log('Configuration saved:', config);
+            
+            // Visual feedback
+            const button = document.querySelector('.save-button');
+            const originalText = button.textContent;
+            button.textContent = 'Saved!';
+            button.style.background = '#48bb78';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '#667eea';
+            }, 2000);
+        }
+
+        // Update SVG connections on window resize
+        function updateConnections() {
+            const svg = document.querySelector('.svg-connections');
+            const container = document.querySelector('.flow-container');
+            
+            // Get actual positions of nodes
+            const nodes = {
+                platform: document.getElementById('platform-node'),
+                scheduleStart: document.getElementById('schedule-start-node'),
+                banner: document.getElementById('banner-node'),
+                spaces: document.getElementById('spaces-node'),
+                login: document.getElementById('login-node'),
+                traffic: document.getElementById('traffic-node'),
+                variantA: document.getElementById('variant-a-node'),
+                variantB: document.getElementById('variant-b-node'),
+                scheduleEnd: document.getElementById('schedule-end-node')
+            };
+
+            // Recalculate connections if needed
+            // This can be expanded to dynamically update SVG paths based on actual node positions
+        }
+
+        window.addEventListener('resize', updateConnections);
+        updateConnections();
+    </script>
+</body>
+</html>
