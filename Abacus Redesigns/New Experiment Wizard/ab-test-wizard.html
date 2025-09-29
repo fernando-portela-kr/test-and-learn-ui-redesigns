@@ -567,6 +567,19 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
+        .btn-warning {
+            background: #c62d00;
+            color: white;
+            border: 1px solid #c62d00;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #a52500;
+            border-color: #a52500;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(198, 45, 0, 0.2);
+        }
+
         .step-indicator {
             color: var(--text-secondary);
             font-size: 13px;
@@ -861,6 +874,144 @@
             border-color: var(--accent-blue);
         }
 
+        /* File Upload Styles */
+        .file-upload {
+            border: 2px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            margin-bottom: 16px;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-blue);
+            background: rgba(25, 118, 210, 0.05);
+        }
+
+        .file-upload.dragover {
+            border-color: var(--accent-blue);
+            background: rgba(25, 118, 210, 0.1);
+        }
+
+        .file-upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+            margin: 0 auto 16px;
+        }
+
+        .file-upload h4 {
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .file-upload p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .file-list {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            background: var(--bg-card);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            color: var(--text-secondary);
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .file-action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .file-action-btn.view {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .file-action-btn.view:hover {
+            background: var(--accent-blue-hover);
+        }
+
+        .file-action-btn.delete {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .file-action-btn.delete:hover {
+            background: #b91c1c;
+        }
+
+        .upload-progress {
+            margin-top: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            transition: width 0.3s ease;
+        }
+
+        .upload-status {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
 
     </style>
 </head>
@@ -903,6 +1054,10 @@
                     </div>
                     <div class="progress-step" data-step="7">
                         <div class="progress-step-indicator">7</div>
+                        <div class="progress-step-label">Resources</div>
+                    </div>
+                    <div class="progress-step" data-step="8">
+                        <div class="progress-step-indicator">8</div>
                         <div class="progress-step-label">Review</div>
                     </div>
                 </div>
@@ -1347,22 +1502,34 @@
             <div class="form-group">
                 <label class="form-label">Banner Selection</label>
                 <div class="option-description">Select which banners will run this experiment. Web platform division and store filtering options are available through AMP.</div>
-                <div class="multi-select-container" style="margin-bottom: 8px;">
-                    <select class="form-select" id="banner-select" onchange="handleBannerSelectChange(this.value); this.value='';">
-                        <option value="">Select Banner...</option>
-                    </select>
+                <div class="banners-grid">
+                    <div class="banner-item">
+                        <input type="checkbox" class="banner-checkbox" id="all-banners" checked>
+                        <label for="all-banners">All Banners</label>
+                    </div>
+                    <div class="individual-banners hidden">
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Kroger</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Baker's</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> City Market</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Dillons</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Food 4 Less</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Foods Co</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fred Meyer</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fry's</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Gerbes</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Harris Teeter</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Jay C</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> King Soopers</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Mariano's</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Metro Market</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Owen's</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pay Less</div>
+                        <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pick 'n Save</div>
+                    </div>
                 </div>
-                <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px; background: var(--bg-input);"></div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Location(s)/URL</label>
-                <div class="multi-select-container" style="margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 8px;">
-                    <input type="text" class="form-input" id="targeting-url-input" placeholder="Add URL..." onkeydown="if(event.key==='Enter'){ addTargetingUrlFromInput(); event.preventDefault(); }">
-                    <button type="button" class="btn" id="add-targeting-url-btn" onclick="addTargetingUrlFromInput()">Add</button>
-                </div>
-                <div class="bubble-tags-container" id="targeting-urls-tags" style="min-height: 24px; padding: 4px; border-radius: 4px; background: var(--bg-input);"></div>
-            </div>
+
         </div>
 
         <!-- Step 6: Configuration -->
@@ -1374,11 +1541,10 @@
                 <!-- Card 1: User Traffic Allocation -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">User Traffic Allocation</div>
+                        <div class="card-title">User Traffic Allocation Percentage <span style="color:#dc2626">*</span></div>
                         <div class="card-subtitle">Specify the percentage of eligible users that can participate in the experiment.</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">User Traffic Allocation (%)</label>
                         <input type="number" class="form-input" id="traffic-allocation" value="100" min="1" max="100" placeholder="Enter percentage between 1-100">
                         <div class="form-error">Please enter a traffic allocation percentage between 1 and 100</div>
                     </div>
@@ -1391,7 +1557,6 @@
                         <div class="card-subtitle">Select the spaces where this experiment will run to prevent conflicts.</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Spaces</label>
                         <div class="multi-select-container" style="margin-bottom: 8px;">
                             <select class="form-select" id="spaces-select" onchange="addSpace(this.value); this.value='';">
                                 <option value="">Add Space...</option>
@@ -1414,15 +1579,65 @@
                         <div class="card-subtitle">Assign a technical owner for this experiment.</div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Technical Owner</label>
                         <input type="text" class="form-input" id="technical-owner" placeholder="Enter technical owner name...">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 7: Review & Submit -->
+        <!-- Step 7: Resources & Files -->
         <div class="step-content" id="step-7">
+            <h2 class="step-title">Resources & Files</h2>
+            <p class="step-description">Upload supporting files and specify target URLs for your experiment.</p>
+
+            <div class="card-layout">
+                <!-- Card 1: Target URLs -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Target URLs</div>
+                        <div class="card-subtitle">Specify page locations where the experiment will run</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="multi-select-container" style="display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" class="form-input" id="targeting-url-input" placeholder="Add URL..." onkeydown="if(event.key==='Enter'){ addTargetingUrlFromInput(); event.preventDefault(); }">
+                            <button type="button" class="btn" id="add-targeting-url-btn" onclick="addTargetingUrlFromInput()">Add</button>
+                        </div>
+                        <div class="bubble-tags-container" id="targeting-urls-tags" style="min-height: 24px; padding: 4px; border-radius: 4px; background: var(--bg-input);"></div>
+                    </div>
+                </div>
+
+                <!-- Card 2: File Attachments -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Attachments</div>
+                        <div class="card-subtitle">Upload supporting files for your experiment</div>
+                    </div>
+                    <div class="file-upload" id="file-upload-area" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" multiple style="display: none;" onchange="handleFileSelect(event)">
+                        <svg class="file-upload-icon" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                        </svg>
+                        <h4>Drag and drop files here</h4>
+                        <p>or</p>
+                        <button type="button" class="btn btn-primary" onclick="event.stopPropagation(); document.getElementById('file-input').click()">Browse Files</button>
+                        <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">Supports JPG, PNG, MD, PDFs, and Microsoft suite files within a 40MB limit.</p>
+                    </div>
+                    <div id="upload-progress" class="upload-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="upload-status" id="upload-status">Uploading...</div>
+                    </div>
+                    <div id="file-list" class="file-list">
+                        <p id="no-files-message" style="color: var(--text-secondary); font-style: italic;">No files have been uploaded yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 8: Review & Submit -->
+        <div class="step-content" id="step-8">
             <h2 class="step-title">Review & Submit</h2>
             <p class="step-description">Review your experiment configuration before submitting for approval.</p>
 
@@ -1431,8 +1646,8 @@
             </div>
 
             <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
-                <button class="btn btn-secondary" id="abex-collision-btn" onclick="showAbexCollisionOverlay()" style="display: none; min-height: 44px; font-size: 14px; padding: 12px 24px; align-items: center;">
-                    Check for Collisions
+                <button class="btn btn-warning" id="abex-collision-btn" onclick="showAbexCollisionOverlay()" style="display: none; min-height: 44px; font-size: 14px; padding: 12px 24px; align-items: center;">
+                    Three experiment collisions found!
                 </button>
 
                 <button class="btn btn-success" onclick="submitExperiment()" style="min-height: 44px; font-size: 14px; padding: 12px 24px; display: inline-flex; align-items: center;">
@@ -1511,7 +1726,7 @@
     <script>
         // Wizard state
         let currentStep = 1;
-        let totalSteps = 7;
+        let totalSteps = 8;
         let variants = [];
 
 
@@ -1550,6 +1765,7 @@
             variantDistribution: '',
             spaces: [],
             technicalOwner: '',
+            uploadedFiles: [],
             // ABEX-specific fields
             scienceId: '',
             predictedStartDate: DEFAULT_START_DATE,
@@ -1569,8 +1785,7 @@
             updateProgressBar();
             renderSpacesBubbleTags();
             renderTargetingUrlsBubbleTags();
-            renderBannersBubbleTags();
-            renderBannerSelectOptions();
+
 
             renderSecondaryMetricsBubbleTags();
             renderSecondaryMetricOptions();
@@ -1592,67 +1807,61 @@
             'Ralphs', 'Roundy\'s', 'Ruler', 'Smith\'s'
         ];
 
-        // Banner toggle functionality
+        // Banner toggle functionality (matches ABACUS detail page implementation)
         function setupBannerToggle() {
-            renderSecondaryMetricsBubbleTags();
-            renderSecondaryMetricOptions();
-
             const allBannersCheckbox = document.getElementById('all-banners');
-            const individualBanners = document.getElementById('individual-banners');
+            const individualBanners = document.querySelector('.individual-banners');
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
 
-            if (allBannersCheckbox && individualBanners) {
-                allBannersCheckbox.addEventListener('change', function() {
-                    toggleBannerDisplay(this.checked);
-                    updateBannerFormData();
-                });
+            if (!allBannersCheckbox) return;
 
-                // Set up individual banner checkboxes
-                setupIndividualBannerListeners();
-            }
-        }
+            // When "All Banners" is toggled
+            allBannersCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    individualBanners.classList.add('hidden');
+                    // Check all individual banners when "All Banners" is checked
+                    individualCheckboxes.forEach(cb => cb.checked = true);
+                    // Update form data to reflect "All Banners" selection
+                    formData.banners = ['All Banners'];
+                } else {
+                    individualBanners.classList.remove('hidden');
+                    // Update form data to reflect individual banner selections
+                    updateBannerFormDataFromCheckboxes();
+                }
+            });
 
-        // Toggle banner display based on "All Banners" checkbox state (match detail page behavior)
-        function toggleBannerDisplay(allBannersChecked) {
-            const individualBanners = document.getElementById('individual-banners');
-            if (!individualBanners) return;
-            const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
-            if (allBannersChecked) {
-                individualBanners.classList.add('hidden');
-                // Check all individual banners when "All Banners" is selected
-                bannerCheckboxes.forEach(cb => cb.checked = true);
-            } else {
-                individualBanners.classList.remove('hidden');
-            }
-        }
+            // When individual banners are toggled
+            individualCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const allChecked = Array.from(individualCheckboxes).every(cb => cb.checked);
 
-        // Set up event listeners for individual banner checkboxes
-        function setupIndividualBannerListeners() {
-            const individualBanners = document.getElementById('individual-banners');
-            if (individualBanners) {
-                const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
-                bannerCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', updateBannerFormData);
-                });
-            }
-        }
-
-        // Update form data based on banner selections
-        function updateBannerFormData() {
-            const allBannersCheckbox = document.getElementById('all-banners');
-            const individualBanners = document.getElementById('individual-banners');
-
-            if (allBannersCheckbox && allBannersCheckbox.checked) {
-                formData.banners = ['All Banners'];
-            } else if (individualBanners) {
-                const selectedBanners = [];
-                const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
-                bannerCheckboxes.forEach((checkbox, index) => {
-                    if (checkbox.checked && bannerNames[index]) {
-                        selectedBanners.push(bannerNames[index]);
+                    if (allChecked) {
+                        // If all individual banners are checked, check "All Banners" and hide individuals
+                        allBannersCheckbox.checked = true;
+                        individualBanners.classList.add('hidden');
+                        formData.banners = ['All Banners'];
+                    } else {
+                        // If not all are checked, ensure "All Banners" is unchecked
+                        allBannersCheckbox.checked = false;
+                        updateBannerFormDataFromCheckboxes();
                     }
                 });
-                formData.banners = selectedBanners;
-            }
+            });
+        }
+
+        function updateBannerFormDataFromCheckboxes() {
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+            const selectedBanners = [];
+
+            individualCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    const bannerName = cb.parentElement.textContent.trim();
+                    selectedBanners.push(bannerName);
+                }
+            });
+
+            // If no banners are selected, default to "All Banners"
+            formData.banners = selectedBanners.length > 0 ? selectedBanners : ['All Banners'];
         }
 
         // Experiment type handlers for authentication requirement
@@ -1995,12 +2204,31 @@
                         <div class="form-group abex-targeting">
                             <label class="form-label">Banner Selection</label>
                             <div class="option-description">Select which banners will run this experiment. Web platform division and store filtering options are available through AMP.</div>
-                            <div class="multi-select-container" style="margin-bottom: 8px;">
-                                <select class="form-select" id="banner-select" style="width: 100%;" onchange="handleBannerSelectChange(this.value); this.value='';">
-                                    <option value="">Select Banner...</option>
-                                </select>
+                            <div class="banners-grid">
+                                <div class="banner-item">
+                                    <input type="checkbox" class="banner-checkbox" id="all-banners" checked>
+                                    <label for="all-banners">All Banners</label>
+                                </div>
+                                <div class="individual-banners hidden">
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Kroger</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Baker's</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> City Market</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Dillons</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Food 4 Less</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Foods Co</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fred Meyer</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fry's</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Gerbes</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Harris Teeter</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Jay C</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> King Soopers</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Mariano's</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Metro Market</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Owen's</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pay Less</div>
+                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pick 'n Save</div>
+                                </div>
                             </div>
-                            <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;"></div>
                         </div>
 
                         <div class="form-group abex-targeting">
@@ -2045,8 +2273,7 @@
 
             // Initialize ABEX dynamic UI after rendering
             setTimeout(() => {
-                renderBannersBubbleTags();
-                renderBannerSelectOptions();
+                setupBannerToggle();
                 applyAbexDateTypeToLabels();
                 applyDateDefaultsToInputs();
             }, 0);
@@ -2180,7 +2407,164 @@
             renderTargetingUrlsBubbleTags();
         }
 
+        // File upload functionality
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => uploadFile(file));
+        }
 
+        function uploadFile(file) {
+            // Validate file size (40MB limit)
+            const maxSize = 40 * 1024 * 1024; // 40MB in bytes
+            if (file.size > maxSize) {
+                alert(`File "${file.name}" is too large. Maximum file size is 40MB.`);
+                return;
+            }
+
+            // Validate file type
+            const allowedTypes = [
+                'image/jpeg', 'image/jpg', 'image/png',
+                'text/markdown', 'application/pdf',
+                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                alert(`File type "${file.type}" is not supported. Please upload JPG, PNG, MD, PDF, or Microsoft Office files.`);
+                return;
+            }
+
+            // Show upload progress
+            showUploadProgress();
+
+            // Simulate file upload (in real implementation, this would be an actual upload)
+            simulateFileUpload(file);
+        }
+
+        function simulateFileUpload(file) {
+            const progressFill = document.getElementById('progress-fill');
+            const uploadStatus = document.getElementById('upload-status');
+            let progress = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+
+                    // Add file to uploaded files
+                    const fileData = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        uploadDate: new Date().toISOString()
+                    };
+
+                    formData.uploadedFiles.push(fileData);
+                    hideUploadProgress();
+                    renderFileList();
+                }
+
+                progressFill.style.width = `${progress}%`;
+                uploadStatus.textContent = progress < 100 ? `Uploading ${file.name}... ${Math.round(progress)}%` : 'Upload complete!';
+            }, 100);
+        }
+
+        function showUploadProgress() {
+            document.getElementById('upload-progress').style.display = 'block';
+            document.getElementById('progress-fill').style.width = '0%';
+        }
+
+        function hideUploadProgress() {
+            setTimeout(() => {
+                document.getElementById('upload-progress').style.display = 'none';
+            }, 1000);
+        }
+
+        function renderFileList() {
+            const fileList = document.getElementById('file-list');
+            const noFilesMessage = document.getElementById('no-files-message');
+
+            if (formData.uploadedFiles.length === 0) {
+                noFilesMessage.style.display = 'block';
+                return;
+            }
+
+            noFilesMessage.style.display = 'none';
+
+            const filesHtml = formData.uploadedFiles.map(file => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <svg class="file-icon" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4 2a1 1 0 0 1 1-1h3.5v2A2 2 0 0 0 10.5 5h2v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2z"/>
+                        </svg>
+                        <div class="file-details">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-meta">${formatFileSize(file.size)} • ${formatUploadDate(file.uploadDate)}</div>
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-action-btn view" onclick="viewFile('${file.id}')">View</button>
+                        <button class="file-action-btn delete" onclick="deleteFile('${file.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            fileList.innerHTML = `${filesHtml}`;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatUploadDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        function viewFile(fileId) {
+            const file = formData.uploadedFiles.find(f => f.id == fileId);
+            if (file) {
+                alert(`Viewing file: ${file.name}\n\nIn a real implementation, this would open the file for viewing.`);
+            }
+        }
+
+        function deleteFile(fileId) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                formData.uploadedFiles = formData.uploadedFiles.filter(f => f.id != fileId);
+                renderFileList();
+            }
+        }
+
+        // Drag and drop functionality
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('file-upload-area');
+            if (!uploadArea) return;
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+
+                const files = Array.from(e.dataTransfer.files);
+                files.forEach(file => uploadFile(file));
+            });
+        }
 
         // Remove space from selected spaces
         function removeSpace(space) {
@@ -2190,75 +2574,7 @@
 
         // Render spaces bubble tags
 
-        // Banners (multi-entry) helpers with special "All Banners" handling
-        function renderBannersBubbleTags() {
-            const container = document.getElementById('banners-tags');
-            if (!container) return;
-            const banners = formData.banners || [];
-            container.innerHTML = (banners || []).map(b => createBubbleTag(b, `removeBanner('${b}')`)).join('');
-        }
-        function addBanner(name) {
-            const value = (name || '').trim();
-            if (!value) return;
-            const isAll = value.toLowerCase() === 'all banners';
-            if (isAll) {
-                formData.banners = ['All Banners'];
-            } else {
-                formData.banners = (formData.banners || []).filter(b => b !== 'All Banners');
-                if (!formData.banners.includes(value)) {
-                    formData.banners.push(value);
-                }
-            }
-            renderBannersBubbleTags();
-            renderBannerSelectOptions();
-        }
-        function addBannerFromInput() {
-            const input = document.getElementById('banner-input');
-            if (!input) return;
-            const value = input.value.trim();
-            if (value) {
-                addBanner(value);
-                input.value = '';
-            }
-        }
-        function removeBanner(name) {
-            formData.banners = (formData.banners || []).filter(b => b !== name);
-            renderBannersBubbleTags();
-            renderBannerSelectOptions();
-        }
 
-        const predefinedBanners = [
-            'All Banners',
-            "Kroger",
-            "Baker's",
-            "City Market",
-            "Dillons",
-            "Food 4 Less",
-            "Foods Co",
-            "Fred Meyer",
-            "Fry's"
-        ];
-        function renderBannerSelectOptions() {
-            const select = document.getElementById('banner-select');
-            if (!select) return;
-            const selected = formData.banners || [];
-            // Build options in the exact required order, excluding already selected banners
-            const options = ['<option value="">Select Banner...</option>'];
-            predefinedBanners.forEach(name => {
-                const isSelected = selected.includes(name);
-                if (!isSelected) {
-                    options.push(`<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`);
-                }
-            });
-            select.innerHTML = options.join('');
-            select.disabled = options.length <= 1; // only placeholder
-        }
-        function handleBannerSelectChange(value) {
-            if (!value) return;
-            addBanner(value);
-            // Reset options after selection
-            renderBannerSelectOptions();
-        }
 
 
         // Secondary Metrics (multi-entry) helpers
@@ -2393,36 +2709,40 @@
                             <div class="card-title">Banner Selection</div>
                             <div class="card-subtitle">Choose participating stores</div>
                         </div>
-                        <div class="input-group" style="margin-bottom: 8px;">
-                            <select class="input form-select" id="banner-select" onchange="handleBannerSelectChange(this.value); this.value='';">
-                                <option value="">Select Banner...</option>
-                            </select>
+                        <div class="banners-grid">
+                            <div class="banner-item">
+                                <input type="checkbox" class="banner-checkbox" id="all-banners" ${formData.banners && formData.banners.includes('All Banners') ? 'checked' : ''}>
+                                <label for="all-banners">All Banners</label>
+                            </div>
+                            <div class="individual-banners ${formData.banners && formData.banners.includes('All Banners') ? 'hidden' : ''}">
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Kroger') ? 'checked' : ''}> Kroger</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes("Baker's") ? 'checked' : ''}> Baker's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('City Market') ? 'checked' : ''}> City Market</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Dillons') ? 'checked' : ''}> Dillons</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Food 4 Less') ? 'checked' : ''}> Food 4 Less</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Foods Co') ? 'checked' : ''}> Foods Co</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Fred Meyer') ? 'checked' : ''}> Fred Meyer</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes("Fry's") ? 'checked' : ''}> Fry's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Gerbes') ? 'checked' : ''}> Gerbes</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Harris Teeter') ? 'checked' : ''}> Harris Teeter</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Jay C') ? 'checked' : ''}> Jay C</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('King Soopers') ? 'checked' : ''}> King Soopers</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes("Mariano's") ? 'checked' : ''}> Mariano's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Metro Market') ? 'checked' : ''}> Metro Market</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes("Owen's") ? 'checked' : ''}> Owen's</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes('Pay Less') ? 'checked' : ''}> Pay Less</div>
+                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" ${formData.banners && formData.banners.includes("Pick 'n Save") ? 'checked' : ''}> Pick 'n Save</div>
+                            </div>
                         </div>
-                        <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;"></div>
                     </div>
 
-                    <!-- Target URLs Card -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Target URLs</div>
-                            <div class="card-subtitle">Specify page locations</div>
-                        </div>
-                        <div class="url-input-group">
-                            <input type="text" class="url-input form-input" id="targeting-url-input" placeholder="Add URL..." onkeydown="if(event.key==='Enter'){ addTargetingUrlFromInput(); event.preventDefault(); }">
-                            <button type="button" class="btn" id="add-targeting-url-btn" onclick="addTargetingUrlFromInput()">Add</button>
-                        </div>
-                        <div class="bubble-tags-container" id="targeting-urls-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;">
-                            ${(formData.targetingUrls || []).map(url => createBubbleTag(url, `removeTargetingUrl('${url}')`)).join('')}
-                        </div>
-                    </div>
+
                 </div>
             `;
 
             // Initialize dynamic UI after rendering
             setTimeout(() => {
-                renderBannersBubbleTags();
-                renderBannerSelectOptions();
-                renderTargetingUrlsBubbleTags();
+                setupBannerToggle();
                 applyDateTypeToLabels();
                 applyDateDefaultsToInputs();
             }, 0);
@@ -2455,15 +2775,6 @@
         }
 
 
-        // Render variants
-        function renderVariants() {
-            const container = document.getElementById('variants-container');
-            container.innerHTML = '';
-            const showDeploymentID = isABEXSelected();
-
-            variants.forEach((variant, index) => {
-                const letter = String.fromCharCode(65 + index); // A, B, C, etc.
-
         // Apply default dates to visible inputs if empty
         function applyDateDefaultsToInputs() {
             const setIfEmpty = (id, val) => {
@@ -2475,6 +2786,15 @@
             setIfEmpty('predicted-start-date', formData.predictedStartDate);
             setIfEmpty('predicted-end-date', formData.predictedEndDate);
         }
+
+        // Render variants
+        function renderVariants() {
+            const container = document.getElementById('variants-container');
+            container.innerHTML = '';
+            const showDeploymentID = isABEXSelected();
+
+            variants.forEach((variant, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C, etc.
 
                 const variantDiv = document.createElement('div');
                 variantDiv.className = 'variant-card';
@@ -2501,7 +2821,7 @@
                     <div class="variant-row">
                         <div class="variant-info">
                             <div class="variant-title">Variant ${letter}</div>
-                            <div class="variant-subtitle">${index === 0 ? 'Current Experience (Control)' : 'Treatment Experience'}</div>
+                            <div class="variant-subtitle">${index === 0 ? 'Current Experience (Control)' : 'New Experience'}</div>
                         </div>
                         <div class="variant-inputs">
                             ${!isABEXSelected() ? `
@@ -2706,7 +3026,7 @@
             (function(){
                 const abexBtn = document.getElementById('abex-collision-btn');
                 if (abexBtn) {
-                    abexBtn.style.display = (currentStep === 7) ? 'inline-flex' : 'none';
+                    abexBtn.style.display = (currentStep === 8) ? 'inline-flex' : 'none';
                 }
             })();
 
@@ -2725,6 +3045,13 @@
                     renderSpacesBubbleTags();
                 }, 100);
             } else if (currentStep === 7) {
+                // Resources & Files step - setup file upload functionality
+                setTimeout(() => {
+                    renderTargetingUrlsBubbleTags();
+                    renderFileList();
+                    setupDragAndDrop();
+                }, 100);
+            } else if (currentStep === 8) {
                 generateReview();
             }
         }
@@ -2907,6 +3234,10 @@
                     }
                     // variant-distribution is auto-populated, no need to validate
                     break;
+                case 7:
+                    // Resources & Files step - no required fields, but could add validation if needed
+                    // For example, could require at least one targeting URL
+                    break;
             }
 
             // Check required fields
@@ -2950,12 +3281,7 @@
                         const selectedAbexDateType = document.querySelector('#step-5 input[name="abex-date-type"]:checked');
                         formData.abexDateType = selectedAbexDateType ? selectedAbexDateType.value : formData.abexDateType;
                         formData.maxUsers = document.getElementById('max-users').value;
-                        // Capture any pending banner input before leaving the step
-                        const pendingBannerInputABEX = document.getElementById('banner-input');
-                        if (pendingBannerInputABEX && pendingBannerInputABEX.value.trim()) {
-                            addBanner(pendingBannerInputABEX.value.trim());
-                            pendingBannerInputABEX.value = '';
-                        }
+
                         formData.banners = formData.banners || [];
                         // eligibleDivisions and eligibleCustomerSegments are already updated via the helper functions
                     } else {
@@ -2969,19 +3295,7 @@
                         formData.endDate = document.getElementById('end-date').value;
                         const selectedDateType = document.querySelector('#step-5 input[name="date-type"]:checked');
                         formData.dateType = selectedDateType ? selectedDateType.value : formData.dateType;
-                        // Capture any pending URL in the input before leaving the step
-                        const pendingUrlInput = document.getElementById('targeting-url-input');
-                        if (pendingUrlInput && pendingUrlInput.value.trim()) {
-                            addTargetingUrl(pendingUrlInput.value.trim());
-                            pendingUrlInput.value = '';
-                        }
-                        formData.targetingUrls = formData.targetingUrls || [];
-                        // Capture any pending banner input before leaving the step
-                        const pendingBannerInput = document.getElementById('banner-input');
-                        if (pendingBannerInput && pendingBannerInput.value.trim()) {
-                            addBanner(pendingBannerInput.value.trim());
-                            pendingBannerInput.value = '';
-                        }
+
                         formData.banners = formData.banners || [];
                     }
                     break;
@@ -2989,6 +3303,17 @@
                     formData.trafficAllocation = document.getElementById('traffic-allocation').value;
                     formData.technicalOwner = document.getElementById('technical-owner').value;
                     // Spaces are already managed by the bubble tag functions
+                    break;
+                case 7:
+                    // Resources & Files step
+                    // Capture any pending URL in the input before leaving the step
+                    const pendingUrlInput = document.getElementById('targeting-url-input');
+                    if (pendingUrlInput && pendingUrlInput.value.trim()) {
+                        addTargetingUrl(pendingUrlInput.value.trim());
+                        pendingUrlInput.value = '';
+                    }
+                    formData.targetingUrls = formData.targetingUrls || [];
+                    // Files are already managed by the upload functions
                     break;
             }
         }
@@ -3108,10 +3433,6 @@
                             <span class="review-value">${formData.endDate || 'Not set'}</span>
                         </div>
                         <div class="review-item">
-                            <span class="review-label">Targeting URLs:</span>
-                            <span class="review-value">${(formData.targetingUrls && formData.targetingUrls.length) ? formData.targetingUrls.join(', ') : 'None specified'}</span>
-                        </div>
-                        <div class="review-item">
                             <span class="review-label">Banners:</span>
                             <span class="review-value">${formData.banners.join(', ')}</span>
                         </div>
@@ -3135,6 +3456,18 @@
                     </div>
                 </div>
                 ` : ''}
+
+                <div class="review-section">
+                    <h3 class="review-title">Resources & Files</h3>
+                    <div class="review-item">
+                        <span class="review-label">Targeting URLs:</span>
+                        <span class="review-value">${(formData.targetingUrls && formData.targetingUrls.length) ? formData.targetingUrls.join(', ') : 'None specified'}</span>
+                    </div>
+                    <div class="review-item">
+                        <span class="review-label">Uploaded Files:</span>
+                        <span class="review-value">${formData.uploadedFiles.length > 0 ? formData.uploadedFiles.map(f => f.name).join(', ') : 'No files uploaded'}</span>
+                    </div>
+                </div>
             `;
         }
 

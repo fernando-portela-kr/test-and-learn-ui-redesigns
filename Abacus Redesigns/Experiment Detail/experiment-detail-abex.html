@@ -3028,33 +3028,18 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <div class="card-title">Experiment Dates</div>
-                                            <div class="card-subtitle">Set the planned or scheduled dates for your experiment.</div>
+                                            <div class="card-subtitle">Set the start and end dates for your experiment.</div>
                                         </div>
-                                        <!-- Date Type Radios -->
-                                        <div class="form-grid" style="grid-template-columns: 1fr; gap: 16px; margin-top: 12px;">
-                                            <div class="form-group" id="abex-date-type-group">
-                                                <label class="form-label required">Experiment Date Type</label>
-                                                <div class="inline-options">
-                                                    <div class="checkbox-group">
-                                                        <input type="radio" class="checkbox-input" id="abex-date-type-planned" name="abex-date-type" value="Planned" checked onchange="setAbexDateType('Planned')">
-                                                        <label for="abex-date-type-planned" class="checkbox-label">Planned</label>
-                                                    </div>
-                                                    <div class="checkbox-group">
-                                                        <input type="radio" class="checkbox-input" id="abex-date-type-scheduled" name="abex-date-type" value="Scheduled" onchange="setAbexDateType('Scheduled')">
-                                                        <label for="abex-date-type-scheduled" class="checkbox-label">Scheduled</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <!-- Start/End Dates -->
                                         <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; margin-top: 12px;">
                                             <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; margin-bottom: 0;">
-                                                <label class="form-label required" id="abex-start-date-label">Planned Start Date</label>
+                                                <label class="form-label required" id="abex-start-date-label">Start Date</label>
                                                 <input type="date" class="form-input" id="predicted-start-date" onchange="updateABEXField('predictedStartDate', this.value)">
 
                                             </div>
                                             <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; margin-bottom: 0;">
-                                                <label class="form-label required" id="abex-end-date-label">Planned End Date</label>
+                                                <label class="form-label required" id="abex-end-date-label">End Date</label>
                                                 <input type="date" class="form-input" id="predicted-end-date" onchange="updateABEXField('predictedEndDate', this.value)">
 
                                             </div>
@@ -3082,15 +3067,34 @@
                                             <div class="card-title">Audience Selection</div>
                                             <div class="card-subtitle">Define banners, locations, and audience segments for targeting.</div>
                                         </div>
-                                        <!-- Banner Selection (dropdown multi-select with bubble tags) -->
+                                        <!-- Banner Selection (checkbox-based selection) -->
                                         <div class="form-group">
-                                            <label class="form-label">Banner Selection</label>
-                                            <div class="multi-select-container" style="margin-bottom: 8px;">
-                                                <select class="form-select" id="banners-select" onchange="handleBannerSelectChange(this.value); this.value='';">
-                                                    <option value="">Add Banner...</option>
-                                                </select>
+                                            <label class="form-label">Banner Selection <span style="color:#dc2626">*</span></label>
+                                            <div class="banners-grid">
+                                                <div class="banner-item">
+                                                    <input type="checkbox" class="banner-checkbox" id="all-banners" checked>
+                                                    <label for="all-banners">All Banners</label>
+                                                </div>
+                                                <div class="individual-banners hidden">
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Kroger</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Baker's</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> City Market</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Dillons</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Food 4 Less</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Foods Co</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fred Meyer</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fry's</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Gerbes</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Harris Teeter</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Jay C</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> King Soopers</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Mariano's</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Metro Market</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Owen's</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pay Less</div>
+                                                    <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pick 'n Save</div>
+                                                </div>
                                             </div>
-                                            <div id="banners-tags" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
                                         </div>
 
                                         <!-- Eligible Divisions -->
@@ -3228,13 +3232,13 @@
                             <h4 style="margin-bottom: 20px; color: var(--text-primary); font-size: 16px; font-weight: 600; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">Schedule</h4>
                             <div class="config-grid">
                                 <div class="config-item">
-                                    <div class="config-label">Planned Start Date</div>
+                                    <div class="config-label">Start Date</div>
                                     <div class="date-input">
                                         <input type="date" value="2025-04-25">
                                     </div>
                                 </div>
                                 <div class="config-item">
-                                    <div class="config-label">Planned End Date</div>
+                                    <div class="config-label">End Date</div>
                                     <div class="date-input">
                                         <input type="date" value="2025-05-02">
                                     </div>
@@ -3483,6 +3487,8 @@
 
         function applyReadOnlyUI() {
             isReadOnlyMode = true;
+            // Hide red asterisk required indicators in View Mode (Configuration tab)
+            document.querySelectorAll('#configuration-tab span[style*="color:#dc2626"]').forEach(el => { el.style.visibility = 'hidden'; });
             // Variant percentages -> static
             ['A','B','C'].forEach(k => {
                 const input = document.getElementById(`variant-percent-${k}`);
@@ -3602,11 +3608,11 @@
             // Hide validation/helper messages while read-only
             document.querySelectorAll('.form-error').forEach(el => { el.style.display = 'none'; });
 
-            // Banner Selection -> view mode for multi-select: hide the select, show non-removable tags
+            // Banner Selection -> view mode for checkboxes: disable checkboxes
             try {
                 (function(){
-                    const sel = document.getElementById('banners-select');
-                    if (sel) sel.style.display = 'none';
+                    const bannerCheckboxes = document.querySelectorAll('.banner-checkbox');
+                    bannerCheckboxes.forEach(cb => cb.disabled = true);
                     // Also hide category dropdowns in view mode
                     const pSel = document.getElementById('primary-category-select'); if (pSel) pSel.style.display = 'none';
                     const sSel = document.getElementById('secondary-subcategory-select'); if (sSel) sSel.style.display = 'none';
@@ -3642,6 +3648,8 @@
 
         function applyEditUI() {
             isReadOnlyMode = false;
+            // Show red asterisk required indicators in Edit Mode (Configuration tab)
+            document.querySelectorAll('#configuration-tab span[style*="color:#dc2626"]').forEach(el => { el.style.visibility = 'visible'; });
             // Variant percentages -> show editors, hide static
             ['A','B','C'].forEach(k => {
                 const input = document.getElementById(`variant-percent-${k}`);
@@ -3743,14 +3751,11 @@
 	            })();
 
 
-            // Restore Banner Selection controls in edit mode (multi-select)
+            // Restore Banner Selection controls in edit mode (checkboxes)
             (function(){
-                const sel = document.getElementById('banners-select');
-                if (sel) sel.style.display = '';
+                const bannerCheckboxes = document.querySelectorAll('.banner-checkbox');
+                bannerCheckboxes.forEach(cb => cb.disabled = false);
                 if (typeof renderBannersBubbleTags === 'function') renderBannersBubbleTags();
-                if (typeof renderBannerSelectOptions === 'function') renderBannerSelectOptions();
-
-
             })();
 
             // Allow validation messages to be controlled by logic again
@@ -3767,7 +3772,6 @@
             scienceId: '',
             predictedStartDate: '',
             predictedEndDate: '',
-            abexDateType: 'Planned',
             maxUsers: '',
             eligibleDivisions: [],
             eligibleCustomerSegments: [],
@@ -3978,17 +3982,7 @@
         function updateABEXField(field, value) {
             abexConfig[field] = value;
         }
-        function applyAbexDateTypeToLabels() {
-            const t = abexConfig.abexDateType || 'Planned';
-            const s = document.getElementById('abex-start-date-label');
-            if (s) s.textContent = `${t} Start Date`;
-            const e = document.getElementById('abex-end-date-label');
-            if (e) e.textContent = `${t} End Date`;
-        }
-        function setAbexDateType(type) {
-            abexConfig.abexDateType = type;
-            applyAbexDateTypeToLabels();
-        }
+
 
         function formatNumberWithCommas(x) {
             const num = (x || '').toString().replace(/[^0-9]/g, '');
@@ -4331,7 +4325,6 @@
             hideStandardConfigurationForABEX();
             setupABEXConfiguration();
             setupVariantDeploymentDropdowns();
-            applyAbexDateTypeToLabels();
 
 
             // Pre-populate demo values after dropdowns are ready
@@ -4341,9 +4334,10 @@
 
 
             initCharts();
-            // Initialize banner multi-select
+            // Initialize banner checkboxes
             if (typeof renderBannersBubbleTags === 'function') renderBannersBubbleTags();
-            if (typeof renderBannerSelectOptions === 'function') renderBannerSelectOptions();
+            // Legacy banner checkbox toggle will no-op if elements are absent
+            setupBannerToggle();
             setupSubscriptionToggle();
 
             setupWorkflowButtons();
@@ -4705,102 +4699,102 @@
             "Mariano's", "Metro Market", "Owen's", "Pay Less", "Pick 'n Save"
         ];
 
-        function renderIndividualBanners() {
-            const container = document.getElementById('individual-banners');
-            if (!container) return;
-            container.innerHTML = bannerNames.map(b => `
-                <div class="banner-item">
-                    <input type="checkbox" class="banner-checkbox individual-banner" checked> ${b}
-                </div>
-            `).join('');
-        }
 
-        function toggleBannerDisplay(allChecked) {
-            const individualBanners = document.getElementById('individual-banners');
-            if (!individualBanners) return;
-            const individualCheckboxes = individualBanners.querySelectorAll('.individual-banner');
-            if (allChecked) {
-                individualBanners.classList.add('hidden');
-                individualCheckboxes.forEach(cb => cb.checked = true);
-            } else {
-                individualBanners.classList.remove('hidden');
-            }
-        }
 
         function setupBannerToggle() {
             const allBannersCheckbox = document.getElementById('all-banners');
-            const individualBanners = document.getElementById('individual-banners');
-            const individualCheckboxes = individualBanners ? individualBanners.querySelectorAll('.individual-banner') : [];
+            const individualBanners = document.querySelector('.individual-banners');
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
 
-            if (!allBannersCheckbox || !individualBanners) return;
-
-            // Initialize visibility based on current state
-            toggleBannerDisplay(allBannersCheckbox.checked);
+            if (!allBannersCheckbox) return;
 
             // When "All Banners" is toggled
             allBannersCheckbox.addEventListener('change', function() {
-                toggleBannerDisplay(this.checked);
+                if (this.checked) {
+                    individualBanners.classList.add('hidden');
+                    // Check all individual banners when "All Banners" is checked
+                    individualCheckboxes.forEach(cb => cb.checked = true);
+                    // Update config to reflect "All Banners" selection
+                    abexConfig.banners = ['All Banners'];
+                } else {
+                    individualBanners.classList.remove('hidden');
+                    // Update config to reflect individual banner selections
+                    updateBannerConfigFromCheckboxes();
+                }
             });
 
             // When individual banners are toggled
             individualCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
                     const allChecked = Array.from(individualCheckboxes).every(cb => cb.checked);
+
                     if (allChecked) {
+                        // If all individual banners are checked, check "All Banners" and hide individuals
                         allBannersCheckbox.checked = true;
-                        toggleBannerDisplay(true);
+                        individualBanners.classList.add('hidden');
+                        abexConfig.banners = ['All Banners'];
                     } else {
+                        // If not all are checked, ensure "All Banners" is unchecked
                         allBannersCheckbox.checked = false;
+                        updateBannerConfigFromCheckboxes();
                     }
                 });
             });
         }
 
+        function updateBannerConfigFromCheckboxes() {
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+            const selectedBanners = [];
+
+            individualCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    const bannerName = cb.parentElement.textContent.trim();
+                    selectedBanners.push(bannerName);
+                }
+            });
+
+            // If no banners are selected, default to "All Banners"
+            abexConfig.banners = selectedBanners.length > 0 ? selectedBanners : ['All Banners'];
+        }
+
         // Banner Multi-Select (dropdown + bubble tags)
         function renderBannerSelectOptions() {
-            const select = document.getElementById('banners-select');
-            if (!select) return;
-            const selected = abexConfig.banners || [];
-            const options = ['<option value="">Add Banner...</option>']
-                .concat(bannerNames
-                    .filter(name => !selected.includes(name))
-                    .map(name => `<option value="${name}">${name}</option>`));
-            select.innerHTML = options.join('');
-            select.disabled = options.length <= 1; // only placeholder
+            // No-op for checkbox implementation - kept for compatibility
         }
         function renderBannersBubbleTags() {
-            const container = document.getElementById('banners-tags');
-            if (!container) return;
-            const banners = abexConfig.banners || [];
-            container.innerHTML = (banners || []).map(b => `
-                <span style="display:inline-flex;align-items:center;background:var(--accent-blue);color:#fff;padding:4px 8px;border-radius:12px;font-size:12px;margin:2px;">
-                    <span>${b}</span>
-                    ${!isReadOnlyMode ? `<button type="button" data-b="${b}" onclick="removeBanner(this.dataset.b)" style="margin-left:6px;background:transparent;border:none;color:#fff;cursor:pointer;font-weight:700;">×</button>` : ''}
-                </span>
-            `).join('');
-            renderBannerSelectOptions();
+            // Update checkbox states based on abexConfig.banners
+            const banners = abexConfig.banners || ['All Banners'];
+            const allBannersCheckbox = document.getElementById('all-banners');
+            const individualBanners = document.querySelector('.individual-banners');
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+
+            if (!allBannersCheckbox) return;
+
+            const hasAllBanners = banners.includes('All Banners');
+
+            if (hasAllBanners) {
+                allBannersCheckbox.checked = true;
+                individualBanners.classList.add('hidden');
+                // Check all individual banners when "All Banners" is selected
+                individualCheckboxes.forEach(cb => cb.checked = true);
+            } else {
+                allBannersCheckbox.checked = false;
+                individualBanners.classList.remove('hidden');
+                // Update individual checkboxes based on selected banners
+                individualCheckboxes.forEach(cb => {
+                    const bannerName = cb.parentElement.textContent.trim();
+                    cb.checked = banners.includes(bannerName);
+                });
+            }
         }
         function addBanner(name) {
-            const value = (name || '').trim();
-            if (!value) return;
-            const isAll = value.toLowerCase() === 'all banners';
-            if (isAll) {
-                abexConfig.banners = ['All Banners'];
-            } else {
-                abexConfig.banners = (abexConfig.banners || []).filter(b => b.toLowerCase() !== 'all banners');
-
-
-                if (!abexConfig.banners.includes(value)) abexConfig.banners.push(value);
-            }
-            renderBannersBubbleTags();
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
         function removeBanner(name) {
-            abexConfig.banners = (abexConfig.banners || []).filter(b => b !== name);
-            renderBannersBubbleTags();
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
         function handleBannerSelectChange(value) {
-            if (!value) return;
-            addBanner(value);
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
 
 

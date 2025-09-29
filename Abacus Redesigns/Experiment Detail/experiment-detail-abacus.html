@@ -3184,18 +3184,35 @@
                                 <!-- Card: Audience Selection (Banners only) -->
                                 <div class="card">
                                     <div class="card-header">
-                                        <div class="card-title">Banner Selection</div>
+                                        <div class="card-title">Banner Selection <span style="color:#dc2626">*</span></div>
                                         <div class="card-subtitle">Define banners for targeting.</div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="multi-select-container" style="margin-bottom: 8px;">
-                                            <select class="form-select" id="banners-select" onchange="handleBannerSelectChange(this.value); this.value='';">
-                                                <option value="">Add Banner...</option>
-                                            </select>
+                                        <div class="banners-grid">
+                                            <div class="banner-item">
+                                                <input type="checkbox" class="banner-checkbox" id="all-banners" checked>
+                                                <label for="all-banners">All Banners</label>
+                                            </div>
+                                            <div class="individual-banners hidden">
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Kroger</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Baker's</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> City Market</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Dillons</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Food 4 Less</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Foods Co</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fred Meyer</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Fry's</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Gerbes</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Harris Teeter</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Jay C</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> King Soopers</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Mariano's</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Metro Market</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Owen's</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pay Less</div>
+                                                <div class="banner-item"><input type="checkbox" class="banner-checkbox individual-banner" checked> Pick 'n Save</div>
+                                            </div>
                                         </div>
-                                        <div id="banners-tags" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
-
-
                                     </div>
                                 </div>
 
@@ -3643,9 +3660,8 @@
             updateSectionStates();
             updatePlatformSpecificContent();
             initCharts();
-            // Initialize banner multi-select (bubbles + dropdown)
+            // Initialize banner checkboxes
             renderBannersBubbleTags();
-            renderBannerSelectOptions();
             // Initialize secondary metrics multi-select (bubbles + dropdown)
             renderSecondaryMetricsBubbleTags();
             renderSecondaryMetricOptions();
@@ -3849,9 +3865,9 @@
             const spSelRO = document.getElementById('spaces-select');
             if (spSelRO) spSelRO.style.display = 'none';
             if (typeof renderSpacesBubbleTags === 'function') renderSpacesBubbleTags();
-            // Banners: hide select, render non-removable tags
-            const banSel = document.getElementById('banners-select');
-            if (banSel) banSel.style.display = 'none';
+            // Banners: disable checkboxes in view mode
+            const bannerCheckboxes = document.querySelectorAll('.banner-checkbox');
+            bannerCheckboxes.forEach(cb => cb.disabled = true);
             renderBannersBubbleTags();
             // Technical owner
             const tech = document.getElementById('technical-owner');
@@ -3922,6 +3938,8 @@
 
         function applyEditUI() {
             isReadOnlyMode = false;
+            // Show red asterisk required indicators in Edit Mode (Configuration tab)
+            document.querySelectorAll('#configuration-tab span[style*="color:#dc2626"]').forEach(el => { el.style.visibility = 'visible'; });
             // Authentication (Edit Mode): keep visible and re-enable interaction
             const auth = document.getElementById('authentication');
             if (auth) { auth.style.display = ''; auth.removeAttribute('disabled'); }
@@ -3956,10 +3974,11 @@
                 if (disp) disp.style.display = 'none';
             })();
             const spSel = document.getElementById('spaces-select'); if (spSel) spSel.style.display = '';
-            // Banners select
+            // Banners: enable checkboxes in edit mode
             // Show instructional/error text again in Edit Mode
             document.querySelectorAll('#configuration-tab .form-error').forEach(el => { (el).style.display = ''; });
-            const banSel = document.getElementById('banners-select'); if (banSel) banSel.style.display = '';
+            const bannerCheckboxes = document.querySelectorAll('.banner-checkbox');
+            bannerCheckboxes.forEach(cb => cb.disabled = false);
             // Technical owner
             const tech = document.getElementById('technical-owner'); if (tech) tech.style.display = '';
             const techDisp = document.getElementById('technical-owner-static'); if (techDisp) techDisp.style.display = 'none';
@@ -4170,52 +4189,42 @@
 
 
         function renderBannerSelectOptions() {
-            const select = document.getElementById('banners-select');
-            if (!select) return;
-            const selected = abacusConfig.banners || [];
-            const options = ['<option value="">Add Banner...</option>']
-                .concat(bannerNames
-                    .filter(name => !selected.includes(name))
-                    .map(name => `<option value="${name}">${name}</option>`));
-            select.innerHTML = options.join('');
-            select.disabled = options.length <= 1; // only placeholder
+            // No-op for checkbox implementation - kept for compatibility
         }
         function renderBannersBubbleTags() {
-            const container = document.getElementById('banners-tags');
-            if (!container) return;
-            const banners = abacusConfig.banners || [];
-            container.innerHTML = (banners || []).map(b => {
-                const removeBtn = isReadOnlyMode ? '' : `<button type="button" data-b="${b}" onclick="removeBanner(this.dataset.b)" style="margin-left:6px;background:transparent;border:none;color:#fff;cursor:pointer;font-weight:700;">×</button>`;
-                return `
-                <span style="display:inline-flex;align-items:center;background:var(--accent-blue);color:#fff;padding:4px 8px;border-radius:12px;font-size:12px;margin:2px;">
-                    <span>${b}</span>
-                    ${removeBtn}
-                </span>`;
-            }).join('');
-            renderBannerSelectOptions();
+            // Update checkbox states based on abacusConfig.banners
+            const banners = abacusConfig.banners || ['All Banners'];
+            const allBannersCheckbox = document.getElementById('all-banners');
+            const individualBanners = document.querySelector('.individual-banners');
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+
+            if (!allBannersCheckbox) return;
+
+            const hasAllBanners = banners.includes('All Banners');
+
+            if (hasAllBanners) {
+                allBannersCheckbox.checked = true;
+                individualBanners.classList.add('hidden');
+                // Check all individual banners when "All Banners" is selected
+                individualCheckboxes.forEach(cb => cb.checked = true);
+            } else {
+                allBannersCheckbox.checked = false;
+                individualBanners.classList.remove('hidden');
+                // Update individual checkboxes based on selected banners
+                individualCheckboxes.forEach(cb => {
+                    const bannerName = cb.parentElement.textContent.trim();
+                    cb.checked = banners.includes(bannerName);
+                });
+            }
         }
         function addBanner(name) {
-            const value = (name || '').trim();
-            if (!value) return;
-            const isAll = value.toLowerCase() === 'all banners';
-            if (isAll) {
-
-
-                abacusConfig.banners = ['All Banners'];
-            } else {
-                abacusConfig.banners = (abacusConfig.banners || []).filter(b => b.toLowerCase() !== 'all banners');
-                if (!abacusConfig.banners.includes(value)) abacusConfig.banners.push(value);
-            }
-            renderBannersBubbleTags();
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
         function removeBanner(name) {
-            abacusConfig.banners = (abacusConfig.banners || []).filter(b => b !== name);
-            if (!abacusConfig.banners.length) abacusConfig.banners = ['All Banners'];
-            renderBannersBubbleTags();
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
         function handleBannerSelectChange(value) {
-            if (!value) return;
-            addBanner(value);
+            // Legacy function - kept for compatibility but no longer used with checkbox implementation
         }
 
         function matchPieChartHeight() {
@@ -4765,8 +4774,12 @@
                     individualBanners.classList.add('hidden');
                     // Check all individual banners when "All Banners" is checked
                     individualCheckboxes.forEach(cb => cb.checked = true);
+                    // Update config to reflect "All Banners" selection
+                    abacusConfig.banners = ['All Banners'];
                 } else {
                     individualBanners.classList.remove('hidden');
+                    // Update config to reflect individual banner selections
+                    updateBannerConfigFromCheckboxes();
                 }
             });
 
@@ -4779,12 +4792,29 @@
                         // If all individual banners are checked, check "All Banners" and hide individuals
                         allBannersCheckbox.checked = true;
                         individualBanners.classList.add('hidden');
+                        abacusConfig.banners = ['All Banners'];
                     } else {
                         // If not all are checked, ensure "All Banners" is unchecked
                         allBannersCheckbox.checked = false;
+                        updateBannerConfigFromCheckboxes();
                     }
                 });
             });
+        }
+
+        function updateBannerConfigFromCheckboxes() {
+            const individualCheckboxes = document.querySelectorAll('.individual-banner');
+            const selectedBanners = [];
+
+            individualCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    const bannerName = cb.parentElement.textContent.trim();
+                    selectedBanners.push(bannerName);
+                }
+            });
+
+            // If no banners are selected, default to "All Banners"
+            abacusConfig.banners = selectedBanners.length > 0 ? selectedBanners : ['All Banners'];
         }
 
         function setupSubscriptionToggle() {
