@@ -14,21 +14,21 @@
             --bg-input: #ffffff;
             --bg-card: #ffffff;
             --bg-hover: #e9ecef;
-            
+
             --text-primary: #2c3e50;
             --text-secondary: #6c757d;
             --text-muted: #495057;
             --text-light: #ffffff;
             --text-accent: #1976d2;
-            
+
             --border-color: #e2e8f0;
             --border-light: #dee2e6;
             --border-medium: #9ca3af;
-            
+
             --shadow-light: 0 2px 12px rgba(0,0,0,0.06);
             --shadow-medium: 0 4px 20px rgba(0,0,0,0.08);
             --shadow-card: 0 1px 4px rgba(0,0,0,0.05);
-            
+
             --accent-blue: #1976d2;
             --accent-blue-hover: #1565c0;
             --accent-red: #dc2626;
@@ -36,36 +36,6 @@
             --accent-orange: #f59e0b;
         }
 
-        [data-theme="dark"] {
-            /* Dark theme colors */
-            --bg-primary: #4c4c4c;
-            --bg-secondary: #2d2d2d;
-            --bg-tertiary: #3a3a3a;
-            --bg-accent: #374151;
-            --bg-input: #2d2d2d;
-            --bg-card: #262626;
-            --bg-hover: #3a3a3a;
-            
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --text-light: #ffffff;
-            --text-accent: #60a5fa;
-            
-            --border-color: #374151;
-            --border-light: #4b5563;
-            --border-medium: #6b7280;
-            
-            --shadow-light: 0 2px 12px rgba(0,0,0,0.3);
-            --shadow-medium: 0 4px 20px rgba(0,0,0,0.4);
-            --shadow-card: 0 1px 4px rgba(0,0,0,0.2);
-            
-            --accent-blue: #60a5fa;
-            --accent-blue-hover: #3b82f6;
-            --accent-red: #ef4444;
-            --accent-green: #22c55e;
-            --accent-orange: #fbbf24;
-        }
 
         * {
             margin: 0;
@@ -82,17 +52,17 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 16px;
+            padding: 24px;
         }
 
-        /* Header */
+        /* Header - Desktop Optimized */
         .wizard-header {
             background: var(--bg-card);
             border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
             box-shadow: var(--shadow-light);
             text-align: center;
         }
@@ -107,21 +77,22 @@
         .wizard-subtitle {
             font-size: 16px;
             color: var(--text-secondary);
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
-        /* Progress Bar */
+        /* Progress Bar - Compact Design with Standardized Spacing */
         .progress-container {
             background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 2px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8 px;
         }
 
         .progress-steps {
             display: flex;
             justify-content: space-between;
             position: relative;
+            margin: 0;
         }
 
         .progress-step {
@@ -131,21 +102,21 @@
             align-items: center;
             position: relative;
             z-index: 2;
-            padding: 12px 6px;
+            padding: 4px 2px;
         }
 
         .progress-step-indicator {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
             transition: all 0.3s ease;
         }
@@ -160,15 +131,21 @@
             background: var(--accent-blue);
             border-color: var(--accent-blue);
             color: white;
-            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+        }
+
+        .progress-step.skipped .progress-step-indicator {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-color: var(--border-light);
         }
 
         .progress-step-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-align: center;
             font-weight: 500;
-            line-height: 1.3;
+            line-height: 1.2;
         }
 
         .progress-step.completed .progress-step-label,
@@ -177,77 +154,42 @@
             font-weight: 600;
         }
 
-        /* Progress Line */
+        .progress-step.skipped .progress-step-label {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Progress Line - Contained within step indicators */
         .progress-steps::before {
             content: '';
             position: absolute;
-            top: 36px;
-            left: 60px;
-            right: 60px;
-            height: 3px;
+            top: 20px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
             background: var(--border-light);
             z-index: 1;
         }
 
         .progress-line {
             position: absolute;
-            top: 36px;
-            left: 60px;
-            height: 3px;
+            top: 20px;
+            left: 16px;
+            height: 2px;
             background: var(--accent-blue);
             z-index: 1;
             width: 0%;
             transition: width 0.5s ease;
+            max-width: calc(100% - 32px);
         }
 
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: var(--bg-card);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-primary);
-            font-size: 16px;
-            transition: all 0.2s;
-            box-shadow: var(--shadow-card);
-            z-index: 1000;
-        }
 
-        .theme-toggle:hover {
-            background: var(--bg-hover);
-            transform: translateY(-1px);
-        }
-
-        .theme-toggle .sun-icon {
-            display: block;
-        }
-
-        .theme-toggle .moon-icon {
-            display: none;
-        }
-
-        [data-theme="dark"] .theme-toggle .sun-icon {
-            display: none;
-        }
-
-        [data-theme="dark"] .theme-toggle .moon-icon {
-            display: block;
-        }
-
-        /* Step Content */
+        /* Step Content - Desktop Optimized */
         .step-content {
             background: var(--bg-card);
             border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
             box-shadow: var(--shadow-light);
             display: none;
             animation: fadeInSlide 0.4s ease-out;
@@ -284,7 +226,16 @@
 
         /* Form Elements */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+
+        /* Inline options layout (radio/checkbox) */
+        .inline-options { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+        /* ABEX Targeting Form Groups - Increased Spacing */
+        .form-group.abex-targeting {
+            margin-bottom: 32px;
         }
 
         .form-label {
@@ -340,16 +291,23 @@
             display: block;
         }
 
-        /* Grid Layout */
+        /* Grid Layout - Desktop Optimized */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         .form-grid-full {
             grid-column: 1 / -1;
         }
+
+        /* Customer Segments row: horizontal layout with responsive stacking */
+        .segments-row { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 640px) {
+            .segments-row { grid-template-columns: 1fr; }
+        }
+
 
         /* Checkbox Groups */
         .checkbox-group {
@@ -370,6 +328,10 @@
         .checkbox-input {
             width: 18px;
             height: 18px;
+            appearance: auto;
+            -webkit-appearance: auto;
+            margin: 0;
+            vertical-align: middle;
             accent-color: var(--accent-blue);
         }
 
@@ -381,6 +343,17 @@
             cursor: pointer;
         }
 
+        /* Option descriptions for experiment type */
+        .checkbox-content { display: flex; flex-direction: column; gap: 4px; }
+        .option-description { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+        /* Standardize helper spacing for field-level helper text */
+        .form-group > .option-description { font-size: 14px; color: var(--text-secondary); line-height: 1.4; margin: 0 0 16px 0; }
+
+        /* Extra spacing below Step 6 title */
+        #step-6 .step-title { margin-bottom: 20px; }
+
+
+
         /* Variant Configuration */
         .variants-section {
             margin-bottom: 24px;
@@ -388,24 +361,53 @@
 
         .variant-item {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
 
-    .variant-item:hover {
-        border: 1px solid var(--border-light);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    }
+        .variant-item:hover {
+            border: 1px solid #e5e7eb;
+            box-shadow: none;
+        }
 
         .variant-header {
             display: flex;
-            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 0;
+            align-items: center;
+            margin-bottom: 16px;
         }
+
+        /* Step 3 variant card horizontal layout */
+        #step-3 .variant-card { background: var(--bg-secondary); border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+        #step-3 .variant-row { display: flex; align-items: center; gap: 20px; flex-wrap: nowrap; }
+        #step-3 .variant-info { flex: 1 1 auto; }
+        #step-3 .variant-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin: 0 0 4px 0; }
+        #step-3 .variant-subtitle { font-size: 14px; color: #6b7280; margin: 0; }
+        #step-3 .variant-inputs { display: flex; align-items: center; gap: 8px; flex: 0 0 80px; justify-content: flex-end; }
+        #step-3 .variant-inputs .variant-ratio-input,
+        #step-3 .variant-inputs .variant-percentage-input { width: 80px; height: 48px; padding: 0 16px; font-size: 18px; font-weight: 600; text-align: right; background: #eff6ff; color: #1e40af; border: 1px solid #d1d5db; border-radius: 8px; }
+        #step-3 .variant-inputs .variant-ratio-input:focus,
+        #step-3 .variant-inputs .variant-percentage-input:focus { outline: none; border-color: #9ca3af; background: #dbeafe; }
+        #step-3 .variant-inputs .variant-ratio-input::-webkit-outer-spin-button,
+        #step-3 .variant-inputs .variant-ratio-input::-webkit-inner-spin-button,
+        #step-3 .variant-inputs .variant-percentage-input::-webkit-outer-spin-button,
+        #step-3 .variant-inputs .variant-percentage-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        #step-3 .variant-inputs .variant-ratio-input { -moz-appearance: textfield; appearance: textfield; }
+        #step-3 .variant-inputs .variant-percentage-input { -moz-appearance: textfield; appearance: textfield; }
+        #step-3 .variant-percent-text { font-size: 24px; font-weight: 700; color: #6b7280; flex-shrink: 0; text-align: right; }
+        #step-3 .variant-details { margin-top: 12px; }
+        #step-3 .variant-card .form-label { font-size: 14px; font-weight: 500; color: #374151; }
+        /* Step 3: control vs treatment input color schemes */
+        #step-3 .variant-inputs .variant-input.is-control { background: #10b981; color: #ffffff; border: none; }
+        #step-3 .variant-inputs .variant-input.is-control:focus { background: #34d399; outline: 2px solid rgba(255,255,255,0.35); outline-offset: 0; }
+        #step-3 .variant-inputs .variant-input.is-treatment { background: #3b82f6; color: #ffffff; border: none; }
+        #step-3 .variant-inputs .variant-input.is-treatment:focus { background: #60a5fa; outline: 2px solid rgba(255,255,255,0.35); outline-offset: 0; }
+
+        #step-3 .variant-remove { flex: 0 0 24px; display: flex; justify-content: center; }
+
+
 
         .variant-label {
             font-size: 16px;
@@ -418,11 +420,17 @@
             color: white;
             padding: 4px 12px;
             border-radius: 16px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             min-width: 60px;
             text-align: center;
         }
+
+        /* ABEX: Max Users input - hide number steppers */
+        #max-users::-webkit-outer-spin-button,
+        #max-users::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        #max-users { -moz-appearance: textfield; appearance: textfield; }
+
 
         .add-variant-btn {
             background: var(--bg-secondary);
@@ -442,13 +450,16 @@
             color: var(--accent-blue);
         }
 
-        /* Banner Selection */
+        /* Banner Selection - Desktop Optimized */
         .banners-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
+            gap: 12px;
             margin-top: 14px;
         }
+        /* Individual banners container to match detail page */
+        .individual-banners { transition: all 0.3s ease; grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .individual-banners.hidden { display: none; }
 
         .banner-item {
             display: flex;
@@ -472,20 +483,31 @@
             accent-color: var(--accent-blue);
         }
 
-        /* Navigation */
+        /* Navigation - Desktop Optimized */
         .wizard-navigation {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
-            padding: 20px 24px;
+            padding: 24px 32px;
             background: var(--bg-card);
             border-radius: 12px;
             box-shadow: var(--shadow-light);
+            gap: 24px;
         }
 
-        .nav-buttons {
+        .nav-left {
             display: flex;
-            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .nav-center {
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-right {
+            display: flex;
+            justify-content: flex-end;
         }
 
         .btn {
@@ -547,7 +569,7 @@
 
         .step-indicator {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
         }
 
@@ -560,17 +582,16 @@
         }
 
         .review-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid var(--border-light);
         }
 
         .review-item {
             display: flex;
             justify-content: space-between;
+
             align-items: flex-start;
             padding: 6px 0;
             border-bottom: 1px solid var(--border-light);
@@ -592,50 +613,161 @@
             text-align: right;
         }
 
-        /* Responsive Design */
+
+
+        /* Collisions Check Step Styling */
+        .experiments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 400px;
+
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .experiments-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .experiments-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 3px;
+        }
+
+        .experiments-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .experiments-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .experiment-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .experiment-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .experiment-header {
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 12px;
+        }
+
+        .experiment-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px 0;
+            width: 100%;
+            word-wrap: break-word;
+        }
+
+        .experiment-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .science-id, .experiment-dates {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .experiment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .variants-info h4, .targeting-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 8px 0;
+        }
+
+        .variant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .collision-variant-item {
+            display: grid;
+            grid-template-columns: 1fr auto 2fr;
+            gap: 12px;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .variant-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .variant-percentage {
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            background: var(--accent-blue);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .variant-deployment {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            flex: 1;
+        }
+
+        .targeting-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-section h4 {
+            margin-bottom: 4px;
+        }
+
+        .info-tags {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .wizard-header {
-                padding: 18px;
-            }
-
-            .step-content {
-                padding: 18px;
-            }
-
-            .wizard-navigation {
-                padding: 14px;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .form-grid {
+            .experiment-details {
                 grid-template-columns: 1fr;
+                gap: 16px;
             }
 
-            .progress-steps::before {
-                display: none;
+            .collision-variant-item {
+                grid-template-columns: 1fr;
+                gap: 4px;
+                text-align: left;
             }
 
-            .progress-line {
-                display: none;
-            }
-
-            .progress-step {
-                padding: 10px 3px;
-            }
-
-            .progress-step-indicator {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
-            }
-
-            .progress-step-label {
-                font-size: 11px;
+            .variant-deployment {
+                font-size: 10px;
             }
         }
 
@@ -662,17 +794,77 @@
                 opacity: 1;
             }
         }
+
+        /* Alternative card-based layout for Targeting & Schedule (non-ABEX) */
+        .card-layout { display: grid; gap: 24px; }
+        .card { background: #F9F9FB; border: 1px solid #E5E5E7; border-radius: 12px; padding: 24px; }
+        .card-header { margin-bottom: 16px; }
+        .card-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+        .card-subtitle { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+        .platform-list { display: flex; flex-direction: column; gap: 12px; }
+        .platform-checkbox { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px 12px; border-radius: 8px; transition: background 0.2s; }
+        .platform-checkbox:hover { background: var(--bg-hover); }
+        .platform-checkbox input[type="checkbox"] { width: 18px; height: 18px; }
+        .platform-name { font-size: 15px; color: var(--text-primary); flex: 1; }
+
+        .radio-group { display: flex; gap: 24px; background: var(--bg-input); padding: 12px; border-radius: 8px; }
+        .radio-option { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+
+        .date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .label { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .input { padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--bg-input); color: var(--text-primary); }
+
+        .url-input-group { display: flex; gap: 12px; }
+        .url-input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; background: var(--bg-input); color: var(--text-primary); }
+
+        /* Tighten bottom spacing inside cards for Step 1/Targeting cards */
+        .card .form-group:last-child { margin-bottom: 0; }
+        .card .checkbox-group:last-child { margin-bottom: 0; }
+
+
+        /* Add this CSS to ensure consistent radio button appearance */
+        .checkbox-input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg-input);
+            flex-shrink: 0;
+        }
+
+        .checkbox-input[type="radio"]:checked {
+            border-color: var(--accent-blue);
+        }
+
+        .checkbox-input[type="radio"]:checked::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .checkbox-input[type="radio"]:hover {
+            border-color: var(--accent-blue);
+        }
+
+
     </style>
 </head>
-<body data-theme="light">
-    <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
-        <svg class="sun-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
-        </svg>
-        <svg class="moon-icon" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
-        </svg>
-    </button>
+<body>
 
     <div class="container">
         <!-- Header -->
@@ -690,22 +882,27 @@
                     </div>
                     <div class="progress-step" data-step="2">
                         <div class="progress-step-indicator">2</div>
-                        <div class="progress-step-label">Variants</div>
+                        <div class="progress-step-label">Collisions</div>
                     </div>
                     <div class="progress-step" data-step="3">
                         <div class="progress-step-indicator">3</div>
-                        <div class="progress-step-label">Metrics</div>
+                        <div class="progress-step-label">Variants</div>
                     </div>
                     <div class="progress-step" data-step="4">
                         <div class="progress-step-indicator">4</div>
-                        <div class="progress-step-label">Targeting</div>
+
+                        <div class="progress-step-label">Metrics</div>
                     </div>
                     <div class="progress-step" data-step="5">
                         <div class="progress-step-indicator">5</div>
-                        <div class="progress-step-label">Configuration</div>
+                        <div class="progress-step-label">Targeting</div>
                     </div>
                     <div class="progress-step" data-step="6">
                         <div class="progress-step-indicator">6</div>
+                        <div class="progress-step-label">Configuration</div>
+                    </div>
+                    <div class="progress-step" data-step="7">
+                        <div class="progress-step-indicator">7</div>
                         <div class="progress-step-label">Review</div>
                     </div>
                 </div>
@@ -715,68 +912,332 @@
         <!-- Step 1: Basic Information -->
         <div class="step-content active" id="step-1">
             <h2 class="step-title">Basic Information</h2>
-            <p class="step-description">Let's start with the basics of your experiment. Provide a clear title and hypothesis.</p>
+            <p class="step-description">Let's start with the basics of your experiment.</p>
 
-            <div class="form-group">
-                <label class="form-label required">Experiment Title</label>
-                <input type="text" class="form-input" id="experiment-title" placeholder="Enter a descriptive title for your experiment">
-                <div class="form-error">Please enter a title for your experiment</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label required">Hypothesis</label>
-                <textarea class="form-textarea" id="hypothesis" placeholder="Describe what you expect to happen and why..."></textarea>
-                <div class="form-error">Please enter your experiment hypothesis</div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label required">Experiment Type</label>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="checkbox-group">
-                        <input type="radio" class="checkbox-input" id="amp-experiment" name="experiment-type" value="amp">
-                        <label for="amp-experiment" class="checkbox-label">AMP Experiment</label>
+            <div class="card-layout">
+                <!-- Card 1: Experiment Details -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Title and Hypothesis</div>
+                        <div class="card-subtitle">Provide a clear title and hypothesis.</div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="radio" class="checkbox-input" id="server-side" name="experiment-type" value="server-side" checked>
-                        <label for="server-side" class="checkbox-label">Server-side Experiment</label>
+
+                    <div class="form-group">
+                        <label class="form-label required">Experiment Title</label>
+                        <input type="text" class="form-input" id="experiment-title" placeholder="Enter a descriptive title for your experiment" value="Improve Homepage Banner Engagement">
+                        <div class="form-error">Please enter a title for your experiment</div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="radio" class="checkbox-input" id="client-side" name="experiment-type" value="client-side">
-                        <label for="client-side" class="checkbox-label">Client-side Experiment</label>
+                    <div class="form-group">
+                        <label class="form-label required">Hypothesis</label>
+                        <textarea class="form-textarea" id="hypothesis" placeholder="Describe what you expect to happen and why...">If we show a more prominent homepage banner, then click-through rate and orders from the homepage will increase by at least 5% because the call-to-action will be more visible.</textarea>
+                        <div class="form-error">Please enter your experiment hypothesis</div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label class="form-label">Authentication</label>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="checkbox-input" id="authentication-required" checked>
-                    <label for="authentication-required" class="checkbox-label">Authentication Required</label>
+                <!-- Card 2: Experiment Type -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Experiment Type <span style="color:#dc2626">*</span></div>
+                        <div class="card-subtitle">Select the type of experiment you want to run</div>
+                    </div>
+                    <div class="form-group">
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="checkbox-group">
+                                <input type="radio" class="checkbox-input" id="amp-experiment" name="experiment-type" value="amp">
+                                <div class="checkbox-content">
+                                    <label for="amp-experiment" class="checkbox-label">AMP Experiment</label>
+                                    <div class="option-description">Server-side experiments where the backend sends a variant-specific web component to the browser, based on the users variant.</div>
+                                </div>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" class="checkbox-input" id="server-side" name="experiment-type" value="server-side">
+                                <div class="checkbox-content">
+                                    <label for="server-side" class="checkbox-label">Server-side Experiment</label>
+                                    <div class="option-description">Tests run on the backend, where the server uses the users variant to decide what data or response to send back to the app. Variant information is sent to the backend via a custom HTTP header, <code>x-ab-test</code>.</div>
+                                </div>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" class="checkbox-input" id="client-side" name="experiment-type" value="client-side">
+                                <div class="checkbox-content">
+                                    <label for="client-side" class="checkbox-label">Client-side Experiment</label>
+                                    <div class="option-description">Tests run directly in the client app (iOS, Android, or Web), where the app itself uses the users variant to decide what to show.</div>
+                                </div>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="radio" class="checkbox-input" id="abex-experiment" name="experiment-type" value="abex">
+                                <div class="checkbox-content">
+                                    <label for="abex-experiment" class="checkbox-label">ABEX Experiment</label>
+                                    <div class="option-description">Server-side experiments built inside of AMP using the AMP Page Builder.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Card 3: Authentication Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Authentication Settings</div>
+                        <div class="card-subtitle">Does the experiment require the user to be logged in?</div>
+                    </div>
+                    <div class="form-group">
+
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="authentication-required" checked>
+                            <label for="authentication-required" class="checkbox-label">Authentication Required</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 2: Variants Configuration -->
-        <div class="step-content" id="step-2">
+        <!-- Step 2: Collisions Check -->
+        <div class="step-content" id="step-2" style="display: none;">
+            <h2 class="step-title">Collisions Check</h2>
+            <p class="step-description">Review currently active experiments to check for potential collisions with your new experiment.</p>
+
+            <div class="experiments-list">
+                <!-- Experiment 1 -->
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3 class="experiment-name">Homepage Banner Optimization</h3>
+                        <div class="experiment-meta">
+                            <span class="science-id">Science ID: Conversion Rate Optimization Study</span>
+                            <span class="experiment-dates">Jan 15, 2024 - Feb 15, 2024</span>
+                        </div>
+                    </div>
+                    <div class="experiment-details">
+                        <div class="variants-info">
+                            <h4>Variants:</h4>
+                            <div class="variant-list">
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Control (A)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">93483406-50ea-4207-b0df-e9fd0c41e0b5</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">New Banner (B)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">36af36b2-f16c-404e-b33a-b3151d04e236</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="targeting-info">
+                            <div class="info-section">
+                                <h4>Divisions:</h4>
+                                <span class="info-tags">011 - Atlanta, 016 - Columbus, 018 - Michigan</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Customer Segments:</h4>
+                                <span class="info-tags">Customer Type - New Customers, Purchase Behavior - High Value</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Banners:</h4>
+                                <span class="info-tags">Kroger, Harris Teeter, King Soopers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experiment 2 -->
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3 class="experiment-name">Checkout Flow Enhancement</h3>
+                        <div class="experiment-meta">
+                            <span class="science-id">Science ID: User Engagement Enhancement Project</span>
+                            <span class="experiment-dates">Jan 20, 2024 - Mar 20, 2024</span>
+                        </div>
+                    </div>
+                    <div class="experiment-details">
+                        <div class="variants-info">
+                            <h4>Variants:</h4>
+                            <div class="variant-list">
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Current Flow (A)</span>
+                                    <span class="variant-percentage">33%</span>
+                                    <span class="variant-deployment">4aecebee-91fa-4ad5-b551-c464b133ff3b</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Simplified (B)</span>
+                                    <span class="variant-percentage">33%</span>
+                                    <span class="variant-deployment">3395c54a-f492-4f7b-b3e0-75acfa720cef</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Enhanced (C)</span>
+                                    <span class="variant-percentage">34%</span>
+                                    <span class="variant-deployment">54e34aa2-40b3-4e0a-b4e5-c172513873c2</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="targeting-info">
+                            <div class="info-section">
+                                <h4>Divisions:</h4>
+                                <span class="info-tags">014 - Cincinnati/Dayton, 021 - Central, 024 - Louisville</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Customer Segments:</h4>
+                                <span class="info-tags">Platform Usage - Mobile Users, Engagement Level - Active</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Banners:</h4>
+                                <span class="info-tags">Dillons, Fry's, Smith's, Ralphs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experiment 3 -->
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3 class="experiment-name">Product Recommendation Algorithm</h3>
+                        <div class="experiment-meta">
+                            <span class="science-id">Science ID: Product Recommendation Engine Test</span>
+                            <span class="experiment-dates">Feb 1, 2024 - Apr 1, 2024</span>
+                        </div>
+                    </div>
+                    <div class="experiment-details">
+                        <div class="variants-info">
+                            <h4>Variants:</h4>
+                            <div class="variant-list">
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Current Algorithm (A)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">94ec6fa4-0777-49bc-961e-0693529b0192</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">ML Enhanced (B)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">70121d82-049d-4f79-bef6-b589305ae791</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="targeting-info">
+                            <div class="info-section">
+                                <h4>Divisions:</h4>
+                                <span class="info-tags">025 - Delta, 026 - Nashville, 029 - Mid-Atlantic</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Customer Segments:</h4>
+                                <span class="info-tags">Customer Type - Returning Customers, Purchase Behavior - Frequent Buyers</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Banners:</h4>
+                                <span class="info-tags">Fred Meyer, QFC, Food 4 Less, Foods Co</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experiment 4 -->
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3 class="experiment-name">Mobile Navigation Redesign</h3>
+                        <div class="experiment-meta">
+                            <span class="science-id">Science ID: Navigation Usability Enhancement Research</span>
+                            <span class="experiment-dates">Jan 25, 2024 - Mar 25, 2024</span>
+                        </div>
+                    </div>
+                    <div class="experiment-details">
+                        <div class="variants-info">
+                            <h4>Variants:</h4>
+                            <div class="variant-list">
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Current Nav (A)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">187b01e7-e16f-4d0e-812e-dba18cb3a053</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Redesigned Nav (B)</span>
+                                    <span class="variant-percentage">50%</span>
+                                    <span class="variant-deployment">5298a055-d28b-4173-b896-0cbcaff607a1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="targeting-info">
+                            <div class="info-section">
+                                <h4>Divisions:</h4>
+                                <span class="info-tags">011 - Atlanta, 014 - Cincinnati/Dayton, 018 - Michigan</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Customer Segments:</h4>
+                                <span class="info-tags">Platform Usage - Mobile Users, Geographic Region - Urban</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Banners:</h4>
+                                <span class="info-tags">Mariano's, Metro Market, Pick 'n Save, Jay C</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experiment 5 -->
+                <div class="experiment-card">
+                    <div class="experiment-header">
+                        <h3 class="experiment-name">Cart Abandonment Recovery</h3>
+                        <div class="experiment-meta">
+                            <span class="science-id">Science ID: Cart Abandonment Reduction Initiative</span>
+                            <span class="experiment-dates">Feb 5, 2024 - Apr 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="experiment-details">
+                        <div class="variants-info">
+                            <h4>Variants:</h4>
+                            <div class="variant-list">
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">No Intervention (A)</span>
+                                    <span class="variant-percentage">25%</span>
+                                    <span class="variant-deployment">6dc0fb31-d215-47f2-b106-daa737944b1e</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Email Reminder (B)</span>
+                                    <span class="variant-percentage">25%</span>
+                                    <span class="variant-deployment">7993c543-5fd5-48ee-b737-0a43c65fc07c</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Push Notification (C)</span>
+                                    <span class="variant-percentage">25%</span>
+                                    <span class="variant-deployment">f898d1f2-78d6-4fd1-8759-2169b9a70c03</span>
+                                </div>
+                                <div class="collision-variant-item">
+                                    <span class="variant-name">Discount Offer (D)</span>
+                                    <span class="variant-percentage">25%</span>
+                                    <span class="variant-deployment">f7e416ba-01a5-43ae-96b7-ca886dc9d936</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="targeting-info">
+                            <div class="info-section">
+                                <h4>Divisions:</h4>
+                                <span class="info-tags">016 - Columbus, 021 - Central, 025 - Delta</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Customer Segments:</h4>
+                                <span class="info-tags">Customer Type - Premium Members, Engagement Level - Moderate</span>
+                            </div>
+                            <div class="info-section">
+                                <h4>Banners:</h4>
+                                <span class="info-tags">Baker's, City Market, Gerbes, Owen's, Pay Less, Ruler</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Variants Configuration -->
+        <div class="step-content" id="step-3">
             <h2 class="step-title">Variants Configuration</h2>
-            <p class="step-description">Define the different experiences you want to test and set their traffic ratios. Variants are automatically labeled A, B, C, etc. Variant A is your control and cannot be deleted. You need at least one test variant in addition to the control.</p>
+            <p class="step-description" id="step-3-description">Define the different experiences you want to test and set their traffic ratios. Variants are automatically labeled A, B, C, etc. Variant A is your control and cannot be deleted. You need at least one test variant in addition to the control.</p>
 
             <div class="variants-section" id="variants-container">
                 <!-- Variants will be dynamically added here -->
             </div>
 
-            <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="color: var(--accent-blue);">
-                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                    </svg>
-                    <span style="color: var(--text-primary); font-weight: 600; font-size: 14px;">Ratio-based Distribution</span>
-                </div>
-                <p style="color: var(--text-secondary); font-size: 13px; margin: 0; line-height: 1.4;">
-                    Enter ratios for each variant (e.g., 1:1:2 means the third variant gets twice as much traffic as the first two). 
-                    Percentages are calculated automatically. Variants are automatically labeled A, B, C, etc.
-                </p>
-            </div>
+
 
             <div class="add-variant-btn" onclick="addVariant()">
                 <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 8px;">
@@ -786,175 +1247,182 @@
             </div>
         </div>
 
-        <!-- Step 3: Metrics & Goals -->
-        <div class="step-content" id="step-3">
+        <!-- Step 4: Metrics & Goals -->
+        <div class="step-content" id="step-4">
             <h2 class="step-title">Metrics & Goals</h2>
             <p class="step-description">Select the primary metric you want to optimize and any secondary metrics to track.</p>
 
-            <div class="form-group">
-                <label class="form-label required">Primary Metric</label>
-                <select class="form-select" id="primary-metric">
-                    <option value="">Select primary metric...</option>
-                    <option value="clicks-nav">Clicks (Nav Elements)</option>
-                    <option value="cart-adds">Cart Adds</option>
-                    <option value="orders-placed">Orders Placed</option>
-                    <option value="conversion-rate">Conversion Rate</option>
-                    <option value="revenue-per-user">Revenue Per User</option>
-                    <option value="order-revenue">Order Revenue Booked</option>
-                    <option value="page-views">Page Views</option>
-                    <option value="time-on-page">Time on Page</option>
-                    <option value="bounce-rate">Bounce Rate</option>
-                    <option value="session-duration">Session Duration</option>
-                </select>
-                <div class="form-error">Please select a primary metric</div>
-            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Experiment Metrics</div>
+                    <div class="card-subtitle">Define what success looks like for your experiment.</div>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">Secondary Measures/Goals</label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-orders">
-                        <label for="secondary-orders" class="checkbox-label">Orders Placed</label>
+                <div class="form-group">
+                    <label class="form-label required">Primary Metric</label>
+                    <select class="form-select" id="primary-metric">
+                        <option value="">Select primary metric...</option>
+                        <option value="clicks-nav">Clicks (Nav Elements)</option>
+                        <option value="cart-adds">Cart Adds</option>
+                        <option value="orders-placed">Orders Placed</option>
+                        <option value="conversion-rate">Conversion Rate</option>
+                        <option value="revenue-per-user">Revenue Per User</option>
+                        <option value="order-revenue">Order Revenue Booked</option>
+                        <option value="page-views">Page Views</option>
+                        <option value="time-on-page">Time on Page</option>
+                        <option value="bounce-rate">Bounce Rate</option>
+                        <option value="session-duration">Session Duration</option>
+                    </select>
+                    <div class="form-error">Please select a primary metric</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Secondary Measures/Goals</label>
+                    <div class="multi-select-container" style="margin-bottom: 8px;">
+                        <select class="form-select" id="secondary-metric-select" onchange="handleSecondaryMetricSelect(this.value); this.value='';">
+                            <option value="">Select Secondary Metric...</option>
+                        </select>
                     </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-pageviews">
-                        <label for="secondary-pageviews" class="checkbox-label">Page Views</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-clicks">
-                        <label for="secondary-clicks" class="checkbox-label">Clicks (Nav Elements)</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-revenue">
-                        <label for="secondary-revenue" class="checkbox-label">Order Revenue Booked</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-cart-adds">
-                        <label for="secondary-cart-adds" class="checkbox-label">Cart Adds</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-conversion">
-                        <label for="secondary-conversion" class="checkbox-label">Conversion Rate</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-rpu">
-                        <label for="secondary-rpu" class="checkbox-label">Revenue Per User</label>
-                    </div>
-                    <div class="checkbox-group" style="margin-bottom: 0;">
-                        <input type="checkbox" class="checkbox-input" id="secondary-time">
-                        <label for="secondary-time" class="checkbox-label">Time on Page</label>
-                    </div>
+                    <div class="bubble-tags-container" id="secondary-metrics-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 4: Targeting & Schedule -->
-        <div class="step-content" id="step-4">
+        <!-- Step 5: Targeting & Schedule -->
+        <div class="step-content" id="step-5">
             <h2 class="step-title">Targeting & Schedule</h2>
             <p class="step-description">Define where and when your experiment should run.</p>
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Location(s)/URL</label>
-                    <input type="text" class="form-input" id="targeting-url" placeholder="Enter URL or targeting criteria">
-                </div>
+
                 <div class="form-group">
                     <label class="form-label">Platforms</label>
-                    <div>
+                    <div class="inline-options">
                         <div class="checkbox-group">
                             <input type="checkbox" class="checkbox-input" id="platform-web" checked>
                             <label for="platform-web" class="checkbox-label">Web</label>
                         </div>
                         <div class="checkbox-group">
-                            <input type="checkbox" class="checkbox-input" id="platform-ios">
+                            <input type="checkbox" class="checkbox-input" id="platform-ios" checked>
                             <label for="platform-ios" class="checkbox-label">iOS</label>
                         </div>
                         <div class="checkbox-group">
-                            <input type="checkbox" class="checkbox-input" id="platform-android">
+                            <input type="checkbox" class="checkbox-input" id="platform-android" checked>
                             <label for="platform-android" class="checkbox-label">Android</label>
+
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="form-grid">
+
+            <div class="form-grid" style="grid-template-columns: 1.2fr 1fr 1fr; gap: 16px; align-items: end;">
                 <div class="form-group">
-                    <label class="form-label required">Planned Start Date</label>
+                    <label class="form-label required">Experiment Date Type</label>
+                    <div class="inline-options">
+                        <div class="checkbox-group">
+                            <input type="radio" class="checkbox-input" id="date-type-planned" name="date-type" value="Planned" checked onchange="setDateType('Planned')">
+                            <label for="date-type-planned" class="checkbox-label">Planned</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="radio" class="checkbox-input" id="date-type-scheduled" name="date-type" value="Scheduled" onchange="setDateType('Scheduled')">
+                            <label for="date-type-scheduled" class="checkbox-label">Scheduled</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required" id="start-date-label">Planned Start Date</label>
                     <input type="date" class="form-input" id="start-date">
                     <div class="form-error">Please select a start date</div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label required">Planned End Date</label>
+                    <label class="form-label required" id="end-date-label">Planned End Date</label>
                     <input type="date" class="form-input" id="end-date">
                     <div class="form-error">Please select an end date</div>
                 </div>
             </div>
 
+
+
             <div class="form-group">
                 <label class="form-label">Banner Selection</label>
-                <div class="checkbox-group">
-                    <input type="checkbox" class="checkbox-input" id="all-banners" checked>
-                    <label for="all-banners" class="checkbox-label">All Banners</label>
+                <div class="option-description">Select which banners will run this experiment. Web platform division and store filtering options are available through AMP.</div>
+                <div class="multi-select-container" style="margin-bottom: 8px;">
+                    <select class="form-select" id="banner-select" onchange="handleBannerSelectChange(this.value); this.value='';">
+                        <option value="">Select Banner...</option>
+                    </select>
                 </div>
-                <div class="banners-grid" id="individual-banners" style="display: none;">
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Kroger</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Baker's</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> City Market</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Dillons</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Food 4 Less</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Foods Co</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Fred Meyer</div>
-                    <div class="banner-item"><input type="checkbox" class="banner-checkbox" checked> Fry's</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 5: Configuration -->
-        <div class="step-content" id="step-5">
-            <h2 class="step-title">Allocations & Distribution</h2>
-            <p class="step-description">Configure traffic allocation and review variant distribution from your ratio settings.</p>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label required">User Traffic Allocation (%)</label>
-                    <input type="number" class="form-input" id="traffic-allocation" value="100" min="1" max="100" placeholder="Enter percentage between 1-100">
-                    <div class="form-error">Please enter a traffic allocation percentage between 1 and 100</div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Variant Distribution (from Step 2)</label>
-                    <input type="text" class="form-input" id="variant-distribution" placeholder="e.g., 1:1:2 or 50:30:20" readonly style="background: var(--bg-secondary); cursor: not-allowed; color: var(--text-secondary);">
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
-                        This field is automatically populated based on the ratios you set in Step 2.
-                    </div>
-                </div>
+                <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px; background: var(--bg-input);"></div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Spaces</label>
-                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">Select the spaces where this experiment will run to prevent conflicts.</p>
-                <div class="form-grid">
-                    <div class="checkbox-group">
-                        <input type="checkbox" class="checkbox-input" id="space-home">
-                        <label for="space-home" class="checkbox-label">Home</label>
+                <label class="form-label">Location(s)/URL</label>
+                <div class="multi-select-container" style="margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 8px;">
+                    <input type="text" class="form-input" id="targeting-url-input" placeholder="Add URL..." onkeydown="if(event.key==='Enter'){ addTargetingUrlFromInput(); event.preventDefault(); }">
+                    <button type="button" class="btn" id="add-targeting-url-btn" onclick="addTargetingUrlFromInput()">Add</button>
+                </div>
+                <div class="bubble-tags-container" id="targeting-urls-tags" style="min-height: 24px; padding: 4px; border-radius: 4px; background: var(--bg-input);"></div>
+            </div>
+        </div>
+
+        <!-- Step 6: Configuration -->
+        <div class="step-content" id="step-6">
+            <h2 class="step-title">User Traffic Allocation & Spaces</h2>
+
+
+            <div class="card-layout">
+                <!-- Card 1: User Traffic Allocation -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">User Traffic Allocation</div>
+                        <div class="card-subtitle">Specify the percentage of eligible users that can participate in the experiment.</div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" class="checkbox-input" id="space-search">
-                        <label for="space-search" class="checkbox-label">Search</label>
+                    <div class="form-group">
+                        <label class="form-label required">User Traffic Allocation (%)</label>
+                        <input type="number" class="form-input" id="traffic-allocation" value="100" min="1" max="100" placeholder="Enter percentage between 1-100">
+                        <div class="form-error">Please enter a traffic allocation percentage between 1 and 100</div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" class="checkbox-input" id="space-cart">
-                        <label for="space-cart" class="checkbox-label">Cart & Checkout</label>
+                </div>
+
+                <!-- Card 2: Spaces -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Spaces</div>
+                        <div class="card-subtitle">Select the spaces where this experiment will run to prevent conflicts.</div>
                     </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" class="checkbox-input" id="space-profile">
-                        <label for="space-profile" class="checkbox-label">Profile</label>
+                    <div class="form-group">
+                        <label class="form-label">Spaces</label>
+                        <div class="multi-select-container" style="margin-bottom: 8px;">
+                            <select class="form-select" id="spaces-select" onchange="addSpace(this.value); this.value='';">
+                                <option value="">Add Space...</option>
+                                <option value="Home">Home</option>
+                                <option value="Search">Search</option>
+                                <option value="Cart & Checkout">Cart & Checkout</option>
+                                <option value="Profile">Profile</option>
+                            </select>
+                        </div>
+                        <div class="bubble-tags-container" id="spaces-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;">
+                            <!-- Space bubble tags will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Technical Owner -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Technical Owner</div>
+                        <div class="card-subtitle">Assign a technical owner for this experiment.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Technical Owner</label>
+                        <input type="text" class="form-input" id="technical-owner" placeholder="Enter technical owner name...">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Step 6: Review & Submit -->
-        <div class="step-content" id="step-6">
+        <!-- Step 7: Review & Submit -->
+        <div class="step-content" id="step-7">
             <h2 class="step-title">Review & Submit</h2>
             <p class="step-description">Review your experiment configuration before submitting for approval.</p>
 
@@ -962,9 +1430,15 @@
                 <!-- Review content will be populated by JavaScript -->
             </div>
 
-            <div style="text-align: center; margin-top: 24px;">
-                <button class="btn btn-success" onclick="submitExperiment()">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-secondary" id="abex-collision-btn" onclick="showAbexCollisionOverlay()" style="display: none; min-height: 44px; font-size: 14px; padding: 12px 24px; align-items: center;">
+                    Check for Collisions
+                </button>
+
+                <button class="btn btn-success" onclick="submitExperiment()" style="min-height: 44px; font-size: 14px; padding: 12px 24px; display: inline-flex; align-items: center;">
                     <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+
+
                         <path d="M15.854 5.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L8.5 11.793l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                     </svg>
                     Submit Experiment for Approval
@@ -981,9 +1455,11 @@
             </div>
             <h2 class="step-title">Experiment Submitted Successfully!</h2>
             <p class="step-description">Your experiment has been submitted for review. You'll receive notifications about the approval process.</p>
-            
+
             <div style="background: var(--bg-secondary); border-radius: 12px; padding: 20px; margin: 24px 0; text-align: left;">
                 <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Next Steps:</h3>
+
+
                 <ul style="list-style: none; padding: 0;">
                     <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
                         <div style="width: 20px; height: 20px; background: var(--accent-blue); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">1</div>
@@ -1008,16 +1484,20 @@
 
         <!-- Navigation -->
         <div class="wizard-navigation">
-            <div class="step-indicator">
-                Step <span id="current-step">1</span> of 6
-            </div>
-            <div class="nav-buttons">
+            <div class="nav-left">
                 <button class="btn btn-secondary" id="prev-btn" onclick="previousStep()" disabled>
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
                     </svg>
                     Previous
                 </button>
+            </div>
+            <div class="nav-center">
+                <div class="step-indicator">
+                    Step <span id="current-step">1</span> of <span id="total-steps">6</span>
+                </div>
+            </div>
+            <div class="nav-right">
                 <button class="btn btn-primary" id="next-btn" onclick="nextStep()">
                     Next
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -1031,92 +1511,1011 @@
     <script>
         // Wizard state
         let currentStep = 1;
-        let totalSteps = 6;
+        let totalSteps = 7;
         let variants = [];
-        let currentTheme = 'light';
+
+
+
+        // Date defaults helpers
+        function formatDateYYYYMMDD(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+        const __today = new Date();
+        const __defaultStartDate = new Date(__today);
+        __defaultStartDate.setDate(__today.getDate() + 7);
+        const __defaultEndDate = new Date(__today);
+        __defaultEndDate.setDate(__today.getDate() + 30);
+        const DEFAULT_START_DATE = formatDateYYYYMMDD(__defaultStartDate);
+        const DEFAULT_END_DATE = formatDateYYYYMMDD(__defaultEndDate);
 
         // Form data storage
         let formData = {
-            title: '',
-            hypothesis: '',
+            title: 'Sample Experiment: Improve Homepage Banner Engagement',
+            hypothesis: 'If we show a more prominent homepage banner, then click-through rate and orders from the homepage will increase by at least 5% because the call-to-action will be more visible.',
             experimentType: [],
             authRequired: false,
             variants: [],
             primaryMetric: '',
             secondaryMetrics: [],
-            platforms: [],
-            startDate: '',
-            endDate: '',
-            targetingUrl: '',
-            banners: [],
+            platforms: ['iOS', 'Web', 'Android'],
+            startDate: DEFAULT_START_DATE,
+            endDate: DEFAULT_END_DATE,
+            dateType: 'Planned',
+            targetingUrls: [],
+            banners: ['All Banners'],
             trafficAllocation: 100,
             variantDistribution: '',
-            spaces: []
+            spaces: [],
+            technicalOwner: '',
+            // ABEX-specific fields
+            scienceId: '',
+            predictedStartDate: DEFAULT_START_DATE,
+            predictedEndDate: DEFAULT_END_DATE,
+            abexDateType: 'Planned',
+            maxUsers: '',
+            eligibleDivisions: [],
+            eligibleCustomerSegments: []
         };
 
         // Initialize wizard
         function init() {
-            setupThemeToggle();
-            setupBannerToggle();
+
+
+            setupExperimentTypeHandlers();
             initializeVariants();
             updateProgressBar();
+            renderSpacesBubbleTags();
+            renderTargetingUrlsBubbleTags();
+            renderBannersBubbleTags();
+            renderBannerSelectOptions();
+
+            renderSecondaryMetricsBubbleTags();
+            renderSecondaryMetricOptions();
+
+
+            applyDateDefaultsToInputs();
+            applyDateTypeToLabels();
+            applyAbexDateTypeToLabels();
+
             updateNavigation();
         }
 
-        // Theme toggle functionality
-        function setupThemeToggle() {
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', () => {
-                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-                document.body.setAttribute('data-theme', currentTheme);
-            });
-        }
+
+        // Banner names array for consistent use across the application
+        const bannerNames = [
+            'Kroger', 'Baker\'s', 'City Market', 'Dillons', 'Food 4 Less', 'Foods Co',
+            'Fred Meyer', 'Fry\'s', 'Gerbes', 'Harris Teeter', 'Jay C', 'King Soopers',
+            'Mariano\'s', 'Metro Market', 'Owen\'s', 'Pay Less', 'Pick \'n Save', 'QFC',
+            'Ralphs', 'Roundy\'s', 'Ruler', 'Smith\'s'
+        ];
 
         // Banner toggle functionality
         function setupBannerToggle() {
+            renderSecondaryMetricsBubbleTags();
+            renderSecondaryMetricOptions();
+
             const allBannersCheckbox = document.getElementById('all-banners');
             const individualBanners = document.getElementById('individual-banners');
 
-            allBannersCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    individualBanners.style.display = 'none';
+            if (allBannersCheckbox && individualBanners) {
+                allBannersCheckbox.addEventListener('change', function() {
+                    toggleBannerDisplay(this.checked);
+                    updateBannerFormData();
+                });
+
+                // Set up individual banner checkboxes
+                setupIndividualBannerListeners();
+            }
+        }
+
+        // Toggle banner display based on "All Banners" checkbox state (match detail page behavior)
+        function toggleBannerDisplay(allBannersChecked) {
+            const individualBanners = document.getElementById('individual-banners');
+            if (!individualBanners) return;
+            const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
+            if (allBannersChecked) {
+                individualBanners.classList.add('hidden');
+                // Check all individual banners when "All Banners" is selected
+                bannerCheckboxes.forEach(cb => cb.checked = true);
+            } else {
+                individualBanners.classList.remove('hidden');
+            }
+        }
+
+        // Set up event listeners for individual banner checkboxes
+        function setupIndividualBannerListeners() {
+            const individualBanners = document.getElementById('individual-banners');
+            if (individualBanners) {
+                const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
+                bannerCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateBannerFormData);
+                });
+            }
+        }
+
+        // Update form data based on banner selections
+        function updateBannerFormData() {
+            const allBannersCheckbox = document.getElementById('all-banners');
+            const individualBanners = document.getElementById('individual-banners');
+
+            if (allBannersCheckbox && allBannersCheckbox.checked) {
+                formData.banners = ['All Banners'];
+            } else if (individualBanners) {
+                const selectedBanners = [];
+                const bannerCheckboxes = individualBanners.querySelectorAll('.banner-checkbox');
+                bannerCheckboxes.forEach((checkbox, index) => {
+                    if (checkbox.checked && bannerNames[index]) {
+                        selectedBanners.push(bannerNames[index]);
+                    }
+                });
+                formData.banners = selectedBanners;
+            }
+        }
+
+        // Experiment type handlers for authentication requirement
+        function setupExperimentTypeHandlers() {
+            const experimentTypeRadios = document.querySelectorAll('input[name="experiment-type"]');
+            const authCheckbox = document.getElementById('authentication-required');
+            const authLabel = document.querySelector('label[for="authentication-required"]');
+
+            // Function to handle experiment type changes
+            function handleExperimentTypeChange() {
+                const selectedType = document.querySelector('input[name="experiment-type"]:checked');
+
+                if (selectedType && selectedType.value === 'abex') {
+                    // ABEX Experiment selected - check and disable authentication
+                    authCheckbox.checked = true;
+                    authCheckbox.disabled = true;
+                    authLabel.style.opacity = '0.6';
+                    authLabel.style.cursor = 'not-allowed';
+
+                    // Ensure default Max Users for ABEX if unset
+                    if (!formData.maxUsers) { formData.maxUsers = '100000'; }
                 } else {
-                    individualBanners.style.display = 'grid';
+                    // Other experiment types - enable authentication checkbox
+                    authCheckbox.disabled = false;
+                    authLabel.style.opacity = '1';
+                    authLabel.style.cursor = 'pointer';
                 }
+
+                // Update progress bar to reflect skipped steps
+                updateProgressBar();
+                updateNavigation();
+
+                // Update Step 3 content based on experiment type
+                updateStep3Content();
+
+                // Update progress header visibility
+                updateProgressHeaderVisibility();
+
+                // Re-render variants to show/hide deployment ID fields and update percentages
+                if (variants && variants.length > 0) {
+                    calculatePercentagesFromRatios(); // Recalculate percentages for ABEX
+                    renderVariants();
+                }
+
+                // Re-render Step 5 targeting fields if currently on Step 5
+                if (currentStep === 5) {
+                    if (selectedType && selectedType.value === 'abex') {
+                        renderABEXTargetingFields();
+                    } else {
+                        renderStandardTargetingFields();
+                    }
+                }
+            }
+
+            // Add event listeners to all experiment type radio buttons
+            experimentTypeRadios.forEach(radio => {
+                radio.addEventListener('change', handleExperimentTypeChange);
+            });
+
+            // Initialize the state based on current selection
+            handleExperimentTypeChange();
+        }
+
+        // Generate sample GUID for deployment IDs
+        function generateGUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
             });
         }
+
+        // Generate sample deployment records with descriptions
+        function generateSampleDeploymentRecords() {
+            const deploymentDescriptions = [
+                "Homepage Banner Redesign v2.1",
+                "Checkout Flow Optimization",
+                "Product Page Layout Enhancement",
+                "Mobile Navigation Improvement",
+                "Search Results Algorithm Update",
+                "Cart Abandonment Recovery System",
+                "User Onboarding Flow Redesign",
+                "Personalized Recommendations Engine",
+                "Payment Gateway Integration v3.0",
+                "Category Page Filter Enhancement",
+                "Email Marketing Template Update",
+                "Social Login Integration",
+                "Inventory Management Dashboard",
+                "Customer Support Chat Widget",
+                "Loyalty Program Interface"
+            ];
+
+            return deploymentDescriptions.map(description => ({
+                id: generateGUID(),
+                description: description
+            }));
+        }
+
+        // Generate sample science IDs
+        function generateSampleScienceIDs() {
+            return [
+                "Conversion Rate Optimization Study",
+                "User Engagement Enhancement Project",
+                "Mobile UX Performance Analysis",
+                "Checkout Flow Optimization Research",
+                "Personalization Algorithm Testing",
+                "Search Results Relevance Study",
+                "Product Recommendation Engine Test",
+                "Cart Abandonment Reduction Initiative",
+                "Customer Retention Behavior Analysis",
+                "Cross-Platform User Experience Study",
+                "Revenue Per User Optimization Project",
+                "Navigation Usability Enhancement Research"
+            ];
+        }
+
+        // Generate sample divisions
+        function generateSampleDivisions() {
+            return [
+                "011 - Atlanta Division",
+                "014 - Cincinnati/Dayton Division",
+                "016 - Columbus Division",
+                "018 - Michigan Division",
+                "021 - Central Division",
+                "024 - Louisville Division",
+                "025 - Delta Division",
+                "026 - Nashville Division",
+                "029 - Mid-Atlantic Division"
+            ];
+        }
+
+        // Generate hierarchical customer segments data
+        function generateCustomerSegmentsHierarchy() {
+            return {
+                "Customer Type": [
+                    "New Customers",
+                    "Returning Customers",
+                    "Premium Members",
+                    "VIP Customers"
+                ],
+                "Purchase Behavior": [
+                    "Frequent Buyers",
+                    "Occasional Buyers",
+                    "High-Value Purchasers",
+                    "Bargain Hunters"
+                ],
+                "Platform Usage": [
+                    "Mobile Users",
+                    "Desktop Users",
+                    "App Users",
+                    "Web Users"
+                ],
+                "Geographic Region": [
+                    "North America",
+                    "International",
+                    "Urban Markets",
+                    "Suburban Markets"
+                ],
+                "Engagement Level": [
+                    "Highly Engaged",
+                    "Moderately Engaged",
+                    "Low Engagement",
+                    "At-Risk Customers"
+                ]
+            };
+        }
+
+        // Generate sample customer segments (for backward compatibility)
+        function generateSampleCustomerSegments() {
+            return [
+                "Premium Members",
+                "New Users",
+                "Mobile Users",
+                "Frequent Buyers",
+                "High-Value Customers",
+                "Returning Customers",
+                "International Users",
+                "Desktop Users",
+                "Subscription Users",
+                "Enterprise Clients"
+            ];
+        }
+
+        // Initialize sample data
+        const sampleDeploymentRecords = generateSampleDeploymentRecords();
+        const sampleScienceIDs = generateSampleScienceIDs();
+        const sampleDivisions = generateSampleDivisions();
+        const sampleCustomerSegments = generateSampleCustomerSegments();
+        const customerSegmentsHierarchy = generateCustomerSegmentsHierarchy();
+
+        // State for two-level customer segment selection
+        let selectedPrimaryCategory = '';
+        let selectedSecondaryCategory = '';
 
         // Initialize default variants
         function initializeVariants() {
             variants = [
-                { description: 'Current Experience (Control)', ratio: 1, percentage: 50 },
-                { description: 'Test Variant', ratio: 1, percentage: 50 }
+                { description: 'Current Experience (Control)', ratio: 1, percentage: 50, deploymentId: '' },
+                { description: 'Test Variant', ratio: 1, percentage: 50, deploymentId: '' }
             ];
             calculatePercentagesFromRatios();
             renderVariants();
             updateVariantDistribution();
         }
 
+        // Check if ABEX experiment type is selected
+        function isABEXSelected() {
+            const selectedType = document.querySelector('input[name="experiment-type"]:checked');
+            return selectedType && selectedType.value === 'abex';
+        }
+
+        // Create bubble tag element for multi-select fields
+        function createBubbleTag(text, onRemove) {
+            return `
+                <span class="bubble-tag" style="display: inline-flex; align-items: center; background: var(--accent-blue); color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; margin: 2px; white-space: nowrap;">
+                    ${text}
+                    <button type="button" onclick="${onRemove}" style="background: none; border: none; color: white; margin-left: 4px; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">×</button>
+                </span>
+            `;
+        }
+
+        // Render ABEX-specific targeting fields
+        function renderABEXTargetingFields() {
+            // Set default max users if not set yet
+            if (!formData.maxUsers) { formData.maxUsers = '100000'; }
+            const step5Content = document.getElementById('step-5');
+            const formGrid = step5Content.querySelector('.form-grid');
+
+            // Generate Science ID options
+            let scienceOptions = '<option value="">Select Science ID...</option>';
+            sampleScienceIDs.forEach(id => {
+                const selected = formData.scienceId === id ? 'selected' : '';
+                scienceOptions += `<option value="${id}" ${selected}>${id}</option>`;
+            });
+
+            // Generate Division options
+            let divisionOptions = '';
+            sampleDivisions.forEach(division => {
+                if (!formData.eligibleDivisions.includes(division)) {
+                    divisionOptions += `<option value="${division}">${division}</option>`;
+                }
+            });
+
+            // Generate Primary Category options for Customer Segments
+            let primaryCategoryOptions = '<option value="">Select Primary Category...</option>';
+            Object.keys(customerSegmentsHierarchy).forEach(category => {
+                const selected = selectedPrimaryCategory === category ? 'selected' : '';
+                primaryCategoryOptions += `<option value="${category}" ${selected}>${category}</option>`;
+            });
+
+            // Generate Secondary Category options based on selected primary category
+            let secondaryCategoryOptions = '<option value="">Select Secondary Category...</option>';
+            if (selectedPrimaryCategory && customerSegmentsHierarchy[selectedPrimaryCategory]) {
+                customerSegmentsHierarchy[selectedPrimaryCategory].forEach(subcategory => {
+                    const selected = selectedSecondaryCategory === subcategory ? 'selected' : '';
+                    secondaryCategoryOptions += `<option value="${subcategory}" ${selected}>${subcategory}</option>`;
+                });
+            }
+
+            // Generate division bubble tags
+            const divisionTags = formData.eligibleDivisions.map(division =>
+                createBubbleTag(division, `removeDivision('${division}')`)
+            ).join('');
+
+            // Generate segment bubble tags
+            const segmentTags = formData.eligibleCustomerSegments.map(segment =>
+                createBubbleTag(segment, `removeCustomerSegment('${segment}')`)
+            ).join('');
+
+            step5Content.innerHTML = `
+                <h2 class="step-title">Targeting & Schedule</h2>
+                <p class="step-description">Define the ABEX experiment parameters and schedule.</p>
+
+                <div class="card-layout">
+                    <!-- Card 1: Science ID and Maximum Users -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Science ID and Maximum Users</div>
+                            <div class="card-subtitle">Configure experiment parameters and user limits.</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Science ID</label>
+                            <select class="form-select" id="science-id" onchange="updateABEXField('scienceId', this.value)">
+                                ${scienceOptions}
+                            </select>
+                            <div class="form-error">Please select a Science ID</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Maximum Number of Users</label>
+                            <input type="number" class="form-input" id="max-users" value="${formData.maxUsers}" onchange="updateABEXField('maxUsers', this.value)" placeholder="Max # of users" min="1" style="width: 150px; appearance: textfield; -moz-appearance: textfield;">
+                            <div class="form-error">Please enter the maximum number of users</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Experiment Dates -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Experiment Dates</div>
+                            <div class="card-subtitle">Set the planned or scheduled dates for your experiment.</div>
+                        </div>
+                        <!-- Row 1: Date Type Radios -->
+                        <div class="form-grid" style="grid-template-columns: 1fr; gap: 16px; margin-top: 12px;">
+                            <div class="form-group">
+                                <label class="form-label required">Experiment Date Type</label>
+                                <div class="inline-options">
+                                    <div class="checkbox-group">
+                                        <input type="radio" class="checkbox-input" id="abex-date-type-planned" name="abex-date-type" value="Planned" ${formData.abexDateType === 'Scheduled' ? '' : 'checked'} onchange="setAbexDateType('Planned')">
+                                        <label for="abex-date-type-planned" class="checkbox-label">Planned</label>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <input type="radio" class="checkbox-input" id="abex-date-type-scheduled" name="abex-date-type" value="Scheduled" ${formData.abexDateType === 'Scheduled' ? 'checked' : ''} onchange="setAbexDateType('Scheduled')">
+                                        <label for="abex-date-type-scheduled" class="checkbox-label">Scheduled</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Start/End Dates Side-by-Side -->
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px; align-items: end; margin-top: 12px;">
+                            <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; margin-bottom: 0;">
+                                <label class="form-label required" id="abex-start-date-label">${(formData.abexDateType || 'Planned')} Start Date</label>
+                                <input type="date" class="form-input" id="predicted-start-date" value="${formData.predictedStartDate}" onchange="updateABEXField('predictedStartDate', this.value)">
+                                <div class="form-error">Please select a start date</div>
+                            </div>
+                            <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end; margin-bottom: 0;">
+                                <label class="form-label required" id="abex-end-date-label">${(formData.abexDateType || 'Planned')} End Date</label>
+                                <input type="date" class="form-input" id="predicted-end-date" value="${formData.predictedEndDate}" onchange="updateABEXField('predictedEndDate', this.value)">
+                                <div class="form-error">Please select an end date</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Audience Selection -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Audience Selection</div>
+                            <div class="card-subtitle">Define banners, locations, and audience segments for targeting.</div>
+                        </div>
+
+                        <div class="form-group abex-targeting">
+                            <label class="form-label">Banner Selection</label>
+                            <div class="option-description">Select which banners will run this experiment. Web platform division and store filtering options are available through AMP.</div>
+                            <div class="multi-select-container" style="margin-bottom: 8px;">
+                                <select class="form-select" id="banner-select" style="width: 100%;" onchange="handleBannerSelectChange(this.value); this.value='';">
+                                    <option value="">Select Banner...</option>
+                                </select>
+                            </div>
+                            <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;"></div>
+                        </div>
+
+                        <div class="form-group abex-targeting">
+                            <label class="form-label">Eligible Divisions</label>
+                            <div class="multi-select-container" style="margin-bottom: 8px;">
+                                <select class="form-select" id="divisions-select" onchange="addDivision(this.value); this.value='';" ${divisionOptions ? '' : 'disabled'}>
+                                    <option value="">Add Division...</option>
+                                    ${divisionOptions}
+                                </select>
+                            </div>
+                            <div class="bubble-tags-container" id="divisions-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;">
+                                ${divisionTags}
+                            </div>
+                        </div>
+
+                        <div class="form-group abex-targeting">
+                            <label class="form-label">Eligible Customer Segments</label>
+                            <div class="form-grid segments-row" style="margin-bottom: 8px;">
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <select class="form-select" id="primary-category-select" onchange="handlePrimaryCategoryChange(this.value)">
+                                        ${primaryCategoryOptions}
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 8px;">
+                                    <select class="form-select" id="secondary-category-select" onchange="handleSecondaryCategoryChange(this.value)" ${!selectedPrimaryCategory ? 'disabled' : ''}>
+                                        ${secondaryCategoryOptions}
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-bottom: 8px;">
+                                <button type="button" class="btn btn-secondary" onclick="addHierarchicalCustomerSegment()" ${!selectedPrimaryCategory || !selectedSecondaryCategory ? 'disabled' : ''} style="font-size: 12px; padding: 6px 12px;">
+                                    Add Segment
+                                </button>
+                            </div>
+                            <div class="bubble-tags-container" id="segments-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;">
+                                ${segmentTags}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Initialize ABEX dynamic UI after rendering
+            setTimeout(() => {
+                renderBannersBubbleTags();
+                renderBannerSelectOptions();
+                applyAbexDateTypeToLabels();
+                applyDateDefaultsToInputs();
+            }, 0);
+        }
+
+        // Update ABEX field values
+        function updateABEXField(fieldName, value) {
+            formData[fieldName] = value;
+        }
+
+        // Add division to eligible divisions
+        function addDivision(division) {
+            if (division && !formData.eligibleDivisions.includes(division)) {
+                formData.eligibleDivisions.push(division);
+                renderABEXTargetingFields(); // Re-render to update UI
+            }
+        }
+
+        // Remove division from eligible divisions
+        function removeDivision(division) {
+            formData.eligibleDivisions = formData.eligibleDivisions.filter(d => d !== division);
+            renderABEXTargetingFields(); // Re-render to update UI
+        }
+
+        // Add customer segment to eligible segments
+        function addCustomerSegment(segment) {
+            if (segment && !formData.eligibleCustomerSegments.includes(segment)) {
+                formData.eligibleCustomerSegments.push(segment);
+                renderABEXTargetingFields(); // Re-render to update UI
+            }
+        }
+
+        // Remove customer segment from eligible segments
+        function removeCustomerSegment(segment) {
+            formData.eligibleCustomerSegments = formData.eligibleCustomerSegments.filter(s => s !== segment);
+            renderABEXTargetingFields(); // Re-render to update UI
+        }
+
+        // Handle primary category selection change
+        function handlePrimaryCategoryChange(category) {
+            selectedPrimaryCategory = category || ''; // Handle empty values
+            selectedSecondaryCategory = ''; // Reset secondary selection
+            renderABEXTargetingFields(); // Re-render to update secondary dropdown
+        }
+
+        // Handle secondary category selection change
+        function handleSecondaryCategoryChange(subcategory) {
+            selectedSecondaryCategory = subcategory || ''; // Handle empty values
+            renderABEXTargetingFields(); // Re-render to update button state
+        }
+
+        // Add hierarchical customer segment
+        function addHierarchicalCustomerSegment() {
+            if (selectedPrimaryCategory && selectedSecondaryCategory) {
+                const combinedSegment = `${selectedPrimaryCategory} - ${selectedSecondaryCategory}`;
+                if (!formData.eligibleCustomerSegments.includes(combinedSegment)) {
+                    formData.eligibleCustomerSegments.push(combinedSegment);
+                    selectedPrimaryCategory = '';
+                    selectedSecondaryCategory = '';
+                    renderABEXTargetingFields(); // Re-render to update UI
+                }
+            }
+        }
+
+        // Update Step 3 content based on experiment type
+        function updateStep3Content() {
+            const description = document.getElementById('step-3-description');
+
+            if (isABEXSelected()) {
+                description.textContent = 'Define the different experiences you want to test. Variants are automatically labeled A, B, C, etc. and will be distributed equally among users. Variant A is your control and cannot be deleted. You need at least one test variant in addition to the control.';
+            } else {
+                description.textContent = 'Define the different experiences you want to test and set their traffic ratios. Variants are automatically labeled A, B, C, etc. Variant A is your control and cannot be deleted. You need at least one test variant in addition to the control.';
+            }
+        }
+
+        // Update progress header visibility
+        function updateProgressHeaderVisibility() {
+            const collisionsStep = document.querySelector('.progress-step[data-step="2"]');
+            const metricsStep = document.querySelector('.progress-step[data-step="4"]');
+            const configurationStep = document.querySelector('.progress-step[data-step="6"]');
+
+            // Always hide Collisions step from progress header
+            if (collisionsStep) collisionsStep.style.display = 'none';
+
+            // Preserve existing behavior for Metrics (4) and Configuration (6)
+            if (isABEXSelected()) {
+                if (metricsStep) metricsStep.style.display = 'none';
+                if (configurationStep) configurationStep.style.display = 'none';
+            } else {
+                if (metricsStep) metricsStep.style.display = 'flex';
+                if (configurationStep) configurationStep.style.display = 'flex';
+            }
+        }
+
+        // Add space to selected spaces
+        function addSpace(space) {
+            if (space && !formData.spaces.includes(space)) {
+                formData.spaces.push(space);
+
+                renderSpacesBubbleTags(); // Re-render to update UI
+            }
+        }
+
+        // Targeting URLs (multi-entry) helpers
+        function renderTargetingUrlsBubbleTags() {
+            const container = document.getElementById('targeting-urls-tags');
+            if (!container) return;
+            const urls = formData.targetingUrls || [];
+            container.innerHTML = urls.map(url => createBubbleTag(url, `removeTargetingUrl('${url}')`)).join('');
+        }
+        function addTargetingUrl(url) {
+            const value = (url || '').trim();
+            if (!value) return;
+            formData.targetingUrls = formData.targetingUrls || [];
+            if (!formData.targetingUrls.includes(value)) {
+                formData.targetingUrls.push(value);
+                renderTargetingUrlsBubbleTags();
+            }
+        }
+        function addTargetingUrlFromInput() {
+            const input = document.getElementById('targeting-url-input');
+            if (!input) return;
+            const value = input.value.trim();
+            if (value) {
+                addTargetingUrl(value);
+                input.value = '';
+            }
+        }
+        function removeTargetingUrl(url) {
+            formData.targetingUrls = (formData.targetingUrls || []).filter(u => u !== url);
+            renderTargetingUrlsBubbleTags();
+        }
+
+
+
+        // Remove space from selected spaces
+        function removeSpace(space) {
+            formData.spaces = formData.spaces.filter(s => s !== space);
+            renderSpacesBubbleTags(); // Re-render to update UI
+        }
+
+        // Render spaces bubble tags
+
+        // Banners (multi-entry) helpers with special "All Banners" handling
+        function renderBannersBubbleTags() {
+            const container = document.getElementById('banners-tags');
+            if (!container) return;
+            const banners = formData.banners || [];
+            container.innerHTML = (banners || []).map(b => createBubbleTag(b, `removeBanner('${b}')`)).join('');
+        }
+        function addBanner(name) {
+            const value = (name || '').trim();
+            if (!value) return;
+            const isAll = value.toLowerCase() === 'all banners';
+            if (isAll) {
+                formData.banners = ['All Banners'];
+            } else {
+                formData.banners = (formData.banners || []).filter(b => b !== 'All Banners');
+                if (!formData.banners.includes(value)) {
+                    formData.banners.push(value);
+                }
+            }
+            renderBannersBubbleTags();
+            renderBannerSelectOptions();
+        }
+        function addBannerFromInput() {
+            const input = document.getElementById('banner-input');
+            if (!input) return;
+            const value = input.value.trim();
+            if (value) {
+                addBanner(value);
+                input.value = '';
+            }
+        }
+        function removeBanner(name) {
+            formData.banners = (formData.banners || []).filter(b => b !== name);
+            renderBannersBubbleTags();
+            renderBannerSelectOptions();
+        }
+
+        const predefinedBanners = [
+            'All Banners',
+            "Kroger",
+            "Baker's",
+            "City Market",
+            "Dillons",
+            "Food 4 Less",
+            "Foods Co",
+            "Fred Meyer",
+            "Fry's"
+        ];
+        function renderBannerSelectOptions() {
+            const select = document.getElementById('banner-select');
+            if (!select) return;
+            const selected = formData.banners || [];
+            // Build options in the exact required order, excluding already selected banners
+            const options = ['<option value="">Select Banner...</option>'];
+            predefinedBanners.forEach(name => {
+                const isSelected = selected.includes(name);
+                if (!isSelected) {
+                    options.push(`<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`);
+                }
+            });
+            select.innerHTML = options.join('');
+            select.disabled = options.length <= 1; // only placeholder
+        }
+        function handleBannerSelectChange(value) {
+            if (!value) return;
+            addBanner(value);
+            // Reset options after selection
+            renderBannerSelectOptions();
+        }
+
+
+        // Secondary Metrics (multi-entry) helpers
+        const predefinedSecondaryMetrics = [
+            'Orders Placed',
+            'Page Views',
+            'Clicks (Nav Elements)',
+            'Order Revenue Booked',
+            'Cart Adds',
+            'Conversion Rate',
+            'Revenue Per User',
+            'Time on Page'
+        ];
+        function renderSecondaryMetricsBubbleTags() {
+            const container = document.getElementById('secondary-metrics-tags');
+            if (!container) return;
+            const metrics = formData.secondaryMetrics || [];
+            container.innerHTML = metrics.map(m => createBubbleTag(m, `removeSecondaryMetric('${m}')`)).join('');
+        }
+        function renderSecondaryMetricOptions() {
+            const select = document.getElementById('secondary-metric-select');
+            if (!select) return;
+            const selected = formData.secondaryMetrics || [];
+            const options = ['<option value="">Select Secondary Metric...</option>'];
+            predefinedSecondaryMetrics.forEach(name => {
+                if (!selected.includes(name)) {
+                    options.push(`<option value="${name}">${name}</option>`);
+                }
+            });
+            select.innerHTML = options.join('');
+            select.disabled = options.length <= 1;
+        }
+        function addSecondaryMetric(name) {
+            const value = (name || '').trim();
+            if (!value) return;
+            formData.secondaryMetrics = formData.secondaryMetrics || [];
+            if (!formData.secondaryMetrics.includes(value)) {
+                formData.secondaryMetrics.push(value);
+            }
+            renderSecondaryMetricsBubbleTags();
+            renderSecondaryMetricOptions();
+        }
+        function removeSecondaryMetric(name) {
+            formData.secondaryMetrics = (formData.secondaryMetrics || []).filter(m => m !== name);
+            renderSecondaryMetricsBubbleTags();
+            renderSecondaryMetricOptions();
+        }
+        function handleSecondaryMetricSelect(value) {
+            if (!value) return;
+            addSecondaryMetric(value);
+        }
+
+        function renderSpacesBubbleTags() {
+            const spacesTagsContainer = document.getElementById('spaces-tags');
+            if (spacesTagsContainer) {
+                const spaceTags = formData.spaces.map(space =>
+                    createBubbleTag(space, `removeSpace('${space}')`)
+                ).join('');
+                spacesTagsContainer.innerHTML = spaceTags;
+            }
+        }
+
+
+
+        // Render standard (non-ABEX) targeting fields (uses alternative card-based layout)
+        function renderStandardTargetingFields() {
+            const step5Content = document.getElementById('step-5');
+
+            step5Content.innerHTML = `
+                <h2 class="step-title">Targeting & Schedule</h2>
+                <p class="step-description">Define where and when your experiment should run.</p>
+
+                <div class="card-layout">
+                    <!-- Target Platforms Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Target Platforms</div>
+                            <div class="card-subtitle">Select where your experiment will run</div>
+                        </div>
+                        <div class="platform-list">
+                            <label class="platform-checkbox">
+                                <input type="checkbox" id="platform-web" ${formData.platforms.includes('Web') ? 'checked' : ''}>
+                                <span class="platform-name">Web</span>
+                            </label>
+                            <label class="platform-checkbox">
+                                <input type="checkbox" id="platform-ios" ${formData.platforms.includes('iOS') ? 'checked' : ''}>
+                                <span class="platform-name">iOS</span>
+                            </label>
+                            <label class="platform-checkbox">
+                                <input type="checkbox" id="platform-android" ${formData.platforms.includes('Android') ? 'checked' : ''}>
+                                <span class="platform-name">Android</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Experiment Schedule Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Experiment Schedule</div>
+                            <div class="card-subtitle">Configure timing and duration</div>
+                        </div>
+
+                        <div style="margin-bottom: 16px;">
+                            <div class="label" style="margin-bottom: 8px;">Experiment Date Type</div>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" id="date-type-planned" name="date-type" value="Planned" ${formData.dateType === 'Scheduled' ? '' : 'checked'} onchange="setDateType('Planned')"> Planned
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" id="date-type-scheduled" name="date-type" value="Scheduled" ${formData.dateType === 'Scheduled' ? 'checked' : ''} onchange="setDateType('Scheduled')"> Scheduled
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="date-grid">
+                            <div class="input-group">
+                                <label class="label required" id="start-date-label">${(formData.dateType || 'Planned')} Start Date</label>
+                                <input type="date" class="input form-input" id="start-date" value="${formData.startDate}">
+                                <div class="form-error">Please select a start date</div>
+                            </div>
+                            <div class="input-group">
+                                <label class="label required" id="end-date-label">${(formData.dateType || 'Planned')} End Date</label>
+                                <input type="date" class="input form-input" id="end-date" value="${formData.endDate}">
+                                <div class="form-error">Please select an end date</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Banner Selection Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Banner Selection</div>
+                            <div class="card-subtitle">Choose participating stores</div>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 8px;">
+                            <select class="input form-select" id="banner-select" onchange="handleBannerSelectChange(this.value); this.value='';">
+                                <option value="">Select Banner...</option>
+                            </select>
+                        </div>
+                        <div class="bubble-tags-container" id="banners-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;"></div>
+                    </div>
+
+                    <!-- Target URLs Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Target URLs</div>
+                            <div class="card-subtitle">Specify page locations</div>
+                        </div>
+                        <div class="url-input-group">
+                            <input type="text" class="url-input form-input" id="targeting-url-input" placeholder="Add URL..." onkeydown="if(event.key==='Enter'){ addTargetingUrlFromInput(); event.preventDefault(); }">
+                            <button type="button" class="btn" id="add-targeting-url-btn" onclick="addTargetingUrlFromInput()">Add</button>
+                        </div>
+                        <div class="bubble-tags-container" id="targeting-urls-tags" style="min-height: 24px; padding: 4px; border-radius: 4px;">
+                            ${(formData.targetingUrls || []).map(url => createBubbleTag(url, `removeTargetingUrl('${url}')`)).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Initialize dynamic UI after rendering
+            setTimeout(() => {
+                renderBannersBubbleTags();
+                renderBannerSelectOptions();
+                renderTargetingUrlsBubbleTags();
+                applyDateTypeToLabels();
+                applyDateDefaultsToInputs();
+            }, 0);
+        }
+
+        // Date Type helpers (Standard)
+        function applyDateTypeToLabels() {
+            const t = formData.dateType || 'Planned';
+            const start = document.getElementById('start-date-label');
+            if (start) start.textContent = `${t} Start Date`;
+            const end = document.getElementById('end-date-label');
+            if (end) end.textContent = `${t} End Date`;
+        }
+        function setDateType(type) {
+            formData.dateType = type;
+            applyDateTypeToLabels();
+        }
+
+        // Date Type helpers (ABEX)
+        function applyAbexDateTypeToLabels() {
+            const t = formData.abexDateType || 'Planned';
+            const start = document.getElementById('abex-start-date-label');
+            if (start) start.textContent = `${t} Start Date`;
+            const end = document.getElementById('abex-end-date-label');
+            if (end) end.textContent = `${t} End Date`;
+        }
+        function setAbexDateType(type) {
+            formData.abexDateType = type;
+            applyAbexDateTypeToLabels();
+        }
+
+
         // Render variants
         function renderVariants() {
             const container = document.getElementById('variants-container');
             container.innerHTML = '';
+            const showDeploymentID = isABEXSelected();
 
             variants.forEach((variant, index) => {
                 const letter = String.fromCharCode(65 + index); // A, B, C, etc.
+
+        // Apply default dates to visible inputs if empty
+        function applyDateDefaultsToInputs() {
+            const setIfEmpty = (id, val) => {
+                const el = document.getElementById(id);
+                if (el && !el.value) el.value = val || '';
+            };
+            setIfEmpty('start-date', formData.startDate);
+            setIfEmpty('end-date', formData.endDate);
+            setIfEmpty('predicted-start-date', formData.predictedStartDate);
+            setIfEmpty('predicted-end-date', formData.predictedEndDate);
+        }
+
                 const variantDiv = document.createElement('div');
-                variantDiv.className = 'variant-item';
+                variantDiv.className = 'variant-card';
+
+                // Generate deployment ID dropdown options with descriptions
+                let deploymentOptions = '<option value="">Select Deployment ID...</option>';
+                sampleDeploymentRecords.forEach(record => {
+                    const selected = variant.deploymentId === record.id ? 'selected' : '';
+                    const displayText = `${record.description} - ${record.id}`;
+                    deploymentOptions += `<option value="${record.id}" ${selected}>${displayText}</option>`;
+                });
+
+                // Deployment ID field HTML (only shown for ABEX experiments)
+                const deploymentIdField = showDeploymentID ? `
+                    <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+                        <label class="form-label required" style="font-size: 13px; margin-bottom: 6px;">Deployment ID</label>
+                        <select class="form-select deployment-id-select" onchange="updateVariant(${index}, 'deploymentId', this.value)" style="font-size: 14px; padding: 6px 8px; width: 100%;">
+                            ${deploymentOptions}
+                        </select>
+                    </div>
+                ` : '';
+
                 variantDiv.innerHTML = `
-                    <div class="variant-header">
-                        <div style="display: flex; flex-direction: column; flex: 1; margin-right: 12px;">
-                            <div style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Variant ${letter}</div>
-                            <input type="text" class="variant-description" value="${variant.description}" onchange="updateVariant(${index}, 'description', this.value)" placeholder="Enter variant description..." style="border: 1px solid var(--border-light); background: var(--bg-input); font-size: 14px; color: var(--text-primary); padding: 6px 10px; border-radius: 4px;">
+                    <div class="variant-row">
+                        <div class="variant-info">
+                            <div class="variant-title">Variant ${letter}</div>
+                            <div class="variant-subtitle">${index === 0 ? 'Current Experience (Control)' : 'Treatment Experience'}</div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <input type="number" class="variant-ratio-input" value="${variant.ratio}" min="1" onchange="updateVariant(${index}, 'ratio', parseInt(this.value) || 1)" style="width: 60px; text-align: center; border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 8px; background: var(--bg-input); color: var(--text-primary); font-weight: 600; font-size: 12px;">
-                            <span style="font-size: 12px; color: var(--text-secondary);">(${variant.percentage}%)</span>
+                        <div class="variant-inputs">
+                            ${!isABEXSelected() ? `
+                                <input type="number" class="variant-input variant-ratio-input ${index === 0 ? 'is-control' : 'is-treatment'}" value="${variant.ratio}" min="1" onchange="updateVariant(${index}, 'ratio', parseInt(this.value) || 1)">
+                            ` : `
+                                <input type="number" class="variant-input variant-percentage-input ${index === 0 ? 'is-control' : 'is-treatment'}" value="${variant.percentage}" min="0" max="100" step="0.01" onchange="updateVariantPercentage(${index}, parseFloat(this.value) || 0)">
+                            `}
                         </div>
-                        ${variants.length > 2 && index > 0 ? `<button onclick="removeVariant(${index})" style="background: var(--accent-red); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; margin-left: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; line-height: 1;">×</button>` : ''}
+                        <div class="variant-percent-text">${isABEXSelected() ? '%' : (variant.percentage + '%')}</div>
+                        <div class="variant-remove">${variants.length > 2 && index > 0 ? `<button onclick="removeVariant(${index})" style="background: var(--accent-red); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1;">×</button>` : ''}</div>
+                    </div>
+                    <div class="variant-details">
+                        <input type="text" class="variant-description" value="${variant.description}" onchange="updateVariant(${index}, 'description', this.value)" placeholder="Enter variant description..." style="border: 1px solid var(--border-light); background: var(--bg-input); font-size: 14px; color: var(--text-primary); padding: 6px 10px; border-radius: 4px; width: 100%;">
+                        ${deploymentIdField}
                     </div>
                 `;
                 container.appendChild(variantDiv);
@@ -1128,7 +2527,8 @@
             variants.push({
                 description: 'New Test Variant',
                 ratio: 1,
-                percentage: 0
+                percentage: 0,
+                deploymentId: ''
             });
             calculatePercentagesFromRatios();
             renderVariants();
@@ -1148,18 +2548,39 @@
 
         // Calculate percentages from ratios
         function calculatePercentagesFromRatios() {
-            const totalRatio = variants.reduce((sum, variant) => sum + (variant.ratio || 1), 0);
-            
-            variants.forEach(variant => {
-                variant.percentage = Math.round((variant.ratio / totalRatio) * 100 * 10) / 10; // Round to 1 decimal place
-            });
-            
-            // Adjust for rounding errors to ensure total is exactly 100%
-            const totalPercentage = variants.reduce((sum, variant) => sum + variant.percentage, 0);
-            if (totalPercentage !== 100) {
-                const difference = 100 - totalPercentage;
-                variants[0].percentage = Math.round((variants[0].percentage + difference) * 10) / 10;
+            if (isABEXSelected()) {
+                // For ABEX experiments, use equal distribution
+                calculateEqualPercentages();
+            } else {
+                // For standard experiments, use ratio-based calculation
+                const totalRatio = variants.reduce((sum, variant) => sum + (variant.ratio || 1), 0);
+
+                variants.forEach(variant => {
+                    variant.percentage = Math.round((variant.ratio / totalRatio) * 100 * 10) / 10; // Round to 1 decimal place
+                });
+
+                // Adjust for rounding errors to ensure total is exactly 100%
+                const totalPercentage = variants.reduce((sum, variant) => sum + variant.percentage, 0);
+                if (totalPercentage !== 100) {
+                    const difference = 100 - totalPercentage;
+                    variants[0].percentage = Math.round((variants[0].percentage + difference) * 10) / 10;
+                }
             }
+        }
+
+        // Calculate equal percentages for ABEX experiments
+        function calculateEqualPercentages() {
+            const numVariants = variants.length;
+            const basePercentage = Math.floor(10000 / numVariants) / 100; // Round down to 2 decimal places
+            const remainder = 100 - (basePercentage * numVariants);
+
+            variants.forEach((variant, index) => {
+                variant.percentage = basePercentage;
+                // Add remainder to the last variant to ensure total equals 100%
+                if (index === numVariants - 1) {
+                    variant.percentage = Math.round((basePercentage + remainder) * 100) / 100;
+                }
+            });
         }
 
         // Update variant
@@ -1177,6 +2598,36 @@
             // Description changes don't need re-rendering
         }
 
+        // Update variant percentage for ABEX experiments
+        function updateVariantPercentage(index, value) {
+            // Ensure percentage is between 0 and 100
+            value = Math.max(0, Math.min(100, value));
+            variants[index].percentage = value;
+
+            // Validate that total equals 100%
+            const totalPercentage = variants.reduce((sum, variant) => sum + variant.percentage, 0);
+
+            // Show validation message if total doesn't equal 100%
+            const container = document.getElementById('variants-container');
+            let validationMessage = container.querySelector('.percentage-validation');
+
+            if (Math.abs(totalPercentage - 100) > 0.01) { // Allow small floating point differences
+                if (!validationMessage) {
+                    validationMessage = document.createElement('div');
+                    validationMessage.className = 'percentage-validation';
+                    validationMessage.style.cssText = 'background: var(--accent-red); color: white; padding: 8px 12px; border-radius: 6px; margin-top: 8px; font-size: 13px; text-align: center;';
+                    container.appendChild(validationMessage);
+                }
+                validationMessage.textContent = `Total percentage must equal 100%. Current total: ${totalPercentage.toFixed(2)}%`;
+            } else {
+                if (validationMessage) {
+                    validationMessage.remove();
+                }
+            }
+
+            renderVariants();
+        }
+
         // Update variant distribution automatically
         function updateVariantDistribution() {
             const distributionInput = document.getElementById('variant-distribution');
@@ -1185,20 +2636,52 @@
             }
         }
 
+        // Helper function to check if a step should be skipped
+        function shouldSkipStep(stepNumber) {
+            // Always skip Step 2 (Collisions) for all experiment types
+            if (stepNumber === 2) return true;
+
+            // Preserve ABEX-specific skipping of Steps 4 and 6
+            if (isABEXSelected()) {
+                return stepNumber === 4 || stepNumber === 6;
+            }
+            return false;
+        }
+
+        // Get the next valid step number
+        function getNextStep(currentStepNum) {
+            let nextStepNum = currentStepNum + 1;
+            while (nextStepNum <= totalSteps && shouldSkipStep(nextStepNum)) {
+                nextStepNum++;
+            }
+            return nextStepNum;
+        }
+
+        // Get the previous valid step number
+        function getPreviousStep(currentStepNum) {
+            let prevStepNum = currentStepNum - 1;
+            while (prevStepNum >= 1 && shouldSkipStep(prevStepNum)) {
+                prevStepNum--;
+            }
+            return prevStepNum;
+        }
+
         // Navigation functions
         function nextStep() {
             if (validateCurrentStep()) {
                 saveCurrentStepData();
-                if (currentStep < totalSteps) {
-                    currentStep++;
+                const nextStepNum = getNextStep(currentStep);
+                if (nextStepNum <= totalSteps) {
+                    currentStep = nextStepNum;
                     updateWizard();
                 }
             }
         }
 
         function previousStep() {
-            if (currentStep > 1) {
-                currentStep--;
+            const prevStepNum = getPreviousStep(currentStep);
+            if (prevStepNum >= 1) {
+                currentStep = prevStepNum;
                 updateWizard();
             }
         }
@@ -1209,18 +2692,39 @@
             document.querySelectorAll('.step-content').forEach(step => {
                 step.classList.remove('active');
             });
-            
+
             // Show current step
             document.getElementById(`step-${currentStep}`).classList.add('active');
-            
+
             // Update progress bar
             updateProgressBar();
-            
+
             // Update navigation
             updateNavigation();
-            
-            // Special handling for review step
-            if (currentStep === 6) {
+
+            // Toggle ABEX collisions button visibility on Review step
+            (function(){
+                const abexBtn = document.getElementById('abex-collision-btn');
+                if (abexBtn) {
+                    abexBtn.style.display = (currentStep === 7) ? 'inline-flex' : 'none';
+                }
+            })();
+
+
+            // Special handling for specific steps
+            if (currentStep === 5) {
+                // Render appropriate targeting fields based on experiment type
+                if (isABEXSelected()) {
+                    renderABEXTargetingFields();
+                } else {
+                    renderStandardTargetingFields();
+                }
+            } else if (currentStep === 6) {
+                // Render spaces bubble tags
+                setTimeout(() => {
+                    renderSpacesBubbleTags();
+                }, 100);
+            } else if (currentStep === 7) {
                 generateReview();
             }
         }
@@ -1229,24 +2733,36 @@
         function updateProgressBar() {
             const progressLine = document.getElementById('progress-line');
             const steps = document.querySelectorAll('.progress-step');
-            
-            // Calculate progress percentage
-            const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+
+            // Calculate progress percentage accounting for skipped steps
+            const totalValidSteps = Array.from({length: totalSteps}, (_, i) => i + 1)
+                .filter(stepNum => !shouldSkipStep(stepNum)).length;
+            const completedValidSteps = Array.from({length: currentStep - 1}, (_, i) => i + 1)
+                .filter(stepNum => !shouldSkipStep(stepNum)).length;
+            const progressPercentage = totalValidSteps > 1 ? (completedValidSteps / (totalValidSteps - 1)) * 100 : 0;
             progressLine.style.width = `${Math.max(0, progressPercentage)}%`;
-            
+
             // Update step indicators
             steps.forEach((step, index) => {
                 const stepNumber = index + 1;
-                step.classList.remove('active', 'completed');
-                
-                if (stepNumber < currentStep) {
+                step.classList.remove('active', 'completed', 'skipped');
+
+                if (shouldSkipStep(stepNumber)) {
+                    // Mark step as skipped
+                    step.classList.add('skipped');
+                    step.querySelector('.progress-step-indicator').innerHTML = '—';
+                    step.style.opacity = '0.4';
+                } else if (stepNumber < currentStep) {
                     step.classList.add('completed');
                     step.querySelector('.progress-step-indicator').innerHTML = '✓';
+                    step.style.opacity = '1';
                 } else if (stepNumber === currentStep) {
                     step.classList.add('active');
                     step.querySelector('.progress-step-indicator').innerHTML = stepNumber;
+                    step.style.opacity = '1';
                 } else {
                     step.querySelector('.progress-step-indicator').innerHTML = stepNumber;
+                    step.style.opacity = '1';
                 }
             });
         }
@@ -1256,28 +2772,43 @@
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             const currentStepSpan = document.getElementById('current-step');
-            
-            currentStepSpan.textContent = currentStep;
-            
-            // Previous button - hide on first step
-            if (currentStep === 1) {
+            const totalStepsSpan = document.getElementById('total-steps');
+
+            // Calculate display step number (accounting for skipped steps)
+            const validStepsBeforeCurrent = Array.from({length: currentStep}, (_, i) => i + 1)
+                .filter(stepNum => !shouldSkipStep(stepNum)).length;
+            const totalValidSteps = Array.from({length: totalSteps}, (_, i) => i + 1)
+                .filter(stepNum => !shouldSkipStep(stepNum)).length;
+
+            currentStepSpan.textContent = validStepsBeforeCurrent;
+            totalStepsSpan.textContent = totalValidSteps;
+
+            // Previous button - hide if no valid previous step
+            const prevStepNum = getPreviousStep(currentStep);
+            if (prevStepNum < 1) {
                 prevBtn.style.display = 'none';
             } else {
                 prevBtn.style.display = 'inline-flex';
                 prevBtn.disabled = false;
             }
-            
-            // Next button
-            if (currentStep === totalSteps) {
+
+            // Next button - hide if no valid next step
+            const nextStepNum = getNextStep(currentStep);
+            if (nextStepNum > totalSteps) {
                 nextBtn.style.display = 'none';
             } else {
                 nextBtn.style.display = 'inline-flex';
-                nextBtn.textContent = currentStep === totalSteps - 1 ? 'Review' : 'Next';
+                nextBtn.textContent = nextStepNum === totalSteps ? 'Review' : 'Next';
             }
         }
 
         // Validate current step
         function validateCurrentStep() {
+            // Skip validation for skipped steps
+            if (shouldSkipStep(currentStep)) {
+                return true;
+            }
+
             const requiredFields = [];
             let isValid = true;
 
@@ -1297,26 +2828,75 @@
                     }
                     break;
                 case 2:
+                    // Collisions Check step - no validation needed (read-only)
+                    break;
+                case 3:
                     if (variants.length < 2) {
                         alert('You need at least 2 variants to proceed (including the control variant).');
                         return false;
                     }
+
+                    // For ABEX experiments, validate deployment IDs
+                    if (isABEXSelected()) {
+                        for (let i = 0; i < variants.length; i++) {
+                            if (!variants[i].deploymentId || variants[i].deploymentId === '') {
+                                alert(`Please select a Deployment ID for Variant ${String.fromCharCode(65 + i)}.`);
+                                return false;
+                            }
+                        }
+                    }
                     // Ratios automatically ensure valid distribution, no additional validation needed
                     break;
-                case 3:
+                case 4:
                     requiredFields.push('primary-metric');
                     break;
-                case 4:
-                    requiredFields.push('start-date', 'end-date');
-                    // Validate dates
-                    const startDate = document.getElementById('start-date').value;
-                    const endDate = document.getElementById('end-date').value;
-                    if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
-                        alert('End date must be after start date.');
-                        return false;
+                case 5:
+                    if (isABEXSelected()) {
+                        // ABEX-specific validation
+                        requiredFields.push('science-id', 'predicted-start-date', 'predicted-end-date', 'max-users');
+
+                        // Validate dates
+                        const predictedStartDate = document.getElementById('predicted-start-date').value;
+                        const predictedEndDate = document.getElementById('predicted-end-date').value;
+                        if (predictedStartDate && predictedEndDate && new Date(predictedStartDate) >= new Date(predictedEndDate)) {
+                            alert('End date must be after start date.');
+                            return false;
+                        }
+
+
+                        // Require ABEX date type selection
+                        if (!document.querySelector('#step-5 input[name="abex-date-type"]:checked')) {
+                            alert('Please select a date type.');
+                            return false;
+                        }
+
+                        // Validate max users is a positive integer
+                        const maxUsers = parseInt(document.getElementById('max-users').value);
+                        if (isNaN(maxUsers) || maxUsers < 1) {
+                            document.getElementById('max-users').closest('.form-group').classList.add('error');
+                            alert('Maximum number of users must be a positive integer.');
+                            return false;
+                        }
+                    } else {
+                        // Standard validation
+                        requiredFields.push('start-date', 'end-date');
+
+                        // Require date type selection
+                        if (!document.querySelector('#step-5 input[name="date-type"]:checked')) {
+                            alert('Please select a date type.');
+                            return false;
+                        }
+
+                        // Validate dates
+                        const startDate = document.getElementById('start-date').value;
+                        const endDate = document.getElementById('end-date').value;
+                        if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                            alert('End date must be after start date.');
+                            return false;
+                        }
                     }
                     break;
-                case 5:
+                case 6:
                     requiredFields.push('traffic-allocation');
                     // Check traffic allocation range
                     const trafficAllocation = parseInt(document.getElementById('traffic-allocation').value);
@@ -1352,37 +2932,63 @@
                     formData.authRequired = document.getElementById('authentication-required').checked;
                     break;
                 case 2:
-                    formData.variants = [...variants];
+                    // Collisions Check step - no data to save (read-only)
                     break;
                 case 3:
-                    formData.primaryMetric = document.getElementById('primary-metric').value;
-                    formData.secondaryMetrics = [
-                        'secondary-orders', 'secondary-pageviews', 'secondary-clicks',
-                        'secondary-revenue', 'secondary-cart-adds', 'secondary-conversion',
-                        'secondary-rpu', 'secondary-time'
-                    ].filter(id => document.getElementById(id)?.checked)
-                     .map(id => document.querySelector(`label[for="${id}"]`).textContent);
+                    formData.variants = [...variants];
                     break;
                 case 4:
-                    formData.platforms = [
-                        document.getElementById('platform-web').checked ? 'Web' : null,
-                        document.getElementById('platform-ios').checked ? 'iOS' : null,
-                        document.getElementById('platform-android').checked ? 'Android' : null
-                    ].filter(Boolean);
-                    formData.startDate = document.getElementById('start-date').value;
-                    formData.endDate = document.getElementById('end-date').value;
-                    formData.targetingUrl = document.getElementById('targeting-url').value;
-                    formData.banners = document.getElementById('all-banners').checked ? ['All Banners'] : ['Selected Banners'];
+                    formData.primaryMetric = document.getElementById('primary-metric').value;
+                    formData.secondaryMetrics = formData.secondaryMetrics || [];
                     break;
                 case 5:
+                    if (isABEXSelected()) {
+                        // Save ABEX-specific fields
+                        formData.scienceId = document.getElementById('science-id').value;
+                        formData.predictedStartDate = document.getElementById('predicted-start-date').value;
+                        formData.predictedEndDate = document.getElementById('predicted-end-date').value;
+                        const selectedAbexDateType = document.querySelector('#step-5 input[name="abex-date-type"]:checked');
+                        formData.abexDateType = selectedAbexDateType ? selectedAbexDateType.value : formData.abexDateType;
+                        formData.maxUsers = document.getElementById('max-users').value;
+                        // Capture any pending banner input before leaving the step
+                        const pendingBannerInputABEX = document.getElementById('banner-input');
+                        if (pendingBannerInputABEX && pendingBannerInputABEX.value.trim()) {
+                            addBanner(pendingBannerInputABEX.value.trim());
+                            pendingBannerInputABEX.value = '';
+                        }
+                        formData.banners = formData.banners || [];
+                        // eligibleDivisions and eligibleCustomerSegments are already updated via the helper functions
+                    } else {
+                        // Save standard fields
+                        formData.platforms = [
+                            document.getElementById('platform-web').checked ? 'Web' : null,
+                            document.getElementById('platform-ios').checked ? 'iOS' : null,
+                            document.getElementById('platform-android').checked ? 'Android' : null
+                        ].filter(Boolean);
+                        formData.startDate = document.getElementById('start-date').value;
+                        formData.endDate = document.getElementById('end-date').value;
+                        const selectedDateType = document.querySelector('#step-5 input[name="date-type"]:checked');
+                        formData.dateType = selectedDateType ? selectedDateType.value : formData.dateType;
+                        // Capture any pending URL in the input before leaving the step
+                        const pendingUrlInput = document.getElementById('targeting-url-input');
+                        if (pendingUrlInput && pendingUrlInput.value.trim()) {
+                            addTargetingUrl(pendingUrlInput.value.trim());
+                            pendingUrlInput.value = '';
+                        }
+                        formData.targetingUrls = formData.targetingUrls || [];
+                        // Capture any pending banner input before leaving the step
+                        const pendingBannerInput = document.getElementById('banner-input');
+                        if (pendingBannerInput && pendingBannerInput.value.trim()) {
+                            addBanner(pendingBannerInput.value.trim());
+                            pendingBannerInput.value = '';
+                        }
+                        formData.banners = formData.banners || [];
+                    }
+                    break;
+                case 6:
                     formData.trafficAllocation = document.getElementById('traffic-allocation').value;
-                    formData.variantDistribution = document.getElementById('variant-distribution').value;
-                    formData.spaces = [
-                        document.getElementById('space-home').checked ? 'Home' : null,
-                        document.getElementById('space-search').checked ? 'Search' : null,
-                        document.getElementById('space-cart').checked ? 'Cart & Checkout' : null,
-                        document.getElementById('space-profile').checked ? 'Profile' : null
-                    ].filter(Boolean);
+                    formData.technicalOwner = document.getElementById('technical-owner').value;
+                    // Spaces are already managed by the bubble tag functions
                     break;
             }
         }
@@ -1390,7 +2996,7 @@
         // Generate review content
         function generateReview() {
             const reviewContent = document.getElementById('review-content');
-            
+
             reviewContent.innerHTML = `
                 <div class="review-section">
                     <h3 class="review-title">Basic Information</h3>
@@ -1404,7 +3010,7 @@
                     </div>
                     <div class="review-item">
                         <span class="review-label">Experiment Type:</span>
-                        <span class="review-value">${formData.experimentType === 'amp' ? 'AMP Experiment' : formData.experimentType === 'server-side' ? 'Server-side Experiment' : formData.experimentType === 'client-side' ? 'Client-side Experiment' : 'Not selected'}</span>
+                        <span class="review-value">${formData.experimentType === 'amp' ? 'AMP Experiment' : formData.experimentType === 'server-side' ? 'Server-side Experiment' : formData.experimentType === 'client-side' ? 'Client-side Experiment' : formData.experimentType === 'abex' ? 'ABEX Experiment' : 'Not selected'}</span>
                     </div>
                     <div class="review-item">
                         <span class="review-label">Authentication Required:</span>
@@ -1416,14 +3022,22 @@
                     <h3 class="review-title">Variants</h3>
                     ${formData.variants.map((variant, index) => {
                         const letter = String.fromCharCode(65 + index); // A, B, C, etc.
+                        const deploymentInfo = formData.experimentType === 'abex' && variant.deploymentId ? (() => {
+                            const deploymentRecord = sampleDeploymentRecords.find(record => record.id === variant.deploymentId);
+                            const deploymentDisplay = deploymentRecord ?
+                                `${deploymentRecord.description} - ${deploymentRecord.id}` :
+                                variant.deploymentId;
+                            return `<br><small style="color: var(--text-secondary);">Deployment: ${deploymentDisplay}</small>`;
+                        })() : '';
                         return `
                         <div class="review-item">
                             <span class="review-label">Variant ${letter}:</span>
-                            <span class="review-value">Ratio ${variant.ratio} (${variant.percentage}%) - ${variant.description || 'No description'}</span>
+                            <span class="review-value">${isABEXSelected() ? `${variant.percentage}%` : `Ratio ${variant.ratio} (${variant.percentage}%)`} - ${variant.description || 'No description'}${deploymentInfo}</span>
                         </div>
                     `;}).join('')}
                 </div>
 
+                ${!isABEXSelected() ? `
                 <div class="review-section">
                     <h3 class="review-title">Metrics</h3>
                     <div class="review-item">
@@ -1435,31 +3049,76 @@
                         <span class="review-value">${formData.secondaryMetrics.join(', ') || 'None selected'}</span>
                     </div>
                 </div>
+                ` : ''}
 
                 <div class="review-section">
                     <h3 class="review-title">Targeting & Schedule</h3>
-                    <div class="review-item">
-                        <span class="review-label">Platforms:</span>
-                        <span class="review-value">${formData.platforms.join(', ') || 'None selected'}</span>
-                    </div>
-                    <div class="review-item">
-                        <span class="review-label">Start Date:</span>
-                        <span class="review-value">${formData.startDate || 'Not set'}</span>
-                    </div>
-                    <div class="review-item">
-                        <span class="review-label">End Date:</span>
-                        <span class="review-value">${formData.endDate || 'Not set'}</span>
-                    </div>
-                    <div class="review-item">
-                        <span class="review-label">Targeting URL:</span>
-                        <span class="review-value">${formData.targetingUrl || 'Not specified'}</span>
-                    </div>
-                    <div class="review-item">
-                        <span class="review-label">Banners:</span>
-                        <span class="review-value">${formData.banners.join(', ')}</span>
-                    </div>
+                    ${formData.experimentType === 'abex' ? `
+                        <div class="review-item">
+                            <span class="review-label">Science ID:</span>
+                            <span class="review-value">${formData.scienceId || 'Not selected'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Experiment Date Type:</span>
+                            <span class="review-value">${formData.abexDateType || 'Planned'}</span>
+                        </div>
+
+                        <div class="review-item">
+                            <span class="review-label">Start Date:</span>
+                            <span class="review-value">${formData.predictedStartDate || 'Not set'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">End Date:</span>
+                            <span class="review-value">${formData.predictedEndDate || 'Not set'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Maximum Number of Users:</span>
+                            <span class="review-value">${formData.maxUsers || 'Not set'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Eligible Divisions:</span>
+                            <span class="review-value">${formData.eligibleDivisions.join(', ') || 'None selected'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Eligible Customer Segments:</span>
+                            <span class="review-value">${formData.eligibleCustomerSegments.join(', ') || 'None selected'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Banners:</span>
+                            <span class="review-value">${formData.banners.join(', ') || 'None selected'}</span>
+                        </div>
+                    ` : `
+                        <div class="review-item">
+                            <span class="review-label">Platforms:</span>
+                            <span class="review-value">${formData.platforms.join(', ') || 'None selected'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Experiment Date Type:</span>
+                            <span class="review-value">${formData.dateType || 'Planned'}</span>
+                        </div>
+
+                        <div class="review-item">
+                            <span class="review-label">Start Date:</span>
+                            <span class="review-value">${formData.startDate || 'Not set'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">End Date:</span>
+
+
+                            <span class="review-value">${formData.endDate || 'Not set'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Targeting URLs:</span>
+                            <span class="review-value">${(formData.targetingUrls && formData.targetingUrls.length) ? formData.targetingUrls.join(', ') : 'None specified'}</span>
+                        </div>
+                        <div class="review-item">
+                            <span class="review-label">Banners:</span>
+                            <span class="review-value">${formData.banners.join(', ')}</span>
+                        </div>
+                    `}
                 </div>
 
+                ${!isABEXSelected() ? `
                 <div class="review-section">
                     <h3 class="review-title">Configuration</h3>
                     <div class="review-item">
@@ -1467,14 +3126,15 @@
                         <span class="review-value">${formData.trafficAllocation}%</span>
                     </div>
                     <div class="review-item">
-                        <span class="review-label">Variant Distribution:</span>
-                        <span class="review-value">${formData.variantDistribution}</span>
-                    </div>
-                    <div class="review-item">
                         <span class="review-label">Spaces:</span>
                         <span class="review-value">${formData.spaces.join(', ') || 'None selected'}</span>
                     </div>
+                    <div class="review-item">
+                        <span class="review-label">Technical Owner:</span>
+                        <span class="review-value">${formData.technicalOwner || 'Not specified'}</span>
+                    </div>
                 </div>
+                ` : ''}
             `;
         }
 
@@ -1486,20 +3146,20 @@
                 document.querySelectorAll('.step-content').forEach(step => {
                     step.classList.remove('active');
                 });
-                
+
                 // Show success step
                 document.getElementById('step-success').classList.add('active');
-                
+
                 // Hide navigation
                 document.querySelector('.wizard-navigation').style.display = 'none';
-                
+
                 // Update progress to show completion
                 document.querySelectorAll('.progress-step').forEach(step => {
                     step.classList.remove('active');
                     step.classList.add('completed');
                     step.querySelector('.progress-step-indicator').innerHTML = '✓';
                 });
-                
+
                 document.getElementById('progress-line').style.width = '100%';
             }, 500);
         }
@@ -1514,6 +3174,67 @@
         window.nextStep = nextStep;
         window.previousStep = previousStep;
         window.submitExperiment = submitExperiment;
+
+        // ABEX collisions overlay controls
+        function showAbexCollisionOverlay() {
+            const overlay = document.getElementById('abex-collision-overlay');
+            const body = document.getElementById('abex-collision-body');
+            const step2 = document.getElementById('step-2');
+            if (!overlay || !body || !step2) return;
+
+            // Populate overlay content from the original Step 2 content
+            body.innerHTML = step2.innerHTML;
+            overlay.style.display = 'flex';
+
+            // Close on backdrop click
+            overlay._backdropHandler = (e) => {
+                if (e.target === overlay) hideAbexCollisionOverlay();
+            };
+            overlay.addEventListener('click', overlay._backdropHandler);
+
+            // Close on Escape key
+            overlay._escHandler = (e) => {
+                if (e.key === 'Escape') hideAbexCollisionOverlay();
+
+
+            };
+            document.addEventListener('keydown', overlay._escHandler);
+        }
+        function hideAbexCollisionOverlay() {
+            const overlay = document.getElementById('abex-collision-overlay');
+            if (!overlay) return;
+            overlay.style.display = 'none';
+
+            // Remove temporary listeners
+            if (overlay._backdropHandler) {
+                overlay.removeEventListener('click', overlay._backdropHandler);
+                overlay._backdropHandler = null;
+            }
+            if (overlay._escHandler) {
+                document.removeEventListener('keydown', overlay._escHandler);
+                overlay._escHandler = null;
+            }
+        }
+
+        // Expose overlay controls
+        window.showAbexCollisionOverlay = showAbexCollisionOverlay;
+        window.hideAbexCollisionOverlay = hideAbexCollisionOverlay;
+
     </script>
+
+<!-- Collisions Overlay (accessible from Review step) -->
+<div id="abex-collision-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 24px;">
+  <div style="background: var(--bg-card); border-radius: 12px; width: min(100%, 1000px); max-height: 85vh; overflow: auto; box-shadow: var(--shadow-medium);">
+    <div style="display: flex; align-items: center; justify-content: center; padding: 16px 20px; border-bottom: 1px solid var(--border-light); position: sticky; top: 0; background: var(--bg-card); z-index: 1;">
+      <h3 class="review-title" style="margin: 0;">Collisions Check</h3>
+    </div>
+    <div id="abex-collision-body" style="padding: 16px 20px;"></div>
+    <div style="padding: 16px 20px; border-top: 1px solid var(--border-light); position: sticky; bottom: 0; background: var(--bg-card); display: flex; justify-content: center; gap: 12px;">
+      <button class="btn btn-secondary" onclick="hideAbexCollisionOverlay()">Back to Review</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
+
