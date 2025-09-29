@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A/B Test Calendar</title>
+    <style>
+        :root {
+            /* Matching color scheme from reference */
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --text-muted: #495057;
+            
+            --border-color: #e2e8f0;
+            --border-light: #dee2e6;
+            
+            --shadow-light: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.08);
+            
+            --accent-blue: #1976d2;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            
+            --experiment-running: #10b981;
+            --experiment-ended: #8b5cf6;
+            --experiment-pending: #1976d2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .controls {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .date-range label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .date-range input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg-card);
+            cursor: pointer;
+        }
+
+        .date-range input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .legend {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .legend-color.running {
+            background: var(--experiment-running);
+        }
+
+        .legend-color.ended {
+            background: var(--experiment-ended);
+        }
+
+        .legend-color.pending {
+            background: var(--experiment-pending);
+        }
+
+        .calendar-container {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-secondary);
+        }
+
+        .calendar-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calendar-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+        }
+
+        .calendar-content {
+            display: flex;
+            min-width: 1200px;
+            position: relative;
+        }
+
+        .experiments-list {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+        }
+
+        .experiment-label {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 13px;
+            color: var(--text-primary);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .experiment-label:hover {
+            background: var(--bg-hover);
+        }
+
+        .timeline-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .timeline-header {
+            display: flex;
+            height: 40px;
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .timeline-body {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .month-header {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-right: 1px solid var(--border-light);
+        }
+
+        .day-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+        }
+
+        .day-column {
+            flex: 1;
+            border-right: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .experiment-row {
+            height: 48px;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .experiment-bar {
+            position: absolute;
+            height: 32px;
+            top: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .experiment-bar:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            z-index: 2;
+        }
+
+        .experiment-bar.running {
+            background: linear-gradient(135deg, var(--experiment-running) 0%, #059669 100%);
+        }
+
+        .experiment-bar.ended {
+            background: linear-gradient(135deg, var(--experiment-ended) 0%, #7c3aed 100%);
+        }
+
+        .experiment-bar.pending {
+            background: linear-gradient(135deg, var(--experiment-pending) 0%, #1565c0 100%);
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .stats {
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .today-marker {
+            position: absolute;
+            width: 2px;
+            background: var(--accent-orange);
+            top: 0;
+            bottom: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .today-marker::before {
+            content: 'TODAY';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .legend {
+                justify-content: center;
+            }
+            
+            .calendar-content {
+                min-width: 600px;
+            }
+            
+            .experiments-list {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>A/B Test Experiments Calendar</h1>
+            <p>View all running and completed experiments across your platforms</p>
+        </div>
+
+        <div class="controls">
+            <div class="date-range">
+                <label>View Range:</label>
+                <input type="date" id="startDate" value="2025-01-01">
+                <span style="color: var(--text-secondary);">to</span>
+                <input type="date" id="endDate" value="2025-04-30">
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color running"></div>
+                    <span>Running</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color ended"></div>
+                    <span>Ended</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color pending"></div>
+                    <span>Not Started</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h2>Experiment Timeline</h2>
+            </div>
+            
+            <div class="calendar-scroll">
+                <div class="calendar-content">
+                    <div class="experiments-list" id="experimentsList">
+                        <!-- Experiment labels will be generated here -->
+                    </div>
+                    <div class="timeline-container">
+                        <div class="timeline-header" id="timelineHeader">
+                            <!-- Month headers will be generated here -->
+                        </div>
+                        <div class="timeline-body" id="timelineBody">
+                            <div class="day-grid" id="dayGrid">
+                                <!-- Day columns will be generated here -->
+                            </div>
+                            <div id="experimentBars">
+                                <!-- Experiment bars will be generated here -->
+                            </div>
+                            <div class="today-marker" id="todayMarker"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalExperiments">0</div>
+                    <div class="stat-label">Total Experiments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="runningCount">0</div>
+                    <div class="stat-label">Currently Running</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="endedCount">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="pendingCount">0</div>
+                    <div class="stat-label">Not Started</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Sample experiment data
+        const experiments = [
+            {
+                id: 'exp001',
+                name: 'Home Page Hero Banner Test',
+                startDate: '2025-01-15',
+                endDate: '2025-02-15',
+                platform: 'Web',
+                status: 'ended'
+            },
+            {
+                id: 'exp002',
+                name: 'One-Click Add to Cart',
+                startDate: '2025-01-20',
+                endDate: '2025-03-10',
+                platform: 'iOS/Android',
+                status: 'running'
+            },
+            {
+                id: 'exp003',
+                name: 'Search Results Optimization',
+                startDate: '2025-02-01',
+                endDate: '2025-02-28',
+                platform: 'Web',
+                status: 'running'
+            },
+            {
+                id: 'exp004',
+                name: 'Checkout Flow Redesign',
+                startDate: '2025-01-10',
+                endDate: '2025-01-31',
+                platform: 'All Platforms',
+                status: 'ended'
+            },
+            {
+                id: 'exp005',
+                name: 'Product Recommendations',
+                startDate: '2025-03-05',
+                endDate: '2025-04-05',
+                platform: 'Web',
+                status: 'pending'
+            },
+            {
+                id: 'exp006',
+                name: 'Mobile Navigation Test',
+                startDate: '2025-01-25',
+                endDate: '2025-02-20',
+                platform: 'iOS/Android',
+                status: 'running'
+            },
+            {
+                id: 'exp007',
+                name: 'Email Template A/B Test',
+                startDate: '2025-03-10',
+                endDate: '2025-03-31',
+                platform: 'Email',
+                status: 'pending'
+            },
+            {
+                id: 'exp008',
+                name: 'Cart Abandonment Flow',
+                startDate: '2025-02-10',
+                endDate: '2025-03-05',
+                platform: 'Web',
+                status: 'running'
+            },
+            {
+                id: 'exp009',
+                name: 'Category Page Layout',
+                startDate: '2025-01-05',
+                endDate: '2025-01-25',
+                platform: 'Web',
+                status: 'ended'
+            },
+            {
+                id: 'exp010',
+                name: 'Push Notification Timing',
+                startDate: '2025-02-20',
+                endDate: '2025-03-20',
+                platform: 'iOS/Android',
+                status: 'running'
+            },
+            {
+                id: 'exp011',
+                name: 'Loyalty Program Redesign',
+                startDate: '2025-03-15',
+                endDate: '2025-04-15',
+                platform: 'All Platforms',
+                status: 'pending'
+            }
+        ];
+
+        let viewStartDate, viewEndDate, totalDays;
+        const tooltip = document.getElementById('tooltip');
+
+        function initCalendar() {
+            viewStartDate = new Date(document.getElementById('startDate').value);
+            viewEndDate = new Date(document.getElementById('endDate').value);
+            totalDays = Math.ceil((viewEndDate - viewStartDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            renderTimeline();
+            renderExperiments();
+            updateStats();
+            positionTodayMarker();
+        }
+
+        function renderTimeline() {
+            const timelineHeader = document.getElementById('timelineHeader');
+            const dayGrid = document.getElementById('dayGrid');
+            
+            timelineHeader.innerHTML = '';
+            dayGrid.innerHTML = '';
+
+            // Group days by month
+            const months = {};
+            const currentDate = new Date(viewStartDate);
+            
+            for (let i = 0; i < totalDays; i++) {
+                const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}`;
+                const monthName = currentDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                
+                if (!months[monthKey]) {
+                    months[monthKey] = { name: monthName, days: 0 };
+                }
+                months[monthKey].days++;
+                
+                // Add day column
+                const dayColumn = document.createElement('div');
+                dayColumn.className = 'day-column';
+                dayGrid.appendChild(dayColumn);
+                
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Render month headers
+            Object.values(months).forEach(month => {
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.textContent = month.name;
+                monthHeader.style.flex = month.days;
+                timelineHeader.appendChild(monthHeader);
+            });
+        }
+
+        function formatDateShort(dateString) {
+            const date = new Date(dateString);
+            const month = date.toLocaleDateString('en-US', { month: 'short' });
+            const day = date.getDate();
+            return `${month} ${day}`;
+        }
+
+        function renderExperiments() {
+            const experimentsList = document.getElementById('experimentsList');
+            const timelineBody = document.getElementById('timelineBody');
+            const experimentBars = document.getElementById('experimentBars');
+            
+            experimentsList.innerHTML = '';
+            experimentBars.innerHTML = '';
+
+            // Calculate overlapping experiments for stacking
+            const lanes = assignLanes(experiments);
+            
+            // Set timeline height based on number of lanes
+            const maxLanes = Math.max(...Object.values(lanes)) + 1;
+            timelineBody.style.height = `${maxLanes * 48}px`;
+
+            // Render experiment labels and bars
+            experiments.forEach((exp, index) => {
+                // Add label
+                const label = document.createElement('div');
+                label.className = 'experiment-label';
+                label.textContent = exp.name;
+                label.style.top = `${lanes[exp.id] * 48}px`;
+                experimentsList.appendChild(label);
+
+                // Add experiment row
+                const row = document.createElement('div');
+                row.className = 'experiment-row';
+                row.style.top = `${lanes[exp.id] * 48}px`;
+                row.style.position = 'absolute';
+                row.style.width = '100%';
+                experimentBars.appendChild(row);
+
+                // Calculate bar position and width
+                const expStart = new Date(exp.startDate);
+                const expEnd = new Date(exp.endDate);
+                
+                if (expEnd >= viewStartDate && expStart <= viewEndDate) {
+                    const startDay = Math.max(0, Math.ceil((expStart - viewStartDate) / (1000 * 60 * 60 * 24)));
+                    const endDay = Math.min(totalDays, Math.ceil((expEnd - viewStartDate) / (1000 * 60 * 60 * 24)) + 1);
+                    const duration = endDay - startDay;
+
+                    const bar = document.createElement('div');
+                    bar.className = `experiment-bar ${exp.status}`;
+                    
+                    // Format the text with dates
+                    const startDateFormatted = formatDateShort(exp.startDate);
+                    const endDateFormatted = formatDateShort(exp.endDate);
+                    bar.textContent = `${exp.name} ${startDateFormatted}-${endDateFormatted}`;
+                    
+                    bar.style.left = `${(startDay / totalDays) * 100}%`;
+                    bar.style.width = `${(duration / totalDays) * 100}%`;
+                    
+                    bar.addEventListener('mouseenter', (e) => showTooltip(e, exp));
+                    bar.addEventListener('mouseleave', hideTooltip);
+                    
+                    row.appendChild(bar);
+                }
+            });
+        }
+
+        function assignLanes(experiments) {
+            const lanes = {};
+            const sortedExps = [...experiments].sort((a, b) => 
+                new Date(a.startDate) - new Date(b.startDate)
+            );
+
+            sortedExps.forEach(exp => {
+                const expStart = new Date(exp.startDate);
+                const expEnd = new Date(exp.endDate);
+                let lane = 0;
+
+                // Find the first available lane
+                while (true) {
+                    let canUseLane = true;
+                    
+                    for (const [otherId, otherLane] of Object.entries(lanes)) {
+                        if (otherLane === lane) {
+                            const other = experiments.find(e => e.id === otherId);
+                            const otherStart = new Date(other.startDate);
+                            const otherEnd = new Date(other.endDate);
+                            
+                            if (!(expEnd < otherStart || expStart > otherEnd)) {
+                                canUseLane = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (canUseLane) {
+                        lanes[exp.id] = lane;
+                        break;
+                    }
+                    lane++;
+                }
+            });
+
+            return lanes;
+        }
+
+        function showTooltip(event, experiment) {
+            const rect = event.target.getBoundingClientRect();
+            tooltip.innerHTML = `
+                <strong>${experiment.name}</strong><br>
+                Platform: ${experiment.platform}<br>
+                Start: ${new Date(experiment.startDate).toLocaleDateString()}<br>
+                End: ${new Date(experiment.endDate).toLocaleDateString()}<br>
+                Status: <span style="text-transform: capitalize">${experiment.status}</span>
+            `;
+            tooltip.style.left = `${rect.left + rect.width / 2}px`;
+            tooltip.style.top = `${rect.top - 10}px`;
+            tooltip.style.transform = 'translate(-50%, -100%)';
+            tooltip.classList.add('show');
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('show');
+        }
+
+        function updateStats() {
+            const today = new Date();
+            const running = experiments.filter(e => e.status === 'running').length;
+            const ended = experiments.filter(e => e.status === 'ended').length;
+            const pending = experiments.filter(e => e.status === 'pending').length;
+
+            document.getElementById('totalExperiments').textContent = experiments.length;
+            document.getElementById('runningCount').textContent = running;
+            document.getElementById('endedCount').textContent = ended;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+
+        function positionTodayMarker() {
+            const today = new Date();
+            const todayMarker = document.getElementById('todayMarker');
+            
+            if (today >= viewStartDate && today <= viewEndDate) {
+                const daysSinceStart = Math.ceil((today - viewStartDate) / (1000 * 60 * 60 * 24));
+                const position = (daysSinceStart / totalDays) * 100;
+                todayMarker.style.left = `${position}%`;
+                todayMarker.style.display = 'block';
+            } else {
+                todayMarker.style.display = 'none';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('startDate').addEventListener('change', initCalendar);
+        document.getElementById('endDate').addEventListener('change', initCalendar);
+
+        // Initialize on load
+        initCalendar();
+    </script>
+</body>
+</html>
